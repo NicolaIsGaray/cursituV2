@@ -1,0 +1,19 @@
+<div class="home-container">
+  <div class="cards-wrapper">
+    <div class="info-header">
+      <h2>Panel Principal</h2>
+      <p>Bienvenido a <span>CursITU</span>. Selecciona una sección para continuar.</p>
+    </div>
+
+    <div class="long-card" *ngFor="let option of options">
+      <div class="card-content" (click)="navigateTo(option.route)">
+        <span class="material-icons card-icon">{{ option.icon }}</span>
+        <div class="card-text">
+          <h3>{{ option.title }}</h3>
+          <p>{{ option.description }}</p>
+        </div>
+      </div>
+      <span class="material-icons arrow">chevron_right</span>
+    </div>
+  </div>
+</div>

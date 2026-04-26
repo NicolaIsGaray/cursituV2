@@ -1,0 +1,26 @@
+<nav class="navbar">
+  <div class="nav-left">
+    <button class="menu-btn" (click)="toggleMenu()">
+      <span class="material-icons">menu</span>
+    </button>
+    <h1 class="app-title">Curs<span>ITU</span></h1>
+  </div>
+
+  <div class="nav-right">
+    <button class="icon-btn"><span class="material-icons">chat_bubble_outline</span></button>
+    <button class="icon-btn"><span class="material-icons">notifications_none</span></button>
+    <button class="icon-btn"><span class="material-icons">account_circle</span></button>
+  </div>
+</nav>
+
+<router-outlet></router-outlet>
+
+<div class="sidebar-overlay" [class.active]="menuOpen" (click)="toggleMenu()"></div>
+
+<aside class="sidebar" [class.open]="menuOpen">
+  <ul class="sidebar-list">
+    <li><a href="#"><span class="material-icons">home</span> Inicio</a></li>
+    <li><a href="#"><span class="material-icons">book</span> Materias</a></li>
+    <li><a href="#"><span class="material-icons">groups</span> Grupos</a></li>
+  </ul>
+</aside>

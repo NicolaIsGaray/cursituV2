@@ -9,5 +9,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class SubjectEntity {
     @Id
     private String id;
+
     private String subjectName;
 }

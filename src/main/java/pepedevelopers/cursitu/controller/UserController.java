@@ -1,5 +1,7 @@
 package pepedevelopers.cursitu.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pepedevelopers.cursitu.model.user.UserEntity;
 import pepedevelopers.cursitu.model.user.UserRole;
@@ -10,7 +12,8 @@ import java.util.List;
 import static java.lang.IO.println;
 
 @RestController
-@CrossOrigin("/user")
+@RequestMapping("/api/users")
+@CrossOrigin(origins = "*")
 public class UserController {
     private final IUser userRepo;
 
@@ -18,82 +21,52 @@ public class UserController {
         this.userRepo = userRepo;
     }
 
-    @PostMapping("/create-user")
-    public void addUser(UserEntity user) {
-        if (user == null) return;
-
-        UserEntity newUser = new UserEntity();
-
-        newUser.setName(user.getName());
-        newUser.setEmail(user.getEmail());
-        newUser.setPassword(user.getPassword());
-        newUser.setDni(user.getDni());
-        newUser.setRole(user.getRole());
-        newUser.setComission(user.getComission());
-
-        if (newUser.getRole() == UserRole.DOCENTE) {
-            newUser.setSubjects(user.getSubjects());
-        } else {
-            newUser.setSubjects(null);
-        }
-
-        userRepo.save(newUser);
-
-        println("Usuario creado con éxito");
+    @PostMapping
+    public ResponseEntity<UserEntity> addUser(@RequestBody UserEntity user) {
+       return new ResponseEntity<>(userRepo.save(user), HttpStatus.CREATED);
     }
 
-    @GetMapping("/search-user/{id}")
-    public UserEntity SearchUser(@RequestParam String id) {
-        UserEntity requestedUser = userRepo.findById(id).orElse(null);
-
-        if (requestedUser == null) {
-            println("Usuario encontrado.");
-        }
-        else {
-            println("No se ha encontrado al usuario.");
-        }
-
-        return requestedUser;
+    @GetMapping("/{id}")
+    public UserEntity searchUser(@PathVariable String id) {
+        return userRepo.findById(id).orElse(null);
     }
 
-    @GetMapping("/all-users")
-    public List<UserEntity> AllUsers() {
-        return userRepo.findAll();
+    @GetMapping
+    public ResponseEntity<List<UserEntity>> allUsers() {
+        return ResponseEntity.ok(userRepo.findAll());
     }
 
-    @PutMapping("/update-user/{id}")
-    public void UpdateUser(@RequestParam String id, @RequestBody UserEntity userToUpdate) {
-        UserEntity updatedUser = SearchUser(id);
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateUser(@PathVariable String id, @RequestBody UserEntity userToUpdate) {
+        UserEntity updatedUser = userRepo.findById(id).orElse(null);
 
         if (updatedUser == null) {
-            println("Usuario no encontrado.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
         }
-        else {
-            updatedUser.setName(userToUpdate.getName());
-            updatedUser.setEmail(userToUpdate.getEmail());
-            updatedUser.setPassword(userToUpdate.getPassword());
-            updatedUser.setDni(userToUpdate.getDni());
-            updatedUser.setRole(userToUpdate.getRole());
-            updatedUser.setComission(userToUpdate.getComission());
-            updatedUser.setSubjects(userToUpdate.getSubjects());
 
-            userRepo.save(updatedUser);
+        updatedUser.setName(userToUpdate.getName() == null ? updatedUser.getName() : userToUpdate.getName());
+        updatedUser.setEmail(userToUpdate.getEmail() == null ? updatedUser.getEmail() : userToUpdate.getName());
+        updatedUser.setPassword(userToUpdate.getPassword() == null ? updatedUser.getPassword() : userToUpdate.getPassword());
+        updatedUser.setDni(userToUpdate.getDni() == null ? updatedUser.getDni() : userToUpdate.getDni());
+        updatedUser.setRole(userToUpdate.getRole() == null ? updatedUser.getRole() : userToUpdate.getRole());
+        updatedUser.setComission(userToUpdate.getComission() == null ? updatedUser.getComission() : userToUpdate.getComission());
+        updatedUser.setSubjectsId(userToUpdate.getSubjectsId() == null ? updatedUser.getSubjectsId() : userToUpdate.getSubjectsId());
 
-            println("Usuario actualizado con éxito.");
-        }
+        userRepo.save(updatedUser);
+
+        return ResponseEntity.ok("Usuario modificado.");
     }
 
-    @DeleteMapping("/delete-user/{id}")
-    public void DeleteUser(String id) {
-        UserEntity deletedUser = SearchUser(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable String id) {
+      UserEntity deletedUser = userRepo.findById(id).orElse(null);
 
-        if (deletedUser == null) {
-            println("Usuario no encontrado.");
-            return;
-        }
+      if (deletedUser == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
+      }
 
-        userRepo.delete(deletedUser);
+      userRepo.delete(deletedUser);
 
-        println("Usuario eliminado con éxito.");
+      return ResponseEntity.ok("Usuario eliminado");
     }
 }

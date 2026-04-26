@@ -1,5 +1,8 @@
 package pepedevelopers.cursitu.controller;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pepedevelopers.cursitu.model.SubjectEntity;
 import pepedevelopers.cursitu.repository.ISubject;
@@ -9,7 +12,8 @@ import java.util.List;
 import static java.lang.IO.println;
 
 @RestController
-@CrossOrigin("/subject")
+@RequestMapping("/subjects")
+@CrossOrigin(origins = "*")
 public class SubjectController {
     private final ISubject subjectRepo;
 
@@ -17,52 +21,48 @@ public class SubjectController {
         this.subjectRepo = iSubject;
     }
 
-    @PostMapping("/create-subject")
-    public void CreateSubject(SubjectEntity subjectToCreate) {
-        SubjectEntity newSubject = new SubjectEntity();
-
-        newSubject.setSubjectName(subjectToCreate.getSubjectName());
-
-        subjectRepo.save(newSubject);
-
-        println("Materia creada con éxito.");
+    @PostMapping
+    public ResponseEntity<SubjectEntity> createSubject(@RequestBody SubjectEntity subjectToCreate) {
+        return new ResponseEntity<>(subjectRepo.save(subjectToCreate), HttpStatus.CREATED);
     }
 
-    @GetMapping("/search-subject/{id}")
-    public SubjectEntity SearchSubject(@RequestParam String id) {
-        return subjectRepo.findById(id).orElse(null);
+    @GetMapping("/{id}")
+    public ResponseEntity<SubjectEntity> searchSubject(@PathVariable String id) {
+        SubjectEntity requestedSubject = subjectRepo.findById(id).orElse(null);
+
+        return requestedSubject != null ? ResponseEntity.ok(requestedSubject) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/all-subject")
-    public List<SubjectEntity> AllSubjects() {
-        return subjectRepo.findAll();
+    @GetMapping
+    public ResponseEntity<List<SubjectEntity>> allSubjects() {
+        return ResponseEntity.ok(subjectRepo.findAll());
     }
 
-    @PutMapping("/modify-subject/{id}")
-    public void ModifySubject(@RequestParam String id, @RequestBody SubjectEntity subjectToUpdate) {
-        SubjectEntity updatedSubject = SearchSubject(id);
+    @PutMapping("/{id}")
+    public ResponseEntity<String> modifySubject(@PathVariable String id, @RequestBody SubjectEntity subjectToUpdate) {
+        SubjectEntity updatedSubject = subjectRepo.findById(id).orElse(null);
 
         if (updatedSubject == null) {
-            println("No se ha encontrado la materia.");
-            return;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Materia no encontrada.");
         }
 
         updatedSubject.setSubjectName(subjectToUpdate.getSubjectName());
 
-        println("Materia actualizada éxitosamente.");
+        subjectRepo.save(updatedSubject);
+
+        return ResponseEntity.ok("Materia modificada.");
     }
 
-    @DeleteMapping("/delete-subject/{id}")
-    public void DeleteSubject(@RequestParam String id) {
-        SubjectEntity deletedSubject = SearchSubject(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteSubject(@PathVariable String id) {
+        SubjectEntity deletedSubject = subjectRepo.findById(id).orElse(null);
 
         if (deletedSubject == null) {
-            println("No se ha encontrado la materia.");
-            return;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Materia no encontrada.");
         }
 
         subjectRepo.delete(deletedSubject);
 
-        println("Materia eliminada con éxito.");
+        return ResponseEntity.ok("Materia eliminada exitosamente.");
     }
 }

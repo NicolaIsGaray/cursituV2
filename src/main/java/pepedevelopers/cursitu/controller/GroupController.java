@@ -1,5 +1,7 @@
 package pepedevelopers.cursitu.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pepedevelopers.cursitu.model.ClassroomEntity;
 import pepedevelopers.cursitu.model.GroupEntity;
@@ -13,7 +15,8 @@ import java.util.List;
 import static java.lang.IO.println;
 
 @RestController
-@CrossOrigin("/group")
+@RequestMapping("/groups")
+@CrossOrigin(origins = "*")
 public class GroupController {
     private final IGroup groupRepo;
 
@@ -21,69 +24,53 @@ public class GroupController {
         this.groupRepo = groupRepo;
     }
 
-    @PostMapping("/create-group")
-    public void CreateGroup(GroupEntity group, List<UserEntity> members, SubjectEntity subject, UserEntity professor, ClassroomEntity classroom) {
-        if (professor.getRole() != UserRole.DOCENTE) {
-            println("Error. No se ha encontrado un docente asignado al grupo.");
-            return;
-        }
-
-        GroupEntity newGroup = new GroupEntity();
-
-        newGroup.setNumber(group.getNumber());
-        newGroup.setGroupLimit(group.getGroupLimit());
-        newGroup.setClassroom(classroom);
-        newGroup.setMembers(members);
-        newGroup.setProfessor(professor);
-        newGroup.setSubject(group.getSubject());
-
-        groupRepo.save(newGroup);
-
-        println("Grupo creado éxitosamente.");
+    @PostMapping
+    public ResponseEntity<GroupEntity> createGroup(@RequestBody GroupEntity group) {
+        return new ResponseEntity<>(groupRepo.save(group), HttpStatus.CREATED);
     }
 
-    @GetMapping("/search-group/{groupNum}")
-    public GroupEntity SearchGroup(@RequestParam Integer groupNumber) {
-        return groupRepo.findByNumber(groupNumber);
+    @GetMapping("/{groupNum}")
+    public ResponseEntity<GroupEntity> searchGroup(@PathVariable Integer groupNumber) {
+        GroupEntity group = groupRepo.findByNumber(groupNumber);
+
+        return group != null ? ResponseEntity.ok(group) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/all")
-    public List<GroupEntity> AllGroups() {
-        return groupRepo.findAll();
+    @GetMapping
+    public ResponseEntity<List<GroupEntity>> allGroups() {
+        return ResponseEntity.ok(groupRepo.findAll());
     }
 
-    @PutMapping("/modify/{id}")
-    public void ModifyGroup(@RequestParam Integer groupNumber, @RequestBody GroupEntity groupToUpdate) {
-        GroupEntity groupUpdated = SearchGroup(groupNumber);
+    @PutMapping("/{groupNum}")
+    public ResponseEntity<String> modifyGroup(@PathVariable Integer groupNum, @RequestBody GroupEntity groupToUpdate) {
+        GroupEntity groupUpdated = groupRepo.findByNumber(groupNum);
 
         if (groupUpdated == null) {
-            println("No se ha encontrado el grupo.");
-            return;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Grupo no encontrado.");
         }
 
+        groupUpdated.setMembersId(groupToUpdate.getMembersId());
         groupUpdated.setNumber(groupToUpdate.getNumber());
         groupUpdated.setGroupLimit(groupToUpdate.getGroupLimit());
-        groupUpdated.setMembers(groupToUpdate.getMembers());
-        groupUpdated.setSubject(groupToUpdate.getSubject());
-        groupUpdated.setProfessor(groupToUpdate.getProfessor());
-        groupUpdated.setClassroom(groupToUpdate.getClassroom());
+        groupUpdated.setClassroomId(groupToUpdate.getClassroomId());
+        groupUpdated.setProfessorId(groupToUpdate.getProfessorId());
+        groupUpdated.setSubjectId(groupToUpdate.getSubjectId());
 
         groupRepo.save(groupUpdated);
 
-        println("Grupo modificado con éxito.");
+        return ResponseEntity.ok("Grupo modificado correctamente.");
     }
 
-    @DeleteMapping("/delete-group/{groupNum}")
-    public void DeleteGroup(@RequestParam Integer groupNumber) {
-        GroupEntity deletedGroup = SearchGroup(groupNumber);
+    @DeleteMapping("/{groupNum}")
+    public ResponseEntity<String> deleteGroup(@PathVariable Integer groupNum) {
+        GroupEntity deletedGroup = groupRepo.findByNumber(groupNum);
 
         if (deletedGroup == null) {
-            println("Error. No existe el grupo.");
-            return;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Grupo no encontrado.");
         }
 
         groupRepo.delete(deletedGroup);
 
-        println("Grupo eliminado con éxito.");
+        return ResponseEntity.ok("Grupo eliminado exitosamente.");
     }
 }

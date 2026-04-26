@@ -12,6 +12,7 @@ import java.util.List;
 public class ClassroomEntity {
     @Id
     private String id;
+
     private Integer number;
-    private List<UserEntity> students;
+    private List<String> studentsId;
 }

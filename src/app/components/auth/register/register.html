@@ -1,0 +1,28 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2 style="color: var(--primary-purple);">Registro de Usuario</h2>
+    <form [formGroup]="registerForm">
+      <div class="field">
+        <label>Nombre Completo</label>
+        <input type="text" formControlName="name" placeholder="Ej. Juan Pérez">
+      </div>
+
+      <div class="field">
+        <label>Correo Electrónico</label>
+        <input type="email" formControlName="email" placeholder="correo@ejemplo.com">
+      </div>
+
+      <div class="field">
+        <label>DNI</label>
+        <input type="text" formControlName="dni" placeholder="Número de documento">
+      </div>
+
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" formControlName="password" placeholder="Mínimo 8 caracteres">
+      </div>
+
+      <button class="purple-button" (click)="onRegister()">Crear Cuenta</button>
+    </form>
+  </div>
+</div>

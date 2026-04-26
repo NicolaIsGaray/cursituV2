@@ -12,11 +12,12 @@ import java.util.List;
 public class UserEntity {
     @Id
     private String id;
+
     private String name;
     private String email;
     private String password;
     private String dni;
-    private UserRole role = UserRole.ALUMNO;
-    private String comission;
-    private List<SubjectEntity> subjects;
+    private String role;
+    private List<String> comission;
+    private List<String> subjectsId;
 }

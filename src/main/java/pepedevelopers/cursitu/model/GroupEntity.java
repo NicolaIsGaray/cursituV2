@@ -12,10 +12,11 @@ import java.util.List;
 public class GroupEntity {
     @Id
     private String id;
-    private List<UserEntity> members;
+
+    private List<String> membersId;
     private Integer number;
     private Integer groupLimit;
-    private SubjectEntity subject;
-    private UserEntity professor;
-    private ClassroomEntity classroom;
+    private String subjectId;
+    private String professorId;
+    private String classroomId;
 }
