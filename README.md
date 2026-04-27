@@ -1,4 +1,4 @@
-# Cursitu Version 0.2
+# Cursitu  v0.2
 Un aula virtual dedicada a la **Institución Tecnológica Universitaria de la Universidad de Cuyo**.
 
 Proyecto desarrollado por los estudiantes de dicha institución, con el fin de presentar como **EGI** para __Metodología y Testing__.
