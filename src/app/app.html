@@ -1,26 +1,65 @@
-<nav class="navbar">
-  <div class="nav-left">
-    <button class="menu-btn" (click)="toggleMenu()">
-      <span class="material-icons">menu</span>
-    </button>
-    <h1 class="app-title">Curs<span>ITU</span></h1>
-  </div>
+<div class="main-layout">
+  <aside class="sidebar">
+    <div class="app-title">
+      <span class="material-symbols-outlined logo-icon">grid_view</span>
+      <h4>CursITU</h4>
+    </div>
 
-  <div class="nav-right">
-    <button class="icon-btn"><span class="material-icons">chat_bubble_outline</span></button>
-    <button class="icon-btn"><span class="material-icons">notifications_none</span></button>
-    <button class="icon-btn"><span class="material-icons">account_circle</span></button>
-  </div>
-</nav>
+    <div class="sidebar-section">
+      <span class="section-title">Menu</span>
+      <ul class="menu-items">
+        <li class="active"><span class="material-symbols-outlined">home</span><p>Inicio</p></li>
+        <li><span class="material-symbols-outlined">widgets</span><p>Materias</p></li>
+        <li><span class="material-symbols-outlined">group</span><p>Mis Grupos</p></li>
+        <li><span class="material-symbols-outlined">grid_view</span><p>Tareas Pendientes</p></li>
+        <li><span class="material-symbols-outlined">assignment</span><p>Avisos</p></li>
+      </ul>
+    </div>
 
-<router-outlet></router-outlet>
+    <div class="sidebar-section">
+      <span class="section-title">Próximos parciales</span>
+      <ul class="exam-items">
+        <li><span class="dot blue"></span><p>Base de Datos Av... – 13/06</p></li>
+        <li><span class="dot red"></span><p>Programación Or... – 04/05</p></li>
+        <li><span class="dot green"></span><p>Sistemas Operati... – 21/05</p></li>
+      </ul>
+    </div>
 
-<div class="sidebar-overlay" [class.active]="menuOpen" (click)="toggleMenu()"></div>
+    <div class="user-footer">
+      <span class="section-title">Usuario</span>
+      <div class="user-profile">
+        <span class="material-symbols-outlined user-icon">person</span>
+        <div class="user-info">
+          <p class="user-name">Facundo Garay</p>
+          <p class="user-role">Estudiante</p>
+        </div>
+      </div>
+      <div class="settings-btn">
+        <span class="material-symbols-outlined">settings</span>
+        <p>Configuración</p>
+      </div>
+    </div>
+  </aside>
 
-<aside class="sidebar" [class.open]="menuOpen">
-  <ul class="sidebar-list">
-    <li><a href="#"><span class="material-icons">home</span> Inicio</a></li>
-    <li><a href="#"><span class="material-icons">book</span> Materias</a></li>
-    <li><a href="#"><span class="material-icons">groups</span> Grupos</a></li>
-  </ul>
-</aside>
+  <main class="main-content">
+    <header class="top-bar">
+      <div class="welcome-card">
+        <div class="profile-thumb">
+          <img src="https://via.placeholder.com/45" alt="User">
+        </div>
+        <h2 class="welcome-text">¡Buenos dias, <span>FACUNDO GARAY!</span></h2>
+      </div>
+
+      <div class="header-actions">
+        <button class="action-btn"><span class="material-symbols-outlined">handshake</span></button>
+        <button class="action-btn active"><span class="material-symbols-outlined">forum</span></button>
+        <button class="action-btn"><span class="material-symbols-outlined">notifications</span></button>
+        <button class="action-btn"><span class="material-symbols-outlined">person</span></button>
+      </div>
+    </header>
+
+    <div class="view-container">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

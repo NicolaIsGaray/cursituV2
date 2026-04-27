@@ -1,88 +1,82 @@
-.home-container {
-  padding-top: 80px; /* Espacio para la Navbar */
-  background-color: #ffffff;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
+:host {
+  display: block;
+  width: 100%;
 }
 
-.cards-wrapper {
-  width: 60%; /* Ancho solicitado */
+.dashboard-grid {
+  display: grid;
+  /* Definimos 3 columnas de igual tamaño */
+  grid-template-columns: repeat(3, 1fr);
+  /* Altura base de las filas */
+  grid-auto-rows: minmax(160px, auto);
+  gap: 24px;
+}
+
+/* Estilo General de las Tarjetas */
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding: 2rem 0;
+  transition: transform 0.2s ease;
 }
 
-.info-header {
-  margin-bottom: 1rem;
+.card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: #1a1a1a;
 }
 
-.info-header h2 {
-  color: #333;
-  margin-bottom: 0.5rem;
-}
-
-.info-header span {
-  color: #6200ee;
-  font-weight: bold;
-}
-
-.long-card {
+/* El recuadro gris interno de cada sección */
+.card-content.empty {
+  flex-grow: 1;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  padding: 1.5rem;
-  background: #fff;
-  border: 1px solid #eee;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  border: 1px solid #f0f0f0;
   border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  color: #8d8d8d;
 }
 
-.long-card:hover {
-  border-color: #6200ee;
-  box-shadow: 0 4px 12px rgba(98, 0, 238, 0.08);
-  transform: translateY(-2px);
-}
-
-.card-content {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.card-icon {
-  font-size: 2rem;
-  color: #6200ee;
-  background: #f4efff;
-  padding: 12px;
-  border-radius: 50%;
-}
-
-.card-text h3 {
+.card-content.empty p {
   margin: 0;
-  color: #333;
-  font-size: 1.1rem;
-}
-
-.card-text p {
-  margin: 4px 0 0;
-  color: #666;
   font-size: 0.9rem;
+  line-height: 1.4;
 }
 
-.arrow {
-  color: #ccc;
+.success-text {
+  color: #1a1a1a;
+  margin-top: 5px;
+  font-size: 0.95rem;
 }
 
-.long-card:hover .arrow {
-  color: #6200ee;
+/* --- Lógica de Posicionamiento (Grid) --- */
+
+.card.wide {
+  grid-column: span 2; /* Ocupa las primeras dos columnas */
 }
 
-/* Responsividad para móviles */
-@media (max-width: 768px) {
-  .cards-wrapper {
-    width: 90%;
+.card.tall {
+  grid-row: span 2;    /* Se estira hacia abajo ocupando 2 filas */
+  grid-column: 3;      /* Se queda fija en la columna de la derecha */
+}
+
+.card.small {
+  grid-column: span 1; /* Ocupa solo una celda */
+}
+
+/* Ajuste de responsividad básico */
+@media (max-width: 1100px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .card.tall {
+    grid-column: span 2;
+    grid-row: auto;
   }
 }

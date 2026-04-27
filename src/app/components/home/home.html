@@ -1,19 +1,44 @@
-<div class="home-container">
-  <div class="cards-wrapper">
-    <div class="info-header">
-      <h2>Panel Principal</h2>
-      <p>Bienvenido a <span>CursITU</span>. Selecciona una sección para continuar.</p>
+<div class="dashboard-grid">
+  <div class="card wide">
+    <h3>Avisos Recientes</h3>
+    <div class="card-content empty">
+      <p>No hay avisos recientes</p>
     </div>
+  </div>
 
-    <div class="long-card" *ngFor="let option of options">
-      <div class="card-content" (click)="navigateTo(option.route)">
-        <span class="material-icons card-icon">{{ option.icon }}</span>
-        <div class="card-text">
-          <h3>{{ option.title }}</h3>
-          <p>{{ option.description }}</p>
-        </div>
-      </div>
-      <span class="material-icons arrow">chevron_right</span>
+  <div class="card tall">
+    <h3>Entregas Pendientes</h3>
+    <div class="card-content empty">
+      <p>No tienes entregas pendientes</p>
+      <b class="success-text">¡Estás al día!</b>
+    </div>
+  </div>
+
+  <div class="card small">
+    <h3>Última Actividad Visitada</h3>
+    <div class="card-content empty">
+      <p>No has visitado ninguna actividad hoy</p>
+    </div>
+  </div>
+
+  <div class="card small">
+    <h3>Última Materia Vista</h3>
+    <div class="card-content empty">
+      <p>No has visitado ninguna materia hoy</p>
+    </div>
+  </div>
+
+  <div class="card wide">
+    <h3>Fechas Importantes</h3>
+    <div class="card-content empty">
+      <p>No hay ninguna fecha importante anunciada</p>
+    </div>
+  </div>
+
+  <div class="card wide">
+    <h3>Reuniones En Vivo</h3>
+    <div class="card-content empty">
+      <p>No hay reuniones activas por el momento</p>
     </div>
   </div>
 </div>

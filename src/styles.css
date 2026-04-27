@@ -6,29 +6,13 @@
   --bg-white: #ffffff;
 }
 
-.auth-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: var(--bg-white);
+body {
+    margin: 0;
+    height: 100%;
 }
 
-.auth-card {
-  width: 400px;
-  padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  border: 1px solid #f0f0f0;
-}
-
-.purple-button {
-  background-color: var(--primary-purple);
-  color: white;
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 1rem;
+* {
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
