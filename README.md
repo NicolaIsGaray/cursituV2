@@ -4,16 +4,19 @@ Un aula virtual dedicada a la **Institución Tecnológica Universitaria de la Un
 Proyecto desarrollado por los estudiantes de dicha institución, con el fin de presentar como **EGI** para __Metodología y Testing__.
 
 # Backend API - [Cursitu]
-# Descripción
+## Descripción
 Servicio backend desarrollado con **Java** y **Spring Boot.** Esta versión está configurada específicamente para pruebas de integración y validación de funcionalidades por parte del equipo de QA/Testers.
 
-# Requisitos Previos
+## Requisitos Previos
 **Java JDK:** Versión 25.
+
 **Maven:** 3.8+.
+
 **Base de Datos:** MongoDB.
+
 **IDE Recomendado:** IntelliJ IDEA.
 
-# Configuración y Ejecución
+## Configuración y Ejecución
 **1. Clonar el repositorio:**
 ```bash
 git clone https://github.com/NicolaIsGaray/cursituV2.git
@@ -24,3 +27,6 @@ cd ./cursituV2
 Asegúrate de configurar las siguientes variables en tu sistema:
 
 `MONGO_URI_TESTER`: URL de la base de datos.
+
+**3. Ejecución**
+En el IDE, busca la aplicación a ejecutar `src/main/java/pepedevelopers/cursitu/CursituApplication.java`. Selecciona el archivo y ejecutalo.
