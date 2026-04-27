@@ -20,7 +20,6 @@ Servicio backend desarrollado con **Java** y **Spring Boot.** Esta versi√≥n est√
 **1. Clonar el repositorio:**
 ```bash
 git clone https://github.com/NicolaIsGaray/cursituV2.git
-cd ./cursituV2
 ```
 
 **2. Configurar variables de entorno:**
