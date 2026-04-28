@@ -3,7 +3,6 @@ package pepedevelopers.cursitu.model;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import pepedevelopers.cursitu.model.user.UserEntity;
 
 import java.util.List;
 
@@ -14,5 +13,5 @@ public class ClassroomEntity {
     private String id;
 
     private Integer number;
-    private List<String> studentsId;
+    private String[] students_id;
 }

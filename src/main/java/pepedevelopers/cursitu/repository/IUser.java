@@ -1,10 +1,7 @@
 package pepedevelopers.cursitu.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
-import pepedevelopers.cursitu.model.user.UserEntity;
-
-import java.util.Optional;
+import pepedevelopers.cursitu.model.UserEntity;
 
 public interface IUser extends MongoRepository<UserEntity, String> {
 }

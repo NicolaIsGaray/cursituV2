@@ -1,4 +1,4 @@
-package pepedevelopers.cursitu.configuration;
+package pepedevelopers.cursitu.config;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;

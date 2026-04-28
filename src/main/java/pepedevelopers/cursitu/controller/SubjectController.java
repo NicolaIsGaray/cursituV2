@@ -46,7 +46,7 @@ public class SubjectController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Materia no encontrada.");
         }
 
-        updatedSubject.setSubjectName(subjectToUpdate.getSubjectName());
+        updatedSubject.setSubject_name(subjectToUpdate.getSubject_name());
 
         subjectRepo.save(updatedSubject);
 

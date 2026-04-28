@@ -1,9 +1,8 @@
-package pepedevelopers.cursitu.model.user;
+package pepedevelopers.cursitu.model;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import pepedevelopers.cursitu.model.SubjectEntity;
 
 import java.util.List;
 
@@ -18,6 +17,6 @@ public class UserEntity {
     private String password;
     private String dni;
     private String role;
-    private List<String> comission;
-    private List<String> subjectsId;
+    private String[] comission;
+    private String[] subjects_id;
 }

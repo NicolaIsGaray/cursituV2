@@ -3,11 +3,7 @@ package pepedevelopers.cursitu.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pepedevelopers.cursitu.model.ClassroomEntity;
 import pepedevelopers.cursitu.model.GroupEntity;
-import pepedevelopers.cursitu.model.SubjectEntity;
-import pepedevelopers.cursitu.model.user.UserEntity;
-import pepedevelopers.cursitu.model.user.UserRole;
 import pepedevelopers.cursitu.repository.IGroup;
 
 import java.util.List;
@@ -49,12 +45,12 @@ public class GroupController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Grupo no encontrado.");
         }
 
-        groupUpdated.setMembersId(groupToUpdate.getMembersId());
+        groupUpdated.setMembers_id(groupToUpdate.getMembers_id());
         groupUpdated.setNumber(groupToUpdate.getNumber());
-        groupUpdated.setGroupLimit(groupToUpdate.getGroupLimit());
-        groupUpdated.setClassroomId(groupToUpdate.getClassroomId());
-        groupUpdated.setProfessorId(groupToUpdate.getProfessorId());
-        groupUpdated.setSubjectId(groupToUpdate.getSubjectId());
+        groupUpdated.setGroup_limit(groupToUpdate.getGroup_limit());
+        groupUpdated.setClassroom_id(groupToUpdate.getClassroom_id());
+        groupUpdated.setProfessor_id(groupToUpdate.getProfessor_id());
+        groupUpdated.setSubject_id(groupToUpdate.getSubject_id());
 
         groupRepo.save(groupUpdated);
 

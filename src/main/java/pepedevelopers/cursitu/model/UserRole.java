@@ -1,4 +1,4 @@
-package pepedevelopers.cursitu.model.user;
+package pepedevelopers.cursitu.model;
 
 public enum UserRole {
     ALUMNO,

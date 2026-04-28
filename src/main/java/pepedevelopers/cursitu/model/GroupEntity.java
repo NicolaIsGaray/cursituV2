@@ -3,7 +3,6 @@ package pepedevelopers.cursitu.model;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import pepedevelopers.cursitu.model.user.UserEntity;
 
 import java.util.List;
 
@@ -13,10 +12,10 @@ public class GroupEntity {
     @Id
     private String id;
 
-    private List<String> membersId;
+    private String[] members_id;
     private Integer number;
-    private Integer groupLimit;
-    private String subjectId;
-    private String professorId;
-    private String classroomId;
+    private Integer group_limit;
+    private String subject_id;
+    private String professor_id;
+    private String classroom_id;
 }

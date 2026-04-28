@@ -3,9 +3,8 @@ package pepedevelopers.cursitu.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pepedevelopers.cursitu.model.user.UserEntity;
-import pepedevelopers.cursitu.model.user.UserRole;
 import pepedevelopers.cursitu.repository.IUser;
+import pepedevelopers.cursitu.model.UserEntity;
 
 import java.util.List;
 
@@ -50,7 +49,7 @@ public class UserController {
         updatedUser.setDni(userToUpdate.getDni() == null ? updatedUser.getDni() : userToUpdate.getDni());
         updatedUser.setRole(userToUpdate.getRole() == null ? updatedUser.getRole() : userToUpdate.getRole());
         updatedUser.setComission(userToUpdate.getComission() == null ? updatedUser.getComission() : userToUpdate.getComission());
-        updatedUser.setSubjectsId(userToUpdate.getSubjectsId() == null ? updatedUser.getSubjectsId() : userToUpdate.getSubjectsId());
+        updatedUser.setSubjects_id(userToUpdate.getSubjects_id() == null ? updatedUser.getSubjects_id() : userToUpdate.getSubjects_id());
 
         userRepo.save(updatedUser);
 

@@ -4,12 +4,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pepedevelopers.cursitu.model.ClassroomEntity;
-import pepedevelopers.cursitu.model.user.UserEntity;
 import pepedevelopers.cursitu.repository.IClassroom;
+import pepedevelopers.cursitu.model.UserEntity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/classrooms")
@@ -26,9 +26,9 @@ public class ClassroomController {
 
     @PostMapping
     public ResponseEntity<ClassroomEntity> createClassroom(@RequestBody ClassroomEntity classroom) {
-        List<String> students = new ArrayList<>();
+        String[] students = {};
 
-        classroom.setStudentsId(students);
+        classroom.setStudents_id(students);
 
         return new ResponseEntity<>(classRepo.save(classroom), HttpStatus.CREATED);
     }
@@ -47,11 +47,12 @@ public class ClassroomController {
     @PutMapping("/{classNum}")
     public ResponseEntity<String> modifyClassroom(@PathVariable Integer classNum, @RequestBody ClassroomEntity updatedData) {
         ClassroomEntity existingClassroom = classRepo.findByNumber(classNum);
+        String[] studentsEmpty = {};
 
         if (existingClassroom == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso no encontrado.");
 
         existingClassroom.setNumber(updatedData.getNumber());
-        existingClassroom.setStudentsId(updatedData.getStudentsId() == null ? new ArrayList<>() : updatedData.getStudentsId());
+        existingClassroom.setStudents_id(updatedData.getStudents_id() == null ? studentsEmpty : updatedData.getStudents_id());
         classRepo.save(existingClassroom);
 
         return ResponseEntity.ok("Curso modificado exitosamente.");
@@ -76,13 +77,26 @@ public class ClassroomController {
 
         String memberId = student.getId();
 
-        List<String> students = classroom.getStudentsId();
+      String[] students = classroom.getStudents_id();
+      boolean exists = false;
 
-        if (!students.contains(memberId)) {
-            students.add(memberId);
-            classroom.setStudentsId(students);
-            classRepo.save(classroom);
+      for (String id : students) {
+        if (id.equals(memberId)) {
+          exists = true;
+          break;
         }
+      }
+
+      if (!exists) {
+        String[] updatedStudents = new String[students.length + 1];
+
+        System.arraycopy(students, 0, updatedStudents, 0, students.length);
+
+        updatedStudents[students.length] = memberId;
+
+        classroom.setStudents_id(updatedStudents);
+        classRepo.save(classroom);
+      }
 
         return ResponseEntity.ok("Alumno asignado exitosamente.");
     }
@@ -95,13 +109,29 @@ public class ClassroomController {
         UserEntity student = userController.searchUser(studentId);
         if (student == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Alumno no encontrado.");
 
-        boolean removed = classroom.getStudentsId().removeIf(s -> s.equals(student.getId()));
+      String[] students = classroom.getStudents_id();
+      String targetId = student.getId();
 
-        if (removed) {
-            classRepo.save(classroom);
-            return ResponseEntity.ok("Alumno quitado con éxito.");
+      int count = 0;
+      for (String id : students) {
+        if (id.equals(targetId)) count++;
+      }
+
+      if (count > 0) {
+        String[] updatedStudents = new String[students.length - count];
+        int index = 0;
+
+        for (String id : students) {
+          if (!id.equals(targetId)) {
+            updatedStudents[index++] = id;
+          }
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El alumno no pertenecía al curso.");
+        classroom.setStudents_id(updatedStudents);
+        classRepo.save(classroom);
+        return ResponseEntity.ok("Alumno quitado con éxito.");
+      }
+
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El alumno no pertenecía al curso.");
     }
 }
