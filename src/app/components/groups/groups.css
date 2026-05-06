@@ -1,5 +1,3 @@
-/* === TUS ESTILOS ORIGINALES (SIN CAMBIOS) === */
-
 .groups-container {
   display: grid;
   grid-template-columns: 1fr 1.2fr;
@@ -111,18 +109,21 @@ h3 {
   font-size: 0.85rem;
 }
 
+/* === SECCIÓN DOCENTE CORREGIDA PARA NETBOOK === */
+
 .grupos-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 20px;
+  padding: 10px; /* Reducido */
+  height: calc(100vh - 150px); /* Ajuste dinámico para netbook */
+  box-sizing: border-box;
 }
 
 .main-card {
   display: flex;
   width: 100%;
   max-width: 1200px;
-  height: 750px;
+  height: 100%; /* Toma el alto del contenedor padre */
   background: white;
   border-radius: 20px;
   overflow: hidden;
@@ -130,54 +131,51 @@ h3 {
 }
 
 .gestion-form-section {
-  flex: 0 0 40%;
-  padding: 40px;
+  flex: 0 0 350px; /* Ancho fijo para el formulario */
+  padding: 25px;
   color: white;
   display: flex;
   flex-direction: column;
+  overflow-y: auto; /* Por si el formulario es largo */
 }
 
 .gestion-form-section h2 {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 800;
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .form-group {
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 }
 
 .form-group label {
   display: block;
   font-weight: 700;
-  margin-bottom: 10px;
-  font-size: 1.1rem;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
 }
 
-.input-field, .textarea-field {
+.input-field {
   width: 100%;
   border: none;
-  border-radius: 10px;
-  padding: 15px;
-  font-size: 1rem;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 0.9rem;
   background: white;
-}
-
-.textarea-field {
-  height: 200px;
-  resize: none;
+  box-sizing: border-box;
 }
 
 .btn-guardar-grupo {
-  margin-top: auto;
+  margin-top: 15px;
   background: rgba(0,0,0,0.2);
   color: white;
   border: none;
-  padding: 15px;
-  border-radius: 10px;
+  padding: 12px;
+  border-radius: 8px;
   font-weight: 800;
-  font-size: 1.2rem;
+  font-size: 1rem;
   cursor: pointer;
   transition: background 0.3s;
 }
@@ -189,42 +187,54 @@ h3 {
 .grupos-grid-section {
   flex: 1;
   background: #f8faff;
-  padding: 30px;
-  overflow: hidden;
+  padding: 20px;
+  overflow: hidden; /* Importante para que el scroll-container funcione */
+  display: flex;
+  flex-direction: column;
 }
 
 .scroll-container {
-  height: 100%;
-  overflow-y: auto;
+  flex: 1;
+  overflow-y: auto; /* Scroll de la grilla de grupos */
   padding-right: 10px;
+}
+
+/* Personalización de scrollbar para que ocupe menos espacio */
+.scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+.scroll-container::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
 }
 
 .grupos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 15px;
 }
 
 .grupo-card {
   background: white;
-  border-radius: 15px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
   height: fit-content;
 }
 
 .grupo-card-header {
-  padding: 12px 15px;
+  padding: 10px 12px;
   color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-weight: 700;
+  font-size: 0.85rem;
 }
 
 .grupo-actions {
   display: flex;
-  gap: 8px;
+  gap: 5px;
 }
 
 .action-icon {
@@ -232,110 +242,38 @@ h3 {
   border: none;
   color: white;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-
-.action-icon .material-symbols-outlined {
-  font-size: 20px;
-}
-
-.integrantes-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  padding: 2px;
 }
 
 .integrantes-list li {
-  padding: 12px 15px;
+  padding: 8px 12px;
   border-bottom: 1px solid #eee;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: #444;
-}
-
-.integrantes-list li:nth-child(even) {
-  background: #fdfdfd;
-}
-
-.integrantes-list li:last-child {
-  border-bottom: none;
 }
 
 .select-field {
   width: 100%;
   border: none;
-  border-radius: 10px;
-  padding: 10px;
-  font-size: 0.95rem;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 0.85rem;
   background: white;
-  color: #333;
-  height: 180px;
-  font-family: inherit;
-}
-
-.select-field option {
-  padding: 10px;
-  border-bottom: 1px solid #f0f0f0;
-  font-weight: 600;
+  height: 120px; /* Reducido para netbook */
+  box-sizing: border-box;
 }
 
 .help-text {
-  display: block;
-  margin-top: 8px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  opacity: 0.9;
+  font-size: 0.7rem;
+  margin-top: 5px;
 }
 
-/* =========================================
-   ADAPTACIÓN PARA RESOLUCIONES (NETBOOKS)
-   ========================================= */
-
-@media (max-width: 1100px) {
-  /* Alumno: Cambio de grid a una sola columna para evitar compresión lateral */
-  .groups-container {
-    grid-template-columns: 1fr;
-    gap: 20px;
+/* Media Query específica para el alto de la netbook */
+@media (max-height: 620px) {
+  .grupos-container {
+    height: calc(100vh - 100px);
   }
-
-  /* Docente: Cambio de disposición lateral a vertical */
-  .main-card {
-    flex-direction: column;
-    height: auto; /* Permite scroll vertical en lugar de altura fija de 750px */
-    max-height: none;
-  }
-
-  .gestion-form-section {
-    flex: none;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 30px;
-  }
-
-  .grupos-grid-section {
-    width: 100%;
-    height: 500px; /* Altura fija con scroll interno para la grilla de grupos */
-    box-sizing: border-box;
-  }
-}
-
-@media (max-height: 700px) {
-  /* Ajustes para pantallas con poca altura (ej: 1024x600) */
-  .main-card {
-    height: auto;
-  }
-  
-  .gestion-form-section h2 {
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-  }
-
-  .form-group {
-    margin-bottom: 15px;
-  }
-
-  .select-field {
-    height: 120px; /* Reducción de altura para evitar scroll excesivo */
-  }
+  .gestion-form-section h2 { font-size: 1.2rem; }
+  .select-field { height: 90px; }
 }

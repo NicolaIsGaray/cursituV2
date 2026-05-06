@@ -7,7 +7,7 @@ body {
   padding: 0;
   height: 100vh;
   width: 100vw;
-  overflow: hidden;
+  overflow: hidden; /* Evita scroll en el body */
   background-color: #f4f7fe;
 }
 
@@ -17,14 +17,15 @@ body {
 }
 
 /* =========================================
-2. LAYOUT ESTRUCTURAL
+2. LAYOUT ESTRUCTURAL (Corrección Scroll X/Y)
 ========================================= */
 .main-layout {
   display: flex;
   height: 100vh;
-  width: 100vw;
+  width: 100%; /* Cambiado de 100vw para evitar desbordamiento por scrollbar */
   box-sizing: border-box;
   transition: all 0.3s ease;
+  overflow: hidden; 
 }
 
 .main-content {
@@ -32,26 +33,30 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: hidden; /* El contenido no debe empujar el alto del padre */
   box-sizing: border-box;
   background-color: #f4f7fe;
+  min-width: 0; /* Permite que el flex-item se encoja correctamente */
 }
 
 .view-container {
   flex-grow: 1;
-  overflow-y: auto;
+  overflow-y: auto; /* El scroll vertical solo vive aquí */
+  overflow-x: hidden;
   box-sizing: border-box;
   padding: 0 0.7rem;
+  min-height: 0; /* Necesario para que flex-grow respete el overflow */
 }
 
 /* =========================================
-3. SIDEBAR (ADAPTADA)
+3. SIDEBAR (Ajuste de dimensiones para evitar scroll Y)
 ========================================= */
 .sidebar {
   width: var(--sidebar-width);
   min-width: var(--sidebar-width);
-  height: calc(100vh - 3vh);
-  margin: 1.5vh 0 1.5vh 1vw;
+  /* Ajuste de altura y margen para evitar scroll en 600px de alto */
+  height: calc(100vh - 20px); 
+  margin: 10px 0 10px 10px;
   background: white;
   border-radius: 20px;
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
@@ -210,13 +215,14 @@ body {
 }
 
 /* =========================================
-4. TOP BAR (ADAPTADA)
+4. TOP BAR
 ========================================= */
 .top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  padding: 1rem 1.5rem; /* Ajustado para netbooks */
+  flex-shrink: 0;
 }
 
 .top-bar-left {
@@ -268,7 +274,7 @@ body {
   justify-content: center;
 }
 
-/* ELEMENTOS NUEVOS PARA MÓVIL */
+/* ELEMENTOS MÓVIL */
 .menu-toggle, .close-sidebar-mobile, .sidebar-overlay {
   display: none;
 }
@@ -279,10 +285,12 @@ body {
 
 @media (max-width: 1024px) {
   :root {
-    --sidebar-width: 220px;
+    --sidebar-width: 210px; /* Un poco más estrecha para 1024px */
   }
   .sidebar {
     padding: 1rem;
+    margin: 5px 0 5px 5px;
+    height: calc(100vh - 10px);
   }
   .welcome-text {
     display: none;
@@ -297,7 +305,6 @@ body {
     border: none;
     border-radius: 8px;
     padding: 5px;
-    box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
   }
 
   .sidebar {
@@ -320,7 +327,6 @@ body {
     top: 0; left: 0;
     width: 100vw; height: 100vh;
     background: rgba(0,0,0,0.3);
-    backdrop-filter: blur(2px);
     z-index: 999;
   }
 
@@ -329,17 +335,13 @@ body {
     background: none;
     border: none;
     margin-left: auto;
-    color: #666;
-  }
-
-  .header-actions .dev-role-switcher {
-    display: none; /* Ocultar switcher en móviles para ganar espacio */
   }
 }
 
-@media (max-height: 600px) {
+/* FIX JUANA MANSO (ALTURA CRÍTICA) */
+@media (max-height: 620px) {
   .sidebar-section:nth-child(3) {
-    display: none;
+    display: none !important; /* Oculta parciales para evitar scroll Y en sidebar */
   }
   .app-title { margin-bottom: 1rem; }
   .top-bar { padding: 0.5rem 1.5rem; }
@@ -349,6 +351,6 @@ body {
 6. NO-NAVIGATION (LOGIN)
 ========================================= */
 .main-layout.no-navigation .main-content {
-  width: 100vw;
+  width: 100%;
   height: 100vh;
 }

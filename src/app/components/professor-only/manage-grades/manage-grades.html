@@ -1,21 +1,5 @@
 <main *ngIf="authService.userRole$ | async as rol">
   <div class="notas-container" *ngIf="rol === 'DOCENTE'">
-    <!-- Columna Lateral: Materias a Cargo -->
-    <aside class="materias-sidebar">
-      <div class="sidebar-card">
-        <h3>Materias a Cargo</h3>
-        <div class="search-box">
-          <input type="text" placeholder="Buscar materia..." />
-        </div>
-
-        <div class="materias-list">
-          <button class="materia-btn orange active">PROGRAMACIÓN ORIENTADA A OBJETOS</button>
-          <button class="materia-btn green">BASE DE DATOS AVANZADA</button>
-          <button class="materia-btn blue">SISTEMAS OPERATIVOS APLICADOS</button>
-        </div>
-      </div>
-    </aside>
-
     <!-- Columna Principal: Planilla -->
     <main class="planilla-content">
       <nav class="top-nav">
