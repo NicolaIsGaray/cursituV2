@@ -1,19 +1,5 @@
 <main *ngIf="authService.userRole$ | async as rol">
-    <div class="gestion-tps-container" *ngIf="rol === 'DOCENTE'">
-      
-      <!-- Sidebar de Materias (Reutilizado) -->
-      <aside class="materias-selector">
-        <h3>Materias</h3>
-        <div class="materias-list">
-          <button class="materia-btn active" [style.background-color]="'#ff912c'">
-            PROGRAMACIÓN ORIENTADA A OBJETOS
-          </button>
-          <button class="materia-btn" [style.background-color]="'#2ecc71'">
-            BASE DE DATOS AVANZADA
-          </button>
-        </div>
-      </aside>
-    
+    <div class="gestion-tps-container" *ngIf="rol === 'DOCENTE'">    
       <!-- Panel de TPs -->
       <main class="tps-panel">
         <h2>Gestión de Trabajos Prácticos</h2>
@@ -57,7 +43,7 @@
           </article>
     
           <!-- TP 2: Sin consigna -->
-          <article class="tp-card" [style.border-left-color]="'#2ecc71'">
+          <article class="tp-card" [style.border-left-color]="'#ff912c'">
             <div class="tp-header">
               <div class="tp-title-area">
                 <h3>TP N° 2: Herencia y Polimorfismo</h3>

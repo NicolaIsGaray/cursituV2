@@ -1,18 +1,5 @@
 <main *ngIf="authService.userRole$ | async as rol">
   <div class="gestion-fechas-container" *ngIf="rol === 'DOCENTE'">
-    <!-- Sidebar de Materias -->
-    <aside class="materias-selector">
-      <h3>Materias</h3>
-      <div class="materias-list">
-        <button class="materia-btn active" [style.background-color]="'#ff912c'">
-          PROGRAMACIÓN ORIENTADA A OBJETOS
-        </button>
-        <button class="materia-btn" [style.background-color]="'#2ecc71'">
-          BASE DE DATOS AVANZADA
-        </button>
-      </div>
-    </aside>
-
     <!-- Contenido Principal -->
     <main class="calendario-content">
       <header class="calendario-header">

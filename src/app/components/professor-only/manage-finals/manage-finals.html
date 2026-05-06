@@ -1,19 +1,5 @@
 <main *ngIf="authService.userRole$ | async as rol">
-    <div class="gestion-parciales-container" *ngIf="rol === 'DOCENTE'">
-      
-      <!-- Sidebar de Materias (Reutilizado) -->
-      <aside class="materias-selector">
-        <h3>Materias</h3>
-        <div class="materias-list">
-          <button class="materia-btn active" [style.background-color]="'#ff912c'">
-            PROGRAMACIÓN ORIENTADA A OBJETOS
-          </button>
-          <button class="materia-btn" [style.background-color]="'#2ecc71'">
-            BASE DE DATOS AVANZADA
-          </button>
-        </div>
-      </aside>
-    
+    <div class="gestion-parciales-container" *ngIf="rol === 'DOCENTE'">    
       <!-- Panel de Parciales -->
       <main class="parciales-panel">
         <h2>Gestión de Parciales</h2>

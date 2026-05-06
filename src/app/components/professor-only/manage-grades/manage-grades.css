@@ -1,8 +1,5 @@
 .notas-container {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 2rem;
-  align-items: start;
+  width: 100%;
 }
 
 /* --- SIDEBAR DE MATERIAS --- */
