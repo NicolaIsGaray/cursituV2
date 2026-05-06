@@ -1,0 +1,137 @@
+/* === TUS ESTILOS ORIGINALES (SIN CAMBIOS) === */
+
+:host {
+  display: block;
+  height: 100vh;
+  width: 100vw;
+  background-color: #000;
+}
+
+.live-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.live-header {
+  background-color: #3f3689;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  color: white;
+  z-index: 10;
+}
+
+.brand {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.header-center {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+}
+
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.live-indicator .dot {
+  width: 12px;
+  height: 12px;
+  background-color: #e74c3c;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #e74c3c;
+  animation: pulse 1.5s infinite;
+}
+
+.btn-exit {
+  background-color: #c00000;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 8px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.viewer-area {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000;
+}
+
+.slide-content h1 {
+  color: white;
+  font-size: 4rem;
+  letter-spacing: 5px;
+  margin: 0;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* =========================================
+   ADAPTACIÓN PARA RESOLUCIONES (NETBOOKS)
+   ========================================= */
+
+@media (max-width: 1024px) {
+  .live-header {
+    height: 60px; /* Reducción de altura para ganar espacio de visor */
+    padding: 0 20px;
+  }
+
+  .brand {
+    font-size: 1rem;
+  }
+
+  .header-center {
+    gap: 20px;
+  }
+
+  .group-name {
+    font-size: 0.9rem;
+  }
+
+  .btn-exit {
+    padding: 8px 15px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Ocultar elementos secundarios en pantallas muy pequeñas */
+  .brand {
+    display: none;
+  }
+  
+  .header-center {
+    justify-content: flex-start;
+    flex-grow: 1;
+  }
+}
+
+@media (max-height: 600px) {
+  /* Maximizar el área de diapositivas en pantallas de baja altura */
+  .live-header {
+    height: 50px;
+  }
+
+  .slide-content h1 {
+    font-size: 2.5rem; /* Ajuste proporcional del placeholder */
+  }
+}

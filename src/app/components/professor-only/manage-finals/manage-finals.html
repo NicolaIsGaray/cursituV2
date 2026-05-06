@@ -1,0 +1,93 @@
+<main *ngIf="authService.userRole$ | async as rol">
+    <div class="gestion-parciales-container" *ngIf="rol === 'DOCENTE'">
+      
+      <!-- Sidebar de Materias (Reutilizado) -->
+      <aside class="materias-selector">
+        <h3>Materias</h3>
+        <div class="materias-list">
+          <button class="materia-btn active" [style.background-color]="'#ff912c'">
+            PROGRAMACIÓN ORIENTADA A OBJETOS
+          </button>
+          <button class="materia-btn" [style.background-color]="'#2ecc71'">
+            BASE DE DATOS AVANZADA
+          </button>
+        </div>
+      </aside>
+    
+      <!-- Panel de Parciales -->
+      <main class="parciales-panel">
+        <h2>Gestión de Parciales</h2>
+    
+        <div class="examen-card">
+          <header class="examen-header">
+            <div class="examen-title-group">
+              <h3>PRIMER PARCIAL</h3>
+              <span class="materia-sub">Materia: Programación Orientada a Objetos</span>
+            </div>
+            <div class="examen-top-actions">
+              <button class="btn-tool"><span class="material-symbols-outlined">settings</span></button>
+              <button class="btn-tool"><span class="material-symbols-outlined">download</span></button>
+            </div>
+          </header>
+    
+          <!-- Grid de Información Logística -->
+          <div class="logistics-grid">
+            <div class="log-item">
+              <span class="log-label">FECHA</span>
+              <div class="log-value-box">
+                04 / 05 / 2026 <span class="material-symbols-outlined">calendar_today</span>
+              </div>
+            </div>
+            <div class="log-item">
+              <span class="log-label">HORA INICIO</span>
+              <div class="log-value-box">08 : 30 a. m.</div>
+            </div>
+            <div class="log-item">
+              <span class="log-label">AULA</span>
+              <div class="log-value-box">Aula 5</div>
+            </div>
+            <div class="log-item">
+              <span class="log-label">INSCRIPTOS</span>
+              <div class="log-value-box">32 Alumnos</div>
+            </div>
+          </div>
+    
+          <!-- Tabla de Alumnos -->
+          <div class="alumnos-table">
+            <div class="table-head">
+              <span class="col-name">Alumno</span>
+              <span class="col-attendance">Asistencia</span>
+              <span class="col-grade">Nota</span>
+              <span class="col-actions">Acciones</span>
+            </div>
+    
+            <div class="table-body">
+              <!-- Alumno 1 -->
+              <div class="student-row">
+                <span class="col-name"><strong>Garay, Facundo</strong></span>
+                <span class="col-attendance"><span class="status-badge presente">Presente</span></span>
+                <span class="col-grade"><input type="number" class="mini-grade" value="8"></span>
+                <span class="col-actions"><button class="btn-save-mini"><span class="material-symbols-outlined">save</span></button></span>
+              </div>
+    
+              <!-- Alumno 2 -->
+              <div class="student-row">
+                <span class="col-name"><strong>Diaz, Martin</strong></span>
+                <span class="col-attendance"><span class="status-badge presente">Presente</span></span>
+                <span class="col-grade"><input type="number" class="mini-grade" value="4"></span>
+                <span class="col-actions"><button class="btn-save-mini"><span class="material-symbols-outlined">save</span></button></span>
+              </div>
+    
+              <!-- Alumno 3 -->
+              <div class="student-row">
+                <span class="col-name"><strong>Perez, Juan</strong></span>
+                <span class="col-attendance"><span class="status-badge ausente">Ausente</span></span>
+                <span class="col-grade"><input type="number" class="mini-grade" placeholder="-"></span>
+                <span class="col-actions"><button class="btn-save-mini"><span class="material-symbols-outlined">save</span></button></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+</main>

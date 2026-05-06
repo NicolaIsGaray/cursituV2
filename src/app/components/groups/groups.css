@@ -1,0 +1,341 @@
+/* === TUS ESTILOS ORIGINALES (SIN CAMBIOS) === */
+
+.groups-container {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 30px;
+  padding: 10px;
+}
+
+h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.selection-panel {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  font-size: 0.9rem;
+}
+
+.subjects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.subject-card {
+  padding: 25px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s;
+}
+
+.subject-card:hover {
+  transform: translateY(-3px);
+}
+
+.group-detail-panel {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.group-header {
+  padding: 25px 30px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.members-list {
+  padding: 10px 30px;
+}
+
+.member-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.member-item:last-child {
+  border-bottom: none;
+}
+
+.member-avatar {
+  width: 55px;
+  height: 55px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #eee;
+}
+
+.member-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.member-name {
+  margin: 0;
+  font-weight: 700;
+  color: #333;
+  font-size: 1rem;
+}
+
+.member-role {
+  margin: 2px 0 0 0;
+  color: #707070;
+  font-size: 0.85rem;
+}
+
+.grupos-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.main-card {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  height: 750px;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.gestion-form-section {
+  flex: 0 0 40%;
+  padding: 40px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.gestion-form-section h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.input-field, .textarea-field {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 1rem;
+  background: white;
+}
+
+.textarea-field {
+  height: 200px;
+  resize: none;
+}
+
+.btn-guardar-grupo {
+  margin-top: auto;
+  background: rgba(0,0,0,0.2);
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-guardar-grupo:hover {
+  background: rgba(0,0,0,0.3);
+}
+
+.grupos-grid-section {
+  flex: 1;
+  background: #f8faff;
+  padding: 30px;
+  overflow: hidden;
+}
+
+.scroll-container {
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.grupos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+.grupo-card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  height: fit-content;
+}
+
+.grupo-card-header {
+  padding: 12px 15px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+}
+
+.grupo-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-icon {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.action-icon .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.integrantes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.integrantes-list li {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #444;
+}
+
+.integrantes-list li:nth-child(even) {
+  background: #fdfdfd;
+}
+
+.integrantes-list li:last-child {
+  border-bottom: none;
+}
+
+.select-field {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 0.95rem;
+  background: white;
+  color: #333;
+  height: 180px;
+  font-family: inherit;
+}
+
+.select-field option {
+  padding: 10px;
+  border-bottom: 1px solid #f0f0f0;
+  font-weight: 600;
+}
+
+.help-text {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* =========================================
+   ADAPTACIÓN PARA RESOLUCIONES (NETBOOKS)
+   ========================================= */
+
+@media (max-width: 1100px) {
+  /* Alumno: Cambio de grid a una sola columna para evitar compresión lateral */
+  .groups-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  /* Docente: Cambio de disposición lateral a vertical */
+  .main-card {
+    flex-direction: column;
+    height: auto; /* Permite scroll vertical en lugar de altura fija de 750px */
+    max-height: none;
+  }
+
+  .gestion-form-section {
+    flex: none;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 30px;
+  }
+
+  .grupos-grid-section {
+    width: 100%;
+    height: 500px; /* Altura fija con scroll interno para la grilla de grupos */
+    box-sizing: border-box;
+  }
+}
+
+@media (max-height: 700px) {
+  /* Ajustes para pantallas con poca altura (ej: 1024x600) */
+  .main-card {
+    height: auto;
+  }
+  
+  .gestion-form-section h2 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .select-field {
+    height: 120px; /* Reducción de altura para evitar scroll excesivo */
+  }
+}

@@ -1,57 +1,96 @@
+h2 {
+  font-size: 1.4rem;
+
+  font-weight: 700;
+
+  margin-bottom: 20px;
+
+  color: #1a1a1a;
+}
+
 :host {
   display: block;
+
   width: 100%;
 }
 
 .dashboard-grid {
   display: grid;
+
   /* Definimos 3 columnas de igual tamaño */
+
   grid-template-columns: repeat(3, 1fr);
+
   /* Altura base de las filas */
+
   grid-auto-rows: minmax(160px, auto);
+
   gap: 24px;
 }
 
 /* Estilo General de las Tarjetas */
+
 .card {
   background: #ffffff;
+
   border-radius: 16px;
+
   padding: 20px;
+
   display: flex;
+
   flex-direction: column;
+
   transition: transform 0.2s ease;
 }
 
 .card h3 {
   font-size: 1rem;
+
   font-weight: 700;
+
   margin: 0 0 12px 0;
+
   color: #1a1a1a;
 }
 
 /* El recuadro gris interno de cada sección */
+
 .card-content.empty {
   flex-grow: 1;
+
   display: flex;
+
   flex-direction: column;
+
   align-items: center;
+
   justify-content: center;
+
   text-align: center;
+
   padding: 20px;
+
   border: 1px solid #f0f0f0;
+
   border-radius: 12px;
+
   color: #8d8d8d;
 }
 
 .card-content.empty p {
   margin: 0;
+
   font-size: 0.9rem;
+
   line-height: 1.4;
 }
 
 .success-text {
   color: #1a1a1a;
+
   margin-top: 5px;
+
   font-size: 0.95rem;
 }
 
@@ -62,8 +101,9 @@
 }
 
 .card.tall {
-  grid-row: span 2;    /* Se estira hacia abajo ocupando 2 filas */
-  grid-column: 3;      /* Se queda fija en la columna de la derecha */
+  grid-row: span 2; /* Se estira hacia abajo ocupando 2 filas */
+
+  grid-column: 3; /* Se queda fija en la columna de la derecha */
 }
 
 .card.small {
@@ -71,12 +111,256 @@
 }
 
 /* Ajuste de responsividad básico */
+
 @media (max-width: 1100px) {
   .dashboard-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .card.tall {
     grid-column: span 2;
+
     grid-row: auto;
+  }
+}
+
+/* === DOCENTE STYLES === */
+
+.dashboard-container {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2rem;
+}
+
+/* --- BANNER PRINCIPAL --- */
+
+.action-banner {
+  width: 100%;
+}
+
+.btn-create-activity {
+  width: 100%;
+
+  background: var(--primary-purple); /* #3f3689 */
+
+  color: white;
+
+  border: none;
+
+  border-radius: 20px;
+
+  padding: 2.5rem;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 1.5rem;
+
+  cursor: pointer;
+
+  box-shadow: 0px 8px 25px rgba(63, 54, 137, 0.3);
+
+  transition: transform 0.2s;
+}
+
+.btn-create-activity:hover {
+  transform: translateY(-3px);
+}
+
+.btn-create-activity span {
+  font-size: 2.2rem;
+
+  font-weight: 700;
+}
+
+.icon-plus {
+  font-size: 3.5rem !important;
+}
+
+/* --- GRILLA DE TARJETAS --- */
+
+.info-grid {
+  display: grid;
+
+  grid-template-columns: 2fr 1fr; /* Proporción para la lista de alumnos */
+
+  gap: 1.5rem;
+}
+
+.main-stats {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  grid-template-rows: auto auto;
+
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background: var(--white);
+
+  border-radius: 20px;
+
+  padding: 1.5rem;
+
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05);
+
+  display: flex;
+
+  flex-direction: column;
+
+  min-height: 220px;
+}
+
+.wide-card {
+  grid-column: span 2;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.stat-card h3 {
+  font-size: 1.1rem;
+
+  color: #000;
+
+  margin-bottom: 1rem;
+
+  font-weight: 700;
+}
+
+/* --- ESTADO VACÍO --- */
+
+.empty-state {
+  flex-grow: 1;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-align: center;
+}
+
+.empty-state p {
+  color: #999;
+
+  font-size: 0.95rem;
+
+  max-width: 200px;
+}
+
+/* =========================================
+   ADAPTACIÓN HOME (ALUMNO & DOCENTE)
+   ========================================= */
+
+/* --- AJUSTES GLOBALES --- */
+@media (max-width: 1100px) {
+  h2 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+  }
+}
+
+/* --- VISTA ALUMNO (Dashboard Grid) --- */
+@media (max-width: 1100px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr); /* Pasamos a 2 columnas */
+    gap: 16px;
+  }
+
+  .card.wide {
+    grid-column: span 2;
+  }
+
+  .card.tall {
+    grid-column: span 1; /* En netbooks deja de ser tan alta para no romper el flujo */
+    grid-row: span 1;
+  }
+
+  .card.small {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr; /* Una sola columna en móviles */
+  }
+
+  .card.wide, .card.tall, .card.small {
+    grid-column: span 1;
+  }
+}
+
+/* --- VISTA DOCENTE (Info Grid & Banner) --- */
+@media (max-width: 1100px) {
+  .btn-create-activity {
+    padding: 1.5rem; /* Reducimos el padding exagerado */
+    border-radius: 16px;
+  }
+
+  .btn-create-activity span {
+    font-size: 1.5rem;
+  }
+
+  .icon-plus {
+    font-size: 2.5rem !important;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr; /* Apilamos la columna de alumnos abajo */
+  }
+
+  .main-stats {
+    gap: 1rem;
+  }
+
+  .side-stats .stat-card {
+    min-height: 300px; /* Altura fija para la lista de alumnos cuando se apila */
+  }
+}
+
+@media (max-width: 650px) {
+  .main-stats {
+    grid-template-columns: 1fr; /* Cards de estadísticas una debajo de otra */
+  }
+
+  .wide-card {
+    grid-column: span 1;
+  }
+  
+  .btn-create-activity {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+}
+
+/* --- OPTIMIZACIÓN ALTURA (NETBOOKS 1024x600) --- */
+@media (max-height: 650px) {
+  .dashboard-grid {
+    grid-auto-rows: minmax(120px, auto); /* Filas más compactas */
+  }
+
+  .stat-card {
+    min-height: 160px; /* Reducción de altura mínima */
+    padding: 1rem;
+  }
+
+  .card-content.empty, .empty-state {
+    padding: 10px;
+  }
+
+  .btn-create-activity {
+    padding: 1rem;
   }
 }

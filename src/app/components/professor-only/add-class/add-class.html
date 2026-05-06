@@ -1,0 +1,60 @@
+<div class="course-header">
+  <h2>Programación Orientada a Objetos</h2>
+</div>
+
+<main *ngIf="authService.userRole$ | async as rol" style="overflow: hidden;">
+  <div class="form-scroll-container" *ngIf="rol === 'DOCENTE'">
+    <div class="form-card">
+      <h2>Agregar Nueva Sección</h2>
+  
+      <section class="form-group">
+        <label>Nombre:</label>
+        <input type="text" class="input-field" placeholder="Ej: Clase 6 - Herencia">
+      </section>
+  
+      <section class="form-group">
+        <label>Contenido:</label>
+        <textarea class="textarea-field" placeholder="Escribe la descripción de la sección..."></textarea>
+      </section>
+  
+      <div class="grid-columns">
+        <!-- Columna Izquierda: Archivos -->
+        <div class="files-column">
+          <label>Agregar Archivos:</label>
+          <button class="btn-upload">
+            <span class="material-symbols-outlined">add_circle</span>
+          </button>
+  
+          <label class="sub-label">Documentos Agregados:</label>
+          <ul class="file-list">
+            <li><span class="material-symbols-outlined">description</span> Manejo de Errores.pdf</li>
+            <li><span class="material-symbols-outlined">folder</span> Ejemplos Polimorfismo</li>
+            <li><span class="material-symbols-outlined">description</span> Polimorfismo.docx</li>
+            <li><span class="material-symbols-outlined">folder</span> Guias y Ejercicios</li>
+            <li><span class="material-symbols-outlined">description</span> Teoría de Herencia.pdf</li>
+          </ul>
+        </div>
+  
+        <!-- Columna Derecha: Entrega -->
+        <div class="delivery-column">
+          <label>¿Tiene Entrega?</label>
+          <div class="toggle-group">
+            <button class="toggle-btn active">Si</button>
+            <button class="toggle-btn inactive">No</button>
+          </div>
+  
+          <div class="assignment-upload">
+            <label>Agregar Trabajo a Entregar:</label>
+            <button class="btn-upload">
+              <span class="material-symbols-outlined">add_circle</span>
+            </button>
+          </div>
+        </div>
+      </div>
+  
+      <div class="form-footer">
+        <button class="btn-finalizar">Finalizar</button>
+      </div>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,33 @@
+<div class="aviso-detalle-wrapper">
+  <h2>Avisos</h2>
+
+  <div class="detalle-card">
+    <div class="detalle-header">
+      <div class="autor-perfil">
+        <img [src]="avisoActual.fotoAutor" alt="Autor">
+        <div class="autor-text">
+          <p class="nombre">Por: {{ avisoActual.autor }}</p>
+          <p class="motivo">Motivo: "{{ avisoActual.asunto }}"</p>
+        </div>
+      </div>
+      <div class="fecha-envio">
+        Enviado: {{ avisoActual.fecha }}
+      </div>
+    </div>
+
+    <div class="detalle-body">
+      <h3 class="saludo">{{ avisoActual.mensaje.saludo }}</h3>
+      
+      <div class="mensaje-texto">
+        <p *ngFor="let parrafo of avisoActual.mensaje.cuerpo">
+          {{ parrafo }}
+        </p>
+      </div>
+
+      <div class="despedida">
+        <p>Un saludo,</p>
+        <p class="firma">{{ avisoActual.autor }}.</p>
+      </div>
+    </div>
+  </div>
+</div>

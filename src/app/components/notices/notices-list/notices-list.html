@@ -1,0 +1,27 @@
+<div class="avisos-container">
+  <h2>Avisos</h2>
+  
+  <div class="avisos-card">
+    <div class="aviso-row" *ngFor="let aviso of avisos">
+      
+      <div class="aviso-icon">
+        <span class="material-symbols-outlined">mail</span>
+      </div>
+
+      <div class="aviso-info">
+        <p class="aviso-autor">Por: <span>{{ aviso.autor }}</span></p>
+        <p class="aviso-asunto">Asunto: "{{ aviso.asunto }}"</p>
+      </div>
+
+      <div class="aviso-meta">
+        <p class="aviso-fecha">{{ aviso.fecha }}</p>
+        <a class="leer-link" (click)="verDetalle(aviso.id)">Leer mensaje</a>
+      </div>
+
+      <button class="view-btn" (click)="verDetalle(aviso.id)">
+        <span class="material-symbols-outlined">visibility</span>
+      </button>
+      
+    </div>
+  </div>
+</div>

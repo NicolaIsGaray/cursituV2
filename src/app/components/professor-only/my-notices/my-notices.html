@@ -1,0 +1,50 @@
+<main *ngIf="authService.userRole$ | async as rol">
+  <div class="avisos-container" *ngIf="rol === 'DOCENTE'">
+    <div class="main-card">
+      
+      <!-- Lado Izquierdo: Crear Nuevo Aviso -->
+      <div class="crear-aviso-section" [style.background-color]="'#ff912c'">
+        <h2>Crear Nuevo Aviso</h2>
+        
+        <div class="form-group">
+          <label>Asunto</label>
+          <input type="text" class="input-field" placeholder="Escriba el título del aviso...">
+        </div>
+  
+        <div class="form-group">
+          <label>Mensaje</label>
+          <textarea class="textarea-field" placeholder="Escriba el contenido del mensaje..."></textarea>
+        </div>
+  
+        <button class="btn-enviar-aviso">Enviar</button>
+      </div>
+  
+      <!-- Lado Derecho: Avisos Publicados -->
+      <div class="publicados-section">
+        <h3>Publicados</h3>
+        <div class="scroll-container">
+          <div class="avisos-list">
+            
+            <!-- Card de Aviso (Repetible) -->
+            <article class="aviso-item" *ngFor="let i of [1,2,3,4,5]">
+              <div class="aviso-content">
+                <span class="aviso-titulo">"Suspensión de clases"</span>
+                <span class="aviso-fecha">Publicado: Lunes 04 de Abril de 2026 - 19:30hs</span>
+              </div>
+              <div class="aviso-actions">
+                <button class="action-btn edit">
+                  <span class="material-symbols-outlined">edit</span>
+                </button>
+                <button class="action-btn delete">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </div>
+            </article>
+  
+          </div>
+        </div>
+      </div>
+  
+    </div>
+  </div>
+</main>

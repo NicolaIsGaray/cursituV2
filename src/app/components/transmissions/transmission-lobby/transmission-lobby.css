@@ -1,0 +1,156 @@
+/* === TUS ESTILOS ORIGINALES (SIN CAMBIOS) === */
+
+.presentations-container {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  max-width: 1000px;
+  min-height: 500px;
+  background: white;
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+}
+
+.create-section {
+  padding: 40px 60px;
+}
+
+h2 { font-size: 1.5rem; margin-bottom: 40px; font-weight: 600; }
+
+.form-group { margin-bottom: 35px; }
+
+.label-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.label-main { font-weight: 700; font-size: 1.1rem; color: #1a1a1a; }
+.label-hint { color: #8d8d8d; font-size: 0.9rem; }
+
+.upload-btn, .order-btn {
+  width: 100%;
+  background: #3f3689; 
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  transition: 0.2s ease-in-out;
+}
+
+.upload-btn:hover, .order-btn:hover { background: #5246a5; }
+
+.btn-finish {
+  background: #3f3689;
+  color: white;
+  border: none;
+  padding: 15px 50px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: block;
+  margin: 50px auto 0;
+}
+
+.rooms-section {
+  background: #3f3689;
+  color: white;
+  padding: 30px;
+}
+
+.rooms-header {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.room-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.room-name { font-weight: 600; font-size: 1.1rem; }
+
+.status-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  min-width: 90px;
+  text-align: center;
+}
+
+.transmitting { background: #2ecc71 !important; }
+.waiting { background: #6e6e6e !important; }
+
+.btn-enter {
+  background: #5246a5 !important;
+  color: white;
+  border: none;
+  padding: 6px 15px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* =========================================
+   ADAPTACIÓN PARA RESOLUCIONES (NETBOOKS)
+   ========================================= */
+
+@media (max-width: 1024px) {
+    /* Ajuste de ancho total para que entre en pantallas de netbook */
+    .presentations-container {
+        width: 95%;
+        grid-template-columns: 1fr 260px; /* Reducción leve del panel lateral */
+    }
+
+    .create-section {
+        padding: 30px 40px; /* Menos aire en los costados */
+    }
+
+    .btn-finish {
+        margin-top: 30px; /* Reducción de margen para evitar scroll excesivo */
+    }
+}
+
+@media (max-width: 850px) {
+    /* Colapso vertical para resoluciones menores o tablets */
+    .presentations-container {
+        grid-template-columns: 1fr;
+    }
+
+    .rooms-section {
+        padding: 20px 40px;
+    }
+}
+
+@media (max-height: 650px) {
+    /* Optimización para pantallas bajas (ej: 1024x600) */
+    .presentations-container {
+        min-height: auto;
+    }
+
+    h2 { margin-bottom: 20px; }
+    
+    .form-group { margin-bottom: 20px; }
+
+    .btn-finish { margin-top: 20px; }
+
+    .room-item { margin-bottom: 15px; }
+}

@@ -1,0 +1,199 @@
+.form-scroll-container {
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Personalización del scrollbar */
+.form-scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+.form-scroll-container::-webkit-scrollbar-thumb {
+  background: #ff912c;
+  border-radius: 10px;
+}
+
+.form-card {
+  background: white;
+  border-radius: 24px;
+  padding: 3rem;
+  box-shadow: 0px 4px 20px rgba(0,0,0,0.05);
+}
+
+.form-group {
+  margin-bottom: 2rem;
+}
+
+label {
+  display: block;
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.input-field, .textarea-field {
+  width: 100%;
+  border: 2px solid #ff912c;
+  border-radius: 12px;
+  background: #f0f0f0;
+  padding: 15px;
+  font-size: 1rem;
+}
+
+.textarea-field {
+  min-height: 200px;
+  resize: vertical;
+}
+
+/* Grilla de Archivos y Entregas */
+.grid-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  margin-top: 2rem;
+}
+
+.btn-upload {
+  background: #ff912c;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  width: 120px;
+  height: 50px;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+}
+
+.file-list {
+  list-style: none;
+  padding: 0;
+}
+
+.file-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+/* Toggle botones Si/No */
+.toggle-group {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.toggle-btn {
+  padding: 10px 40px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.toggle-btn.active { background: #ff912c; color: white; }
+.toggle-btn.inactive { background: #8e6c43; color: white; }
+
+.help-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+/* Footer */
+.form-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 4rem;
+}
+
+.btn-finalizar {
+  background: #ff912c;
+  color: white;
+  border: none;
+  padding: 15px 80px;
+  border-radius: 12px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0px 4px 15px rgba(255, 145, 44, 0.4);
+}
+
+/* =========================================
+   ADAPTACIÓN PARA RESOLUCIONES (NETBOOKS)
+   ========================================= */
+
+@media (max-width: 1100px) {
+  .form-card {
+    padding: 2rem; /* Reducción de aire interno */
+  }
+
+  .grid-columns {
+    gap: 2rem; /* Menos espacio entre columnas */
+  }
+
+  .btn-finalizar {
+    padding: 12px 60px;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 850px) {
+  .grid-columns {
+    grid-template-columns: 1fr; /* Una sola columna para móviles/tablets */
+    gap: 2.5rem;
+  }
+
+  .form-footer {
+    margin-top: 2.5rem;
+  }
+}
+
+@media (max-height: 650px) {
+  /* Optimización para pantallas tipo 1024x600 */
+  .form-scroll-container {
+    max-height: 75vh; /* Ajuste del área de scroll */
+  }
+
+  .form-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.2rem;
+  }
+
+  label {
+    font-size: 1rem;
+  }
+
+  .input-field {
+    padding: 10px;
+  }
+
+  .textarea-field {
+    min-height: 120px; /* Reducción de altura para evitar scroll excesivo */
+    padding: 10px;
+  }
+
+  .btn-upload {
+    height: 40px;
+    width: 100px;
+    margin-bottom: 1rem;
+  }
+
+  .file-list li {
+    font-size: 0.85rem;
+  }
+
+  .form-footer {
+    margin-top: 2rem;
+  }
+
+  .btn-finalizar {
+    padding: 10px 40px;
+    font-size: 1.1rem;
+  }
+}

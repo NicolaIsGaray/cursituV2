@@ -1,1 +1,104 @@
-<p>groups works!</p>
+<h3>Materia Correspondiente</h3>
+<main *ngIf="authService.userRole$ | async as rol">
+  <div class="groups-container" *ngIf="rol === 'ALUMNO'">
+    <div class="selection-panel">
+      <div class="search-box">
+        <input type="text" placeholder="Buscar materia" />
+      </div>
+
+      <div class="subjects-list">
+        <div
+          class="subject-card"
+          *ngFor="let m of materias"
+          [style.background-color]="m.color"
+          (click)="seleccionarMateria(m)"
+          [class.selected]="m.id === materiaSeleccionada.id"
+        >
+          {{ m.nombre | uppercase }}
+        </div>
+      </div>
+    </div>
+
+    <div class="group-detail-panel" *ngIf="materiaSeleccionada">
+      <div class="group-header" [style.background-color]="materiaSeleccionada.color">
+        <span class="group-number">Grupo N° {{ grupoActual.numero }}</span>
+        <span class="members-count">Integrantes: {{ grupoActual.integrantes.length }}</span>
+      </div>
+
+      <div class="members-list">
+        <div class="member-item" *ngFor="let member of grupoActual.integrantes">
+          <div class="member-avatar">
+            <img [src]="member.foto" alt="Avatar" />
+          </div>
+          <div class="member-info">
+            <p class="member-name">{{ member.nombre }} – {{ member.comision }}</p>
+            <p class="member-role">{{ member.rol }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grupos-container" *ngIf="rol === 'DOCENTE'">
+    <div class="main-card">
+      <!-- Lado Izquierdo: Formulario de Gestión -->
+      <div class="gestion-form-section" [style.background-color]="'#ff912c'">
+        <h2>Gestión de Grupos</h2>
+
+        <div class="form-group">
+          <label>Número del Grupo</label>
+          <input type="text" class="input-field" placeholder="Ej: 4" />
+        </div>
+
+        <div class="form-group">
+          <label>Límite de Integrantes</label>
+          <input type="number" class="input-field" placeholder="Máximo de alumnos" />
+        </div>
+
+        <div class="form-group">
+          <label>Integrantes</label>
+          <!-- Selector de Alumnos acorde a la sección -->
+          <select class="select-field" multiple>
+            <option value="1">Garay, Facundo</option>
+            <option value="2">Diaz, Martin</option>
+            <option value="3">Perez, Juan</option>
+            <option value="4">Lopez, Maria</option>
+            <option value="5">Rodriguez, Cristian</option>
+          </select>
+          <small class="help-text">* Mantén Presionado Ctrl para seleccionar varios</small>
+        </div>
+
+        <button class="btn-guardar-grupo">Guardar Grupo</button>
+      </div>
+
+      <!-- Lado Derecho: Visualización de Grupos -->
+      <div class="grupos-grid-section">
+        <div class="scroll-container">
+          <div class="grupos-grid">
+            <!-- Card de Grupo (Repetible) -->
+            <div class="grupo-card" *ngFor="let i of [1, 2, 3, 4]">
+              <header class="grupo-card-header" [style.background-color]="'#ff912c'">
+                <span>Grupo N° {{ i }}</span>
+                <div class="grupo-actions">
+                  <button class="action-icon">
+                    <span class="material-symbols-outlined">edit</span>
+                  </button>
+                  <button class="action-icon">
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </div>
+              </header>
+              <ul class="integrantes-list">
+                <li>– FACUNDO GARAY</li>
+                <li>– FACUNDO GARAY</li>
+                <li>– FACUNDO GARAY</li>
+                <li>– FACUNDO GARAY</li>
+                <li>– FACUNDO GARAY</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

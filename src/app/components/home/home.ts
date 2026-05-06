@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../service/auth-service';
 
 interface HomeOption {
   title: string;
@@ -12,7 +13,7 @@ interface HomeOption {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -25,7 +26,10 @@ export class Home {
     { title: 'Tareas Pendientes', icon: 'assignment', description: 'Organiza tus entregas.', route: '/pending-tasks' }
   ];
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    public authService: AuthService
+  ) {}
 
   navigateTo(path: string) {
     this.router.navigate([path]);

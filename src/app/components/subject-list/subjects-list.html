@@ -1,0 +1,67 @@
+<h2>Materias En Curso</h2>
+<main *ngIf="authService.userRole$ | async as rol">
+  <div class="materias-container">
+    <h2>Materias</h2>
+
+    <div class="materias-wrapper" *ngIf="rol === 'DOCENTE'">
+      <!-- Fila de Materia 1 -->
+      <div class="materia-row">
+        <div class="materia-card orange">
+          <div class="materia-info">
+            <h3>PROGRAMACIÓN ORIENTADA A OBJETOS</h3>
+            <p>Docente: <span>Ignacio Fontaine</span></p>
+          </div>
+        </div>
+        <button
+          class="action-btn-arrow btn-arrow orange"
+          (click)="navigateTo('/professor-panel')"
+        >
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+        <button class="btn-horarios">Horarios</button>
+      </div>
+
+      <!-- Fila de Materia 2 -->
+      <div class="materia-row">
+        <div class="materia-card purple">
+          <div class="materia-info">
+            <h3>COMPUTACIÓN EN LA NUBE</h3>
+            <p>Docente: <span>Ignacio Fontaine</span></p>
+          </div>
+        </div>
+        <button
+          class="action-btn-arrow btn-arrow purple"
+          (click)="navigateTo('/professor-panel')"
+        >
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+        <button class="btn-horarios">Horarios</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="subjects-container" *ngIf="rol === 'ALUMNO'">
+    <div class="subjects-card">
+      <div class="subject-row" *ngFor="let materia of materias">
+        <div class="subject-main" [style.background-color]="materia.color">
+          <div class="subject-info">
+            <h3>{{ materia.nombre | uppercase }}</h3>
+            <p>
+              Docente: <span>{{ materia.docente }}</span>
+            </p>
+          </div>
+        </div>
+
+        <button
+          class="action-btn-arrow"
+          [style.background-color]="materia.color"
+          (click)="navigateTo('/current-classroom')"
+        >
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+
+        <button class="schedule-btn">Horarios</button>
+      </div>
+    </div>
+  </div>
+</main>

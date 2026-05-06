@@ -1,0 +1,71 @@
+<main *ngIf="authService.userRole$ | async as rol">
+  <div class="alumnos-lista-container" *ngIf="rol === 'DOCENTE'">
+    <header class="seccion-header">
+      <h2>Lista Alumnos</h2>
+      <div class="header-tools">
+        <div class="search-box">
+          <span class="material-symbols-outlined">search</span>
+          <input type="text" placeholder="Buscar alumno...">
+        </div>
+        <button class="btn-export">
+          <span class="material-symbols-outlined">ios_share</span>
+          Exportar
+        </button>
+      </div>
+    </header>
+  
+    <div class="tabla-container">
+      <table class="cursitu-table">
+        <thead>
+          <tr>
+            <th>Nombre Completo</th>
+            <th>Curso</th>
+            <th>Comisión</th>
+            <th>Tiene Grupo</th>
+            <th>Número de Grupo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Fila de ejemplo basada en la imagen -->
+          <tr>
+            <td class="col-nombre">
+              <div class="alumno-perfil">
+                <div class="avatar-sm">F</div>
+                <span>FACUNDO NICOLAS GARAY GONZALEZ</span>
+              </div>
+            </td>
+            <td>36</td>
+            <td>A</td>
+            <td>
+              <span class="badge badge-no">NO</span>
+            </td>
+            <td><span class="group-number">-</span></td>
+            <td>
+              <button class="btn-info"><span class="material-symbols-outlined">visibility</span></button>
+            </td>
+          </tr>
+          
+          <!-- Fila de ejemplo adicional -->
+          <tr>
+            <td class="col-nombre">
+              <div class="alumno-perfil">
+                <div class="avatar-sm">M</div>
+                <span>MARTIN DIAZ</span>
+              </div>
+            </td>
+            <td>36</td>
+            <td>A</td>
+            <td>
+              <span class="badge badge-si">SI</span>
+            </td>
+            <td><span class="group-number">2</span></td>
+            <td>
+              <button class="btn-info"><span class="material-symbols-outlined">visibility</span></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>

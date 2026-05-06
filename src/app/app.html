@@ -1,60 +1,174 @@
-<div class="main-layout">
-  <aside class="sidebar">
+<div
+  class="main-layout"
+  [class.no-navigation]="!(uiService.navigationVisible$ | async)"
+  [class.sidebar-open]="isSidebarOpen"
+  *ngIf="!isLoginPage()"
+>
+  <!-- Overlay para cerrar el menú en móvil -->
+  <div class="sidebar-overlay" (click)="isSidebarOpen = false"></div>
+
+  <aside class="sidebar" *ngIf="uiService.navigationVisible$ | async">
     <div class="app-title">
       <span class="material-symbols-outlined logo-icon">grid_view</span>
       <h4>CursITU</h4>
+      <!-- Botón de cierre para móvil -->
+      <button class="close-sidebar-mobile" (click)="isSidebarOpen = false">
+        <span class="material-symbols-outlined">close</span>
+      </button>
     </div>
 
-    <div class="sidebar-section">
+    <div class="sidebar-section" *ngIf="authService.userRole$ | async as rol">
       <span class="section-title">Menu</span>
-      <ul class="menu-items">
-        <li class="active"><span class="material-symbols-outlined">home</span><p>Inicio</p></li>
-        <li><span class="material-symbols-outlined">widgets</span><p>Materias</p></li>
-        <li><span class="material-symbols-outlined">group</span><p>Mis Grupos</p></li>
-        <li><span class="material-symbols-outlined">grid_view</span><p>Tareas Pendientes</p></li>
-        <li><span class="material-symbols-outlined">assignment</span><p>Avisos</p></li>
+      <ul class="menu-items" *ngIf="rol === 'ALUMNO'">
+        <li routerLinkActive="active">
+          <a routerLink="/home" (click)="isSidebarOpen = false">
+            <span class="material-symbols-outlined">home</span>
+            <p>Inicio</p>
+          </a>
+        </li>
+        <li routerLinkActive="active">
+          <a routerLink="/subjects" (click)="isSidebarOpen = false">
+            <span class="material-symbols-outlined">widgets</span>
+            <p>Materias</p>
+          </a>
+        </li>
+        <li routerLinkActive="active">
+          <a routerLink="/groups" (click)="isSidebarOpen = false">
+            <span class="material-symbols-outlined">group</span>
+            <p>Mis Grupos</p>
+          </a>
+        </li>
+        <li routerLinkActive="active">
+          <a routerLink="/transmission-lobby" (click)="isSidebarOpen = false">
+            <span class="material-symbols-outlined">cast</span>
+            <p>Presentaciones</p>
+          </a>
+        </li>
+        <li routerLinkActive="active">
+          <a routerLink="/pending-tasks" (click)="isSidebarOpen = false">
+            <span class="material-symbols-outlined">grid_view</span>
+            <p>Tareas Pendientes</p>
+          </a>
+        </li>
+        <li routerLinkActive="active">
+          <a routerLink="/notices" (click)="isSidebarOpen = false">
+            <span class="material-symbols-outlined">assignment</span>
+            <p>Avisos</p>
+          </a>
+        </li>
+      </ul>
+      <ul class="menu-items" *ngIf="rol === 'DOCENTE'">
+        <li routerLinkActive="active">
+          <a routerLink="/home" (click)="isSidebarOpen = false">
+            <span class="material-symbols-outlined">home</span>
+            <p>Inicio</p>
+          </a>
+        </li>
+        <li routerLinkActive="active">
+          <a routerLink="/subjects" (click)="isSidebarOpen = false">
+            <span class="material-symbols-outlined">widgets</span>
+            <p>Mis Materias</p>
+          </a>
+        </li>
+        <li routerLinkActive="active">
+          <a routerLink="/transmission-lobby" (click)="isSidebarOpen = false">
+            <span class="material-symbols-outlined">cast</span>
+            <p>Presentaciones</p>
+          </a>
+        </li>
+        <li routerLinkActive="active">
+          <a routerLink="/students" (click)="isSidebarOpen = false">
+            <span class="material-symbols-outlined">school</span>
+            <p>Alumnos</p>
+          </a>
+        </li>
+        <li routerLinkActive="active">
+          <a routerLink="/groups" (click)="isSidebarOpen = false">
+            <span class="material-symbols-outlined">group</span>
+            <p>Grupos</p>
+          </a>
+        </li>
+        <li routerLinkActive="active">
+          <a routerLink="/my-notices" (click)="isSidebarOpen = false">
+            <span class="material-symbols-outlined">assignment</span>
+            <p>Mis Avisos</p>
+          </a>
+        </li>
       </ul>
     </div>
 
-    <div class="sidebar-section">
-      <span class="section-title">Próximos parciales</span>
-      <ul class="exam-items">
-        <li><span class="dot blue"></span><p>Base de Datos Av... – 13/06</p></li>
-        <li><span class="dot red"></span><p>Programación Or... – 04/05</p></li>
-        <li><span class="dot green"></span><p>Sistemas Operati... – 21/05</p></li>
-      </ul>
+    <div class="sidebar-section" *ngIf="authService.userRole$ | async as rol">
+      <div *ngIf="rol === 'ALUMNO'">
+        <span class="section-title">Próximos parciales</span>
+        <ul class="exam-items">
+          <li>
+            <span class="dot blue"></span>
+            <p>Base de Datos Av... – 13/06</p>
+          </li>
+          <li>
+            <span class="dot red"></span>
+            <p>Programación Or... – 04/05</p>
+          </li>
+          <li>
+            <span class="dot green"></span>
+            <p>Sistemas Operati... – 21/05</p>
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <div class="user-footer">
+    <div class="user-footer" *ngIf="authService.userRole$ | async as rol">
       <span class="section-title">Usuario</span>
       <div class="user-profile">
         <span class="material-symbols-outlined user-icon">person</span>
         <div class="user-info">
           <p class="user-name">Facundo Garay</p>
-          <p class="user-role">Estudiante</p>
+          <p class="user-role" *ngIf="rol === 'ALUMNO'">Estudiante</p>
+          <p class="user-role" *ngIf="rol === 'DOCENTE'">Docente</p>
         </div>
       </div>
-      <div class="settings-btn">
+      <a class="settings-btn" routerLink="/configuration" (click)="isSidebarOpen = false">
         <span class="material-symbols-outlined">settings</span>
         <p>Configuración</p>
-      </div>
+      </a>
     </div>
   </aside>
 
   <main class="main-content">
-    <header class="top-bar">
-      <div class="welcome-card">
-        <div class="profile-thumb">
-          <img src="https://via.placeholder.com/45" alt="User">
+    <header class="top-bar" *ngIf="uiService.navigationVisible$ | async">
+      <div class="top-bar-left">
+        <!-- Botón para abrir sidebar en móvil -->
+        <button class="menu-toggle" (click)="isSidebarOpen = true">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+
+        <div class="welcome-card">
+          <div class="profile-thumb">
+            <span class="material-symbols-outlined"> face </span>
+          </div>
+          <h2 class="welcome-text">¡Buenos dias, <span>FACUNDO GARAY!</span></h2>
         </div>
-        <h2 class="welcome-text">¡Buenos dias, <span>FACUNDO GARAY!</span></h2>
       </div>
 
       <div class="header-actions">
-        <button class="action-btn"><span class="material-symbols-outlined">handshake</span></button>
-        <button class="action-btn active"><span class="material-symbols-outlined">forum</span></button>
-        <button class="action-btn"><span class="material-symbols-outlined">notifications</span></button>
+        <button class="action-btn active">
+          <span class="material-symbols-outlined">forum</span>
+        </button>
+        <button class="action-btn">
+          <span class="material-symbols-outlined">notifications</span>
+        </button>
         <button class="action-btn"><span class="material-symbols-outlined">person</span></button>
+
+        <div class="dev-role-switcher">
+          <select (change)="cambiarRol($event)">
+            <option value="ALUMNO" [selected]="(authService.userRole$ | async) === 'ALUMNO'">
+              A
+            </option>
+            <option value="DOCENTE" [selected]="(authService.userRole$ | async) === 'DOCENTE'">
+              D
+            </option>
+          </select>
+        </div>
       </div>
     </header>
 
@@ -62,4 +176,8 @@
       <router-outlet></router-outlet>
     </div>
   </main>
+</div>
+
+<div *ngIf="isLoginPage()" class="full-screen-login">
+  <router-outlet></router-outlet>
 </div>

@@ -1,0 +1,255 @@
+.gestion-tps-container {
+  display: flex;
+  gap: 30px;
+  padding: 20px;
+}
+
+.tps-panel {
+  flex: 1;
+}
+
+.tp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.tp-card {
+  background: white;
+  border-radius: 12px;
+  border-left: 8px solid; /* El color se define vía [style] */
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.tp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.deadline {
+  color: #888;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.tp-stats {
+  display: flex;
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-item .count {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #3f66cc;
+}
+
+.stat-item .count.warning { color: #e67e22; }
+.stat-item .count.alert { color: #e74c3c; }
+
+.stat-item .label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #999;
+  letter-spacing: 0.5px;
+}
+
+.tp-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.attachment, .btn-subir-consigna {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #3f66cc;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-ver-entregas {
+  background: #2ecc71;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tp-actions .btn-icon {
+  background: #f0f0f0;
+  border: none;
+  border-radius: 6px;
+  padding: 5px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+/* Contenedor principal de la barra lateral */
+.materias-selector {
+  width: 300px;
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Título "Materias" */
+.materias-selector h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0;
+  color: #333;
+}
+
+/* Contenedor de la lista de botones */
+.materias-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Estilo base de los botones de materia */
+.materia-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 18px 15px;
+  color: white;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Efecto al pasar el mouse */
+.materia-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Estado activo (el seleccionado actualmente) */
+.materia-btn.active {
+  outline: 3px solid rgba(0, 0, 0, 0.1);
+  outline-offset: -3px;
+}
+
+/* =========================================
+   ADAPTACIÓN PARA RESOLUCIONES (NETBOOKS)
+   ========================================= */
+
+@media (max-width: 1100px) {
+  .gestion-tps-container {
+    gap: 20px;
+    padding: 15px;
+  }
+
+  .materias-selector {
+    width: 250px; /* Sidebar un poco más estrecha */
+    padding: 20px;
+  }
+
+  .materia-btn {
+    padding: 15px 10px;
+    font-size: 0.75rem;
+  }
+
+  .tp-card {
+    padding: 20px;
+  }
+
+  .stat-item .count {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 850px) {
+  .gestion-tps-container {
+    flex-direction: column; /* Sidebar arriba, lista abajo */
+  }
+
+  .materias-selector {
+    width: 100%;
+  }
+
+  .materias-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .tp-stats {
+    flex-direction: column; /* Estadísticas verticales en móviles */
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .tp-footer {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .btn-ver-entregas {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-height: 650px) {
+  /* Optimizaciones para netbooks (ej. 1024x600) */
+  .tps-panel h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .tp-list {
+    gap: 15px;
+  }
+
+  .tp-card {
+    padding: 15px;
+  }
+
+  .tp-header {
+    margin-bottom: 10px;
+  }
+
+  .tp-stats {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .stat-item .count {
+    font-size: 1.1rem;
+  }
+
+  .stat-item .label {
+    font-size: 0.65rem;
+  }
+}

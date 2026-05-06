@@ -1,0 +1,98 @@
+<main *ngIf="authService.userRole$ | async as rol">
+    <div class="gestion-tps-container" *ngIf="rol === 'DOCENTE'">
+      
+      <!-- Sidebar de Materias (Reutilizado) -->
+      <aside class="materias-selector">
+        <h3>Materias</h3>
+        <div class="materias-list">
+          <button class="materia-btn active" [style.background-color]="'#ff912c'">
+            PROGRAMACIÓN ORIENTADA A OBJETOS
+          </button>
+          <button class="materia-btn" [style.background-color]="'#2ecc71'">
+            BASE DE DATOS AVANZADA
+          </button>
+        </div>
+      </aside>
+    
+      <!-- Panel de TPs -->
+      <main class="tps-panel">
+        <h2>Gestión de Trabajos Prácticos</h2>
+    
+        <div class="tp-list">
+          <!-- TP 1: Con consigna subida -->
+          <article class="tp-card" [style.border-left-color]="'#ff912c'">
+            <div class="tp-header">
+              <div class="tp-title-area">
+                <h3>TP N° 1: Introducción a Clases y Objetos</h3>
+                <span class="deadline">Límite de entrega: 15 de Mayo, 2026 - 23:59hs</span>
+              </div>
+              <div class="tp-actions">
+                <button class="btn-icon"><span class="material-symbols-outlined">edit</span></button>
+                <button class="btn-icon delete"><span class="material-symbols-outlined">delete</span></button>
+              </div>
+            </div>
+    
+            <div class="tp-stats">
+              <div class="stat-item">
+                <span class="count">28/32</span>
+                <span class="label">ENTREGADOS</span>
+              </div>
+              <div class="stat-item">
+                <span class="count">12</span>
+                <span class="label">CORREGIDOS</span>
+              </div>
+              <div class="stat-item">
+                <span class="count warning">4</span>
+                <span class="label">PENDIENTES</span>
+              </div>
+            </div>
+    
+            <div class="tp-footer">
+              <div class="attachment">
+                <span class="material-symbols-outlined">description</span>
+                <span class="filename">Consigna_TP1_V2.pdf</span>
+              </div>
+              <a class="btn-ver-entregas" routerLink="/see-deliveries">Ver Entregas</a>
+            </div>
+          </article>
+    
+          <!-- TP 2: Sin consigna -->
+          <article class="tp-card" [style.border-left-color]="'#2ecc71'">
+            <div class="tp-header">
+              <div class="tp-title-area">
+                <h3>TP N° 2: Herencia y Polimorfismo</h3>
+                <span class="deadline">Límite de entrega: 02 de Junio, 2026 - 23:59hs</span>
+              </div>
+              <div class="tp-actions">
+                <button class="btn-icon"><span class="material-symbols-outlined">edit</span></button>
+                <button class="btn-icon delete"><span class="material-symbols-outlined">delete</span></button>
+              </div>
+            </div>
+    
+            <div class="tp-stats">
+              <div class="stat-item">
+                <span class="count">05/32</span>
+                <span class="label">ENTREGADOS</span>
+              </div>
+              <div class="stat-item">
+                <span class="count">0</span>
+                <span class="label">CORREGIDOS</span>
+              </div>
+              <div class="stat-item">
+                <span class="count alert">27</span>
+                <span class="label">SIN ENTREGAR</span>
+              </div>
+            </div>
+    
+            <div class="tp-footer">
+              <button class="btn-subir-consigna">
+                <span class="material-symbols-outlined">add_circle</span>
+                Subir Consigna
+              </button>
+              <a class="btn-ver-entregas" routerLink="/see-deliveries">Ver Entregas</a>
+            </div>
+          </article>
+        </div>
+      </main>
+    </div>
+</main>

@@ -1,0 +1,278 @@
+.gestion-parciales-container {
+  display: flex;
+  gap: 30px;
+  padding: 20px;
+}
+
+.examen-card {
+  background: white;
+  border-radius: 20px;
+  padding: 35px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.examen-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.examen-title-group h3 {
+  font-size: 1.4rem;
+  font-weight: 900;
+  margin: 0;
+}
+
+.materia-sub { color: #888; font-weight: 600; }
+
+.btn-tool {
+  background: #eef2ff;
+  color: #3f66cc;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+/* Logística */
+.logistics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 40px;
+}
+
+.log-label {
+  display: block;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #aaa;
+  margin-bottom: 8px;
+}
+
+.log-value-box {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Tabla de Alumnos */
+.table-head {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+  font-weight: 800;
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.student-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: 20px 0;
+  border-bottom: 1px solid #f5f5f5;
+  align-items: center;
+}
+
+.status-badge {
+  padding: 5px 15px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.status-badge.presente { background: #e8f8f0; color: #2ecc71; }
+.status-badge.ausente { background: #fee; color: #e74c3c; }
+
+.mini-grade {
+  width: 50px;
+  padding: 5px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fdfdfd;
+}
+
+.btn-save-mini {
+  background: #eef2ff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  color: #3f66cc;
+  cursor: pointer;
+}
+
+/* Contenedor lateral */
+.materias-selector {
+  width: 300px;
+  background: white;
+  padding: 25px;
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Título de la sección */
+.materias-selector h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0;
+  color: #1a1a1a;
+  padding-left: 5px;
+}
+
+/* Lista de botones */
+.materias-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Botón de materia individual */
+.materia-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 20px 15px;
+  color: white;
+  font-weight: 800;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* Efectos de interacción */
+.materia-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Clase para la materia seleccionada */
+.materia-btn.active {
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.4), 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* =========================================
+   ADAPTACIÓN PARA RESOLUCIONES (NETBOOKS)
+   ========================================= */
+
+@media (max-width: 1100px) {
+  .gestion-parciales-container {
+    gap: 20px;
+    padding: 15px;
+  }
+
+  .materias-selector {
+    width: 240px;
+    padding: 20px;
+  }
+
+  .examen-card {
+    padding: 20px;
+  }
+
+  .logistics-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2x2 en lugar de 1x4 */
+    gap: 10px;
+  }
+
+  .materia-btn {
+    padding: 15px 10px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 850px) {
+  .gestion-parciales-container {
+    flex-direction: column;
+  }
+
+  .materias-selector {
+    width: 100%;
+  }
+
+  .materias-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .materia-btn {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  /* Scroll horizontal para la tabla si el ancho es insuficiente */
+  .alumnos-table {
+    overflow-x: auto;
+  }
+
+  .table-head, .student-row {
+    min-width: 500px;
+  }
+}
+
+@media (max-width: 500px) {
+  .logistics-grid {
+    grid-template-columns: 1fr; /* Una sola columna para datos de aula/hora */
+  }
+
+  .examen-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .examen-top-actions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-height: 650px) {
+  /* Optimización para netbooks tipo 1024x600 */
+  .parciales-panel h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .examen-card {
+    padding: 15px;
+  }
+
+  .examen-title-group h3 {
+    font-size: 1.1rem;
+  }
+
+  .logistics-grid {
+    margin-bottom: 20px;
+  }
+
+  .log-value-box {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  .student-row {
+    padding: 12px 0;
+  }
+
+  .status-badge {
+    padding: 4px 10px;
+  }
+}

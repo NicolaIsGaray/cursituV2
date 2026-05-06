@@ -1,0 +1,276 @@
+.notas-container {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* --- SIDEBAR DE MATERIAS --- */
+.sidebar-card {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0px 4px 15px rgba(0,0,0,0.05);
+}
+
+.sidebar-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  box-sizing: border-box;
+}
+
+.materias-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.materia-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 15px;
+  color: white;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+.materia-btn.orange { background: #ff912c; }
+.materia-btn.green { background: #2ecc71; }
+.materia-btn.blue { background: #4a69bd; }
+
+/* --- PLANILLA CENTRAL --- */
+.planilla-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Contenedor de navegación */
+.top-nav {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Estilo del botón Regresar */
+.btn-back {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--primary-purple); /* O el color que uses para acentos */
+}
+
+.btn-back .material-symbols-outlined {
+  font-size: 1.2rem;
+}
+
+.btn-nueva-nota {
+  background: #2ecc71;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.planilla-wrapper {
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0px 4px 20px rgba(0,0,0,0.05);
+  min-height: 500px;
+}
+
+.table-header-banner {
+  background: #ff912c;
+  color: white;
+  padding: 2rem;
+  text-align: center;
+  font-weight: 800;
+  font-size: 1.2rem;
+  margin: 20px;
+  border-radius: 15px;
+}
+
+.notas-table {
+  width: 95%;
+  margin: 0 auto 2rem;
+  border-collapse: collapse;
+}
+
+.notas-table th {
+  text-align: left;
+  color: #999;
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+
+.notas-table td {
+  padding: 1.2rem 1rem;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.alumno-name {
+  font-weight: 700;
+  color: #333;
+}
+
+/* Inputs de Nota */
+.input-nota {
+  width: 60px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.input-nota.fail {
+  border-color: #e74c3c;
+  color: #e74c3c;
+}
+
+/* Botones de acción */
+.actions-cell {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-save, .btn-delete {
+  background: none;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 5px;
+  cursor: pointer;
+  color: #666;
+}
+
+.btn-save:hover { color: #3f3689; border-color: #3f3689; }
+.btn-delete:hover { color: #e74c3c; border-color: #e74c3c; }
+
+/* =========================================
+   ADAPTACIÓN PARA RESOLUCIONES (NETBOOKS)
+   ========================================= */
+
+@media (max-width: 1100px) {
+  .notas-container {
+    grid-template-columns: 250px 1fr; /* Sidebar un poco más estrecha */
+    gap: 1.5rem;
+  }
+
+  .sidebar-card {
+    padding: 1rem;
+  }
+
+  .table-header-banner {
+    padding: 1.2rem;
+    font-size: 1rem;
+    margin: 15px;
+  }
+
+  .planilla-wrapper {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 850px) {
+  .notas-container {
+    grid-template-columns: 1fr; /* Sidebar arriba, planilla abajo */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .materias-sidebar {
+    width: 100%;
+  }
+
+  .materias-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+
+  .planilla-content {
+    width: 100%;
+  }
+
+  /* Permitir scroll horizontal en la tabla si los nombres de alumnos son largos */
+  .planilla-wrapper {
+    overflow-x: auto;
+  }
+
+  .notas-table {
+    min-width: 600px;
+  }
+}
+
+@media (max-height: 650px) {
+  /* Optimizaciones para pantallas de poca altura (1024x600) */
+  .notas-container {
+    gap: 1rem;
+    padding: 10px;
+  }
+
+  .sidebar-card h3 {
+    margin-bottom: 0.8rem;
+  }
+
+  .search-box input {
+    margin-bottom: 0.8rem;
+    padding: 8px;
+  }
+
+  .materia-btn {
+    padding: 10px;
+    font-size: 0.8rem;
+  }
+
+  .planilla-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .table-header-banner {
+    padding: 0.8rem;
+    margin: 10px;
+    font-size: 0.9rem;
+  }
+
+  .notas-table td {
+    padding: 0.8rem 1rem;
+  }
+
+  .input-nota {
+    padding: 5px;
+  }
+}

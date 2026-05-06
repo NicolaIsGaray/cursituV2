@@ -1,44 +1,87 @@
-<div class="dashboard-grid">
-  <div class="card wide">
-    <h3>Avisos Recientes</h3>
-    <div class="card-content empty">
-      <p>No hay avisos recientes</p>
+<h2>Página de Inicio</h2>
+<main *ngIf="authService.userRole$ | async as rol">
+  <div class="dashboard-grid" *ngIf="rol === 'ALUMNO'">
+    <div class="card wide">
+      <h3>Avisos Recientes</h3>
+      <div class="card-content empty">
+        <p>No hay avisos recientes</p>
+      </div>
+    </div>
+
+    <div class="card tall">
+      <h3>Entregas Pendientes</h3>
+      <div class="card-content empty">
+        <p>No tienes entregas pendientes</p>
+        <b class="success-text">¡Estás al día!</b>
+      </div>
+    </div>
+
+    <div class="card small">
+      <h3>Última Actividad Visitada</h3>
+      <div class="card-content empty">
+        <p>No has visitado ninguna actividad hoy</p>
+      </div>
+    </div>
+
+    <div class="card small">
+      <h3>Última Materia Vista</h3>
+      <div class="card-content empty">
+        <p>No has visitado ninguna materia hoy</p>
+      </div>
+    </div>
+
+    <div class="card wide">
+      <h3>Fechas Importantes</h3>
+      <div class="card-content empty">
+        <p>No hay ninguna fecha importante anunciada</p>
+      </div>
     </div>
   </div>
 
-  <div class="card tall">
-    <h3>Entregas Pendientes</h3>
-    <div class="card-content empty">
-      <p>No tienes entregas pendientes</p>
-      <b class="success-text">¡Estás al día!</b>
-    </div>
-  </div>
+  <div class="dashboard-container" *ngIf="rol === 'DOCENTE'">
+    <!-- Banner de Acción Principal -->
+    <section class="action-banner">
+      <a class="btn-create-activity" routerLink="/subjects" style="text-decoration: none; width: 80%;">
+        <span>Gestión de Materias</span>
+      </a>
+    </section>
 
-  <div class="card small">
-    <h3>Última Actividad Visitada</h3>
-    <div class="card-content empty">
-      <p>No has visitado ninguna actividad hoy</p>
-    </div>
-  </div>
+    <!-- Grilla de Información -->
+    <div class="info-grid">
+      <!-- Columna Izquierda y Centro (Cards pequeñas) -->
+      <div class="main-stats">
+        <div class="stat-card">
+          <h3>Última Actividad Visitada</h3>
+          <div class="empty-state">
+            <p>No ha visitado ninguna actividad hoy</p>
+          </div>
+        </div>
 
-  <div class="card small">
-    <h3>Última Materia Vista</h3>
-    <div class="card-content empty">
-      <p>No has visitado ninguna materia hoy</p>
-    </div>
-  </div>
+        <div class="stat-card">
+          <h3>Horarios</h3>
+          <div class="empty-state">
+            <p>No hay horarios cargados</p>
+          </div>
+        </div>
 
-  <div class="card wide">
-    <h3>Fechas Importantes</h3>
-    <div class="card-content empty">
-      <p>No hay ninguna fecha importante anunciada</p>
-    </div>
-  </div>
+        <!-- Registro de Actividad (Ocupa dos columnas abajo) -->
+        <div class="stat-card wide-card">
+          <h3>Registro de Actividad</h3>
+          <div class="empty-state">
+            <p>No hay actividades nuevas registradas en el día de hoy</p>
+          </div>
+        </div>
+      </div>
 
-  <div class="card wide">
-    <h3>Reuniones En Vivo</h3>
-    <div class="card-content empty">
-      <p>No hay reuniones activas por el momento</p>
+      <!-- Columna Derecha (Card Larga) -->
+      <aside class="side-stats">
+        <div class="stat-card full-height">
+          <h3>Listado de Alumnos</h3>
+          <div class="empty-state">
+            <p>No hay alumnos registrados aun</p>
+          </div>
+        </div>
+      </aside>
     </div>
   </div>
-</div>
+</main>

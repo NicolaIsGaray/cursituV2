@@ -14,4 +14,5 @@ public class ClassroomEntity {
 
     private Integer number;
     private String[] students_id;
+    private String[] subjects_id;
 }

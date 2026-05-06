@@ -1,0 +1,29 @@
+<main *ngIf="authService.userRole$ | async as rol">
+  <div class="edit-materia-container" *ngIf="rol === 'DOCENTE'">
+    <div class="edit-card">
+      <!-- Lado Izquierdo: Formulario -->
+      <div class="form-section">
+        <h3>Editar Materia</h3>
+
+        <div class="input-group">
+          <label>Nombre de la materia</label>
+          <input type="text" class="input-field" [value]="materia.nombre" />
+        </div>
+
+        <a class="btn-guardar" routerLink="/professor-panel">Guardar</a>
+      </div>
+
+      <!-- Lado Derecho: Selector de Color -->
+      <div class="color-section" [style.background-color]="materia.color">
+        <h3>Color de la materia</h3>
+
+        <div class="color-picker-wrapper">
+          <input type="color" id="colorInput" [value]="materia.color" class="hidden-input" />
+          <label for="colorInput" class="color-icon-btn">
+            <span class="material-symbols-outlined">format_paint</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

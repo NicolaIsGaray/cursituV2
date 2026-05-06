@@ -1,18 +1,58 @@
-<div class="auth-container">
-  <div class="auth-card">
-    <h2 style="color: var(--primary-purple);">Iniciar Sesión</h2>
-    <form [formGroup]="loginForm">
-      <div class="field">
-        <label>DNI</label>
-        <input type="text" formControlName="dni" placeholder="Ingrese su DNI">
+<div class="login-page">
+  <div class="login-container">
+    
+    <!-- Lado Izquierdo: Formulario -->
+    <section class="login-form-side">
+      <div class="brand-header">
+        <span class="material-symbols-outlined logo-icon">school</span>
+        <h1>CursITU</h1>
       </div>
 
-      <div class="field">
-        <label>Contraseña</label>
-        <input type="password" formControlName="password" placeholder="********">
+      <div class="login-content">
+        <h2>Bienvenido de nuevo</h2>
+        <p>Por favor, ingresa tus credenciales para acceder.</p>
+
+        <form class="login-form">
+          <div class="input-group">
+            <label>Correo Institucional</label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined">mail</span>
+              <input type="email" placeholder="usuario@itu.uncu.edu.ar">
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>Contraseña</label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined">lock</span>
+              <input type="password" placeholder="••••••••">
+            </div>
+          </div>
+
+          <div class="login-options">
+            <label class="remember-me">
+              <input type="checkbox"> Recordarme
+            </label>
+            <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <button type="submit" class="btn-login">Iniciar Sesión</button>
+        </form>
       </div>
 
-      <button class="purple-button" (click)="onLogin()">Acceder</button>
-    </form>
+      <footer class="login-footer">
+        <p>© 2026 CursITU - Tecnicatura Universitaria en Programación</p>
+      </footer>
+    </section>
+
+    <!-- Lado Derecho: Visual/Marca -->
+    <section class="login-visual-side">
+      <div class="overlay"></div>
+      <div class="visual-content">
+        <h3>Toda la experiencia del ITU, ahora de forma digital y organizada.</h3>
+        <p>Potenciando la educación técnica con herramientas modernas.</p>
+      </div>
+    </section>
+
   </div>
 </div>

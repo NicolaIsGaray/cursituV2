@@ -1,0 +1,83 @@
+<div [ngStyle]="materiaColorStyle">
+  <div class="course-header">
+    <h2>Programación Orientada a Objetos</h2>
+  </div>
+
+  <div class="assignment-wrapper">
+    <div class="delivery-area">
+      <div class="delivery-card">
+        <h3 class="assignment-title">Entrega Trabajo Práctico: Manejo de Excepciones</h3>
+
+        <div class="subtitle-group">
+          <h4>Subir Trabajo Práctico</h4>
+          <p class="deadline-text">
+            Tiempo de entrega hasta:
+            <span>Martes 02 de Abril del 2026 – 00:00 HS</span>
+          </p>
+        </div>
+
+        <div class="delivery-section">
+          <label>Formato de entrega</label>
+          <div class="format-buttons">
+            <button class="format-btn active">Archivo</button>
+            <button class="format-btn">Carpeta</button>
+            <button class="format-btn">Texto</button>
+          </div>
+        </div>
+
+        <div class="delivery-section">
+          <label>Archivo (o Carpeta)</label>
+          <div class="upload-container">
+            <button class="upload-area-btn">
+              <span class="material-symbols-outlined">upload</span>
+            </button>
+            <p class="nota-text">
+              <b>Nota:</b> ¡asegurate de revisar todo antes de entregar tu trabajo!
+            </p>
+          </div>
+        </div>
+
+        <div class="delivery-section">
+          <label>Comentario (Opcional)</label>
+          <div class="comment-container">
+            <textarea placeholder="Escribe tu mensaje aquí..." rows="6"> </textarea>
+          </div>
+        </div>
+
+        <div class="submit-container">
+          <button class="submit-btn">Realizar Entrega</button>
+        </div>
+      </div>
+    </div>
+
+    <aside class="sections-sidebar" [style.background-color]="materiaColor">
+      <div class="sidebar-header">
+        <h3>Secciones</h3>
+        <div class="divider"></div>
+      </div>
+
+      <ul class="sections-list">
+        <li class="section-item">
+          <span class="material-symbols-outlined">info</span>
+          <p>Introducción</p>
+        </li>
+
+        <li class="section-item active">
+          <div class="indicator"></div>
+          <span class="material-symbols-outlined">assignment</span>
+          <p>Manejo de Excepciones</p>
+        </li>
+
+        <li class="section-item" *ngFor="let i of [1, 2, 3, 4]">
+          <span class="material-symbols-outlined">menu_book</span>
+          <p>Clase {{ i }}</p>
+        </li>
+
+        <li class="section-item exam">
+          <span class="material-symbols-outlined">grade</span>
+          <p>Parcial N° 1</p>
+        </li>
+      </ul>
+    </aside>
+  </div>
+</div>

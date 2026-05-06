@@ -1,0 +1,230 @@
+/* === TUS ESTILOS ORIGINALES (SIN CAMBIOS) === */
+
+.classroom-container {
+  display: flex;
+  gap: 0;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0px 10px 30px rgba(0,0,0,0.05);
+  min-height: 70vh;
+}
+
+.content-area {
+  flex: 1;
+  padding: 40px;
+}
+
+.content-card h3 {
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+}
+
+.teacher-banner {
+  border-radius: 20px;
+  padding: 25px;
+  display: flex;
+  gap: 25px;
+  color: white;
+  margin-bottom: 30px;
+}
+
+.teacher-photo img {
+  width: 150px;
+  height: 180px;
+  border-radius: 15px;
+  object-fit: cover;
+}
+
+.sections-sidebar {
+  width: 280px;
+  padding: 30px 0;
+  color: white;
+}
+
+.sidebar-header {
+  padding: 0 25px;
+  margin-bottom: 20px;
+}
+
+.sidebar-header h3 {
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.divider {
+  height: 2px;
+  background: rgba(255,255,255,0.3);
+  margin-top: 10px;
+  border-radius: 2px;
+}
+
+.sections-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.section-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 25px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  opacity: 0.8;
+  justify-content: flex-start;
+}
+
+.section-item p {
+  margin: 0;
+  font-weight: 500;
+}
+
+.section-item.active {
+  opacity: 1;
+  background: rgba(255,255,255,0.15);
+}
+
+.section-item.active .indicator {
+  position: absolute;
+  left: 0;
+  width: 5px;
+  height: 60%;
+  background: white;
+  border-radius: 0 4px 4px 0;
+}
+
+.section-item:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.1);
+  padding-left: 30px;
+}
+
+.section-item.exam {
+  font-weight: 700;
+  color: rgba(255,255,255,1);
+}
+
+.admin-actions {
+  display: flex;
+  gap: 5px;
+  margin-left: auto;
+}
+
+.btn-icon {
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.btn-icon:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.btn-icon.delete:hover {
+  background: #e74c3c;
+}
+
+.btn-icon .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.sidebar-footer {
+  padding: 20px;
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-agregar {
+  width: 90%;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* =========================================
+   ADAPTACIÓN PARA RESOLUCIONES (NETBOOKS)
+   ========================================= */
+
+@media (max-width: 1024px) {
+  .sections-sidebar {
+    width: 240px; /* Sidebar un poco más angosto */
+  }
+
+  .content-area {
+    padding: 25px; /* Reducción de aire interno */
+  }
+
+  .teacher-banner {
+    padding: 15px;
+    gap: 15px;
+  }
+
+  .teacher-photo img {
+    width: 110px; /* Imagen del docente más pequeña */
+    height: 140px;
+  }
+
+  .teacher-data h4 { font-size: 1.1rem; }
+  .teacher-data .label { font-size: 0.8rem; }
+  .teacher-data p { font-size: 0.9rem; }
+}
+
+@media (max-width: 850px) {
+  /* Cambio de disposición a vertical si el ancho es insuficiente */
+  .classroom-container {
+    flex-direction: column-reverse; /* Sidebar abajo o arriba según preferencia */
+  }
+
+  .sections-sidebar {
+    width: 100%;
+    padding: 20px 0;
+  }
+  
+  .sections-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Secciones en dos columnas */
+  }
+
+  .section-item:hover {
+    padding-left: 25px; /* Desactivamos el efecto de desplazamiento lateral */
+  }
+}
+
+@media (max-height: 650px) {
+  /* Optimización para netbooks con poca altura (ej. 1024x600) */
+  .content-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+  }
+
+  .teacher-banner {
+    margin-bottom: 15px;
+  }
+
+  .section-item {
+    padding: 10px 20px; /* Ítems de lista más compactos */
+  }
+
+  .btn-agregar {
+    padding: 8px;
+    font-size: 1rem;
+  }
+}

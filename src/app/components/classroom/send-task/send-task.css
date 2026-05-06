@@ -1,0 +1,304 @@
+/* === TUS ESTILOS ORIGINALES (SIN CAMBIOS) === */
+
+.assignment-wrapper {
+  display: flex;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0px 10px 30px rgba(0,0,0,0.05);
+  min-height: 75vh;
+}
+
+.delivery-area {
+  flex: 1;
+  padding: 50px;
+}
+
+.assignment-title {
+  font-size: 1.6rem;
+  margin-bottom: 30px;
+  color: #1a1a1a;
+}
+
+.subtitle-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.subtitle-group h4 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.deadline-text {
+  margin: 0;
+  color: #8d8d8d;
+  font-size: 0.9rem;
+}
+
+.deadline-text span {
+  font-weight: 500;
+  color: #333;
+}
+
+.delivery-section {
+  margin-bottom: 30px;
+}
+
+.delivery-section label {
+  display: block;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: #1a1a1a;
+}
+
+.format-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.format-btn {
+  flex: 1;
+  background: #f1f3f9;
+  border: none;
+  border-radius: 12px;
+  padding: 18px 0;
+  color: #707070;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.format-btn.active {
+  background-color: var(--materia-color);
+  color: white;
+}
+
+.upload-container {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.upload-area-btn {
+  width: 250px;
+  height: 60px;
+  background-color: var(--materia-color);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+.upload-area-btn .material-symbols-outlined {
+  font-size: 28px;
+}
+
+.nota-text {
+  flex: 1;
+  color: #8d8d8d;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.nota-text b { color: #333; font-weight: 600; }
+
+.comment-container textarea {
+  width: 100%;
+  background: #fbfbfb;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 15px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
+}
+
+.comment-container textarea:focus {
+  outline: none;
+  border-color: var(--materia-color);
+  background: white;
+}
+
+.sections-sidebar {
+  width: 280px;
+  padding: 30px 0;
+  color: white;
+}
+
+.sidebar-header {
+  padding: 0 25px;
+  margin-bottom: 20px;
+}
+
+.sidebar-header h3 {
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.divider {
+  height: 2px;
+  background: rgba(255,255,255,0.3);
+  margin-top: 10px;
+  border-radius: 2px;
+}
+
+.sections-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.section-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 25px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  opacity: 0.8;
+}
+
+.section-item p { margin: 0; font-weight: 500; font-size: 0.95rem;}
+
+.section-item.active {
+  opacity: 1;
+  background: rgba(255,255,255,0.15);
+}
+
+.section-item.active .indicator {
+  position: absolute;
+  left: 0;
+  width: 4px;
+  height: 70%;
+  background: white;
+  border-radius: 0 4px 4px 0;
+}
+
+.section-item:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.1);
+}
+
+.material-symbols-outlined { font-size: 20px; }
+
+.submit-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.submit-btn {
+  background-color: var(--materia-color);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+  filter: brightness(1.1);
+}
+
+.submit-btn:active {
+  transform: translateY(-1px);
+}
+
+/* =========================================
+   ADAPTACIÓN PARA RESOLUCIONES (NETBOOKS)
+   ========================================= */
+
+@media (max-width: 1100px) {
+  .delivery-area {
+    padding: 30px; /* Reducción de relleno para ganar espacio */
+  }
+
+  .assignment-title {
+    font-size: 1.4rem;
+  }
+
+  .subtitle-group {
+    flex-direction: column; /* Apilar título y fecha de vencimiento */
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .sections-sidebar {
+    width: 240px; /* Sidebar más estrecho */
+  }
+}
+
+@media (max-width: 900px) {
+  .assignment-wrapper {
+    flex-direction: column; /* Layout vertical para evitar compresión extrema */
+  }
+
+  .sections-sidebar {
+    width: 100%;
+    padding: 20px 0;
+  }
+
+  .sections-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Secciones en dos columnas abajo */
+  }
+}
+
+@media (max-width: 700px) {
+  .upload-container {
+    flex-direction: column; /* Apilar botón de carga y nota */
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .upload-area-btn {
+    width: 100%; /* Botón de carga a ancho completo */
+  }
+
+  .format-btn {
+    padding: 12px 0;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-height: 650px) {
+  /* Optimización para pantallas bajas */
+  .delivery-area {
+    padding: 20px;
+  }
+
+  .assignment-title {
+    margin-bottom: 15px;
+  }
+
+  .delivery-section {
+    margin-bottom: 20px;
+  }
+
+  .comment-container textarea {
+    grid-row: 4; /* Reducir altura del área de texto */
+  }
+
+  .submit-btn {
+    padding: 10px 30px;
+    font-size: 1rem;
+  }
+}

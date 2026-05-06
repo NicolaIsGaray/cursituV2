@@ -1,0 +1,59 @@
+<main *ngIf="authService.userRole$ | async as rol">
+  <div class="curso-container" *ngIf="rol === 'DOCENTE'">
+    <h2>Programación Orientada a Objetos</h2>
+
+    <div class="curso-wrapper">
+      <h3 class="greeting-title">¿Que haremos hoy?</h3>
+
+      <div class="actions-grid">
+        <!-- Ver Notas -->
+        <a class="action-card" routerLink="/manage-grades">
+          <div class="icon-box">
+            <span class="material-symbols-outlined">fact_check</span>
+          </div>
+          <span>Gestionar Notas</span>
+        </a>
+
+        <!-- Gestionar Clases -->
+        <a class="action-card" routerLink="/current-classroom">
+          <div class="icon-box">
+            <span class="material-symbols-outlined">school</span>
+          </div>
+          <span>Gestionar Clases</span>
+        </a>
+
+        <!-- Editar Materia -->
+        <a class="action-card" routerLink="/edit-subject">
+          <div class="icon-box">
+            <span class="material-symbols-outlined">edit_note</span>
+          </div>
+          <span>Editar Materia</span>
+        </a>
+
+        <!-- Gestionar Fechas -->
+        <a class="action-card" routerLink="/manage-dates">
+          <div class="icon-box">
+            <span class="material-symbols-outlined">edit_calendar</span>
+          </div>
+          <span>Gestionar Fechas</span>
+        </a>
+
+        <!-- Gestionar Trabajos Prácticos -->
+        <a class="action-card" routerLink="/manage-tasks">
+          <div class="icon-box">
+            <span class="material-symbols-outlined">assignment</span>
+          </div>
+          <span>Gestionar Trabajos Prácticos</span>
+        </a>
+
+        <!-- Gestionar Parciales -->
+        <a class="action-card" routerLink="/manage-finals">
+          <div class="icon-box">
+            <span class="material-symbols-outlined">view_kanban</span>
+          </div>
+          <span>Gestionar Parciales</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</main>

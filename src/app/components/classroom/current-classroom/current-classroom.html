@@ -1,0 +1,72 @@
+<div class="course-header">
+  <h2>Programación Orientada a Objetos</h2>
+</div>
+
+<div class="classroom-container">
+  <div class="content-area">
+    <!-- El contenido se mantiene igual -->
+    <div class="content-card">
+      <h3>Introducción</h3>
+      <div class="teacher-banner" [style.background-color]="'#006054'"> <!-- Color según la imagen -->
+        <div class="teacher-photo">
+          <img src="assets/profesor-fontaine.png" alt="Profesor">
+        </div>
+        <div class="teacher-data">
+          <span class="label">Espacio Curricular:</span>
+          <h4>Programación Orientada a Objetos</h4>
+          <span class="label">Profesor:</span>
+          <p class="name">Ignacio G. Fontaine Didier</p>
+          <span class="label">Formación académica:</span>
+          <p class="bio">Lic. En Informática y Desarrollo de Software</p>
+          <!-- Perfil personal omitido para brevedad -->
+        </div>
+      </div>
+      <div class="text-content">
+        <p>La materia Programación Orientada a Objetos (POO) introduce...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar: Visible para ambos, pero con controles extra para DOCENTE -->
+  <aside class="sections-sidebar" [style.background-color]="materiaColor">
+    <div class="sidebar-header">
+      <h3>Secciones</h3>
+      <div class="divider"></div>
+    </div>
+
+    <ul class="sections-list">
+      <!-- Introducción (Activa) -->
+      <li class="section-item active">
+        <div class="indicator"></div>
+        <p>Introducción</p>
+        <div class="admin-actions" *ngIf="(authService.userRole$ | async) === 'DOCENTE'">
+          <button class="btn-icon"><span class="material-symbols-outlined">edit</span></button>
+          <button class="btn-icon delete"><span class="material-symbols-outlined">delete</span></button>
+        </div>
+      </li>
+      
+      <!-- Clases dinámicas -->
+      <li class="section-item" *ngFor="let i of [1,2,3,4,5]">
+        <p>Clase {{i}}</p>
+        <div class="admin-actions" *ngIf="(authService.userRole$ | async) === 'DOCENTE'">
+          <button class="btn-icon"><span class="material-symbols-outlined">edit</span></button>
+          <button class="btn-icon delete"><span class="material-symbols-outlined">delete</span></button>
+        </div>
+      </li>
+
+      <!-- Parciales -->
+      <li class="section-item exam">
+        <p>Parcial N° 1</p>
+        <div class="admin-actions" *ngIf="(authService.userRole$ | async) === 'DOCENTE'">
+          <button class="btn-icon"><span class="material-symbols-outlined">edit</span></button>
+          <button class="btn-icon delete"><span class="material-symbols-outlined">delete</span></button>
+        </div>
+      </li>
+    </ul>
+
+    <!-- Botón Agregar: Solo para DOCENTE -->
+    <div class="sidebar-footer" *ngIf="(authService.userRole$ | async) === 'DOCENTE'">
+      <a class="btn-agregar" routerLink="/add-class">Agregar</a>
+    </div>
+  </aside>
+</div>

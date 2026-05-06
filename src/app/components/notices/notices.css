@@ -1,0 +1,138 @@
+/* === TUS ESTILOS ORIGINALES (SIN CAMBIOS) === */
+
+.avisos-card {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.aviso-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 90px;
+}
+
+.aviso-icon {
+  width: 90px;
+  height: 100%;
+  background: #ff8c2e;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.aviso-icon .material-symbols-outlined { font-size: 40px; }
+
+.aviso-info { flex-grow: 1; }
+.aviso-autor { font-size: 1.1rem; margin: 0; }
+.aviso-autor span { font-weight: 700; }
+.aviso-asunto { color: #555; margin: 5px 0 0 0; }
+
+.aviso-meta { text-align: right; margin-right: 10px; }
+.aviso-fecha { font-size: 0.9rem; color: #888; margin-bottom: 5px; }
+.leer-link { font-weight: 700; text-decoration: underline; cursor: pointer; color: #333; }
+
+.view-btn {
+  width: 90px;
+  height: 100%;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.detalle-card {
+  background: white;
+  border-radius: 20px;
+  padding: 50px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.detalle-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 30px;
+  margin-bottom: 40px;
+}
+
+.autor-perfil { display: flex; gap: 15px; align-items: center; }
+.autor-perfil img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+.autor-text .nombre { font-weight: 700; margin: 0; font-size: 1.1rem; }
+.autor-text .motivo { margin: 2px 0 0 0; color: #555; }
+
+.detalle-body { font-size: 1.2rem; line-height: 1.6; color: #333; }
+.saludo { font-weight: 700; text-decoration: underline; margin-bottom: 30px; }
+.mensaje-texto p { margin-bottom: 25px; }
+.despedida { margin-top: 50px; }
+.firma { font-weight: 700; margin-top: 5px; }
+
+/* =========================================
+   ADAPTACIÓN PARA RESOLUCIONES (NETBOOKS)
+   ========================================= */
+
+@media (max-width: 1024px) {
+  /* Lista de avisos */
+  .avisos-card {
+    padding: 20px;
+  }
+
+  .aviso-row {
+    height: 75px; /* Reducción de altura por fila */
+    gap: 15px;
+  }
+
+  .aviso-icon, .view-btn {
+    width: 65px; /* Elementos laterales más estrechos */
+  }
+
+  .aviso-icon .material-symbols-outlined { font-size: 30px; }
+
+  .aviso-autor { font-size: 1rem; }
+  .aviso-asunto { font-size: 0.85rem; }
+
+  /* Detalle de mensaje */
+  .detalle-card {
+    padding: 30px;
+  }
+
+  .detalle-header {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+  }
+
+  .detalle-body {
+    font-size: 1rem; /* Lectura más cómoda en pantallas pequeñas */
+  }
+
+  .saludo { margin-bottom: 20px; }
+  .despedida { margin-top: 30px; }
+}
+
+@media (max-width: 768px) {
+  /* Ocultamos elementos no críticos para evitar desbordamiento */
+  .aviso-meta { display: none; }
+  
+  .aviso-row {
+    justify-content: space-between;
+  }
+}
+
+@media (max-height: 650px) {
+  /* Optimizando el scroll vertical */
+  .detalle-header {
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .mensaje-texto p {
+    margin-bottom: 15px;
+  }
+}
