@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-send-task',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './send-task.html',
   styleUrl: './send-task.css',
 })

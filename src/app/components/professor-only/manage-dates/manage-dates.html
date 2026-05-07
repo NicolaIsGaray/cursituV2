@@ -1,89 +1,119 @@
+<nav class="top-nav">
+  <button class="btn-back" routerLink="/professor-panel">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Regresar
+  </button>
+</nav>
 <main *ngIf="authService.userRole$ | async as rol">
   <div class="gestion-fechas-container" *ngIf="rol === 'DOCENTE'">
-    <!-- Contenido Principal -->
     <main class="calendario-content">
       <header class="calendario-header">
-        <h2>Gestión de Fechas Importantes</h2>
+        <h2>Fechas Importantes</h2>
         <button class="btn-programar">
           <span class="material-symbols-outlined">calendar_add_on</span>
-          Programar Fecha
+          <span class="btn-text">Programar</span>
         </button>
       </header>
 
       <div class="calendario-card">
-        <div class="calendario-banner" [style.background-color]="'#ff912c'">
+        <div class="calendario-banner">
           CALENDARIO ACADÉMICO - P.O.O.
         </div>
 
         <div class="fechas-lista">
           <!-- Item: Examen -->
           <div class="fecha-item">
-            <div class="icon-box examen">
-              <span class="material-symbols-outlined">priority_high</span>
+            <div class="fecha-main-info">
+              <div class="icon-box examen">
+                <span class="material-symbols-outlined">priority_high</span>
+              </div>
+              <div class="fecha-text">
+                <h4>Parcial N° 1</h4>
+                <span class="tag-tipo">EXAMEN</span>
+              </div>
             </div>
-            <div class="fecha-info">
-              <h4>Parcial N° 1</h4>
-              <span>EXAMEN</span>
-            </div>
+            
             <div class="fecha-controls">
-              <input type="text" class="date-display" value="04 / 05 / 2026" readonly />
-              <button class="btn-action">
-                <span class="material-symbols-outlined">notifications</span>
-              </button>
-              <button class="btn-action">
-                <span class="material-symbols-outlined">save</span>
-              </button>
-              <button class="btn-action delete">
-                <span class="material-symbols-outlined">delete</span>
-              </button>
+              <div class="date-input-wrapper">
+                <span class="material-symbols-outlined">event</span>
+                <input type="text" class="date-display" value="04 / 05 / 2026" readonly />
+              </div>
+              <div class="action-buttons">
+                <button class="btn-action" title="Notificar">
+                  <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <button class="btn-action" title="Guardar">
+                  <span class="material-symbols-outlined">save</span>
+                </button>
+                <button class="btn-action delete" title="Eliminar">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </div>
             </div>
           </div>
 
           <!-- Item: Entrega -->
           <div class="fecha-item">
-            <div class="icon-box entrega">
-              <span class="material-symbols-outlined">assignment_turned_in</span>
+            <div class="fecha-main-info">
+              <div class="icon-box entrega">
+                <span class="material-symbols-outlined">assignment_turned_in</span>
+              </div>
+              <div class="fecha-text">
+                <h4>Entrega TP Final</h4>
+                <span class="tag-tipo">ENTREGA</span>
+              </div>
             </div>
-            <div class="fecha-info">
-              <h4>Entrega TP Final</h4>
-              <span>ENTREGA</span>
-            </div>
+            
             <div class="fecha-controls">
-              <input type="text" class="date-display" value="15 / 06 / 2026" readonly />
-              <button class="btn-action">
-                <span class="material-symbols-outlined">notifications</span>
-              </button>
-              <button class="btn-action">
-                <span class="material-symbols-outlined">save</span>
-              </button>
-              <button class="btn-action delete">
-                <span class="material-symbols-outlined">delete</span>
-              </button>
+              <div class="date-input-wrapper">
+                <span class="material-symbols-outlined">event</span>
+                <input type="text" class="date-display" value="15 / 06 / 2026" readonly />
+              </div>
+              <div class="action-buttons">
+                <button class="btn-action">
+                  <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <button class="btn-action">
+                  <span class="material-symbols-outlined">save</span>
+                </button>
+                <button class="btn-action delete">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </div>
             </div>
           </div>
 
           <!-- Item: Clase -->
           <div class="fecha-item">
-            <div class="icon-box clase">
-              <span class="material-symbols-outlined">menu_book</span>
+            <div class="fecha-main-info">
+              <div class="icon-box clase">
+                <span class="material-symbols-outlined">menu_book</span>
+              </div>
+              <div class="fecha-text">
+                <h4>Clase de Repaso</h4>
+                <span class="tag-tipo">CLASE</span>
+              </div>
             </div>
-            <div class="fecha-info">
-              <h4>Clase de Repaso</h4>
-              <span>CLASE</span>
-            </div>
+            
             <div class="fecha-controls">
-              <input type="text" class="date-display" value="30 / 04 / 2026" readonly />
-              <button class="btn-action">
-                <span class="material-symbols-outlined">notifications</span>
-              </button>
-              <button class="btn-action">
-                <span class="material-symbols-outlined">save</span>
-              </button>
-              <button class="btn-action delete">
-                <span class="material-symbols-outlined">delete</span>
-              </button>
+              <div class="date-input-wrapper">
+                <span class="material-symbols-outlined">event</span>
+                <input type="text" class="date-display" value="30 / 04 / 2026" readonly />
+              </div>
+              <div class="action-buttons">
+                <button class="btn-action">
+                  <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <button class="btn-action">
+                  <span class="material-symbols-outlined">save</span>
+                </button>
+                <button class="btn-action delete">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </div>
             </div>
           </div>
+          
         </div>
       </div>
     </main>

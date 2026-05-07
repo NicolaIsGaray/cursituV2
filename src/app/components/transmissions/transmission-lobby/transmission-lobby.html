@@ -1,195 +1,106 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CursITU - Presentaciones</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0" />
-    <style>
-        :root {
-            --primary-purple: #3f3689;
-            --light-purple: #5246a5;
-            --bg-gray: #f8f9fe;
-            --text-dark: #1a1a1a;
-            --text-muted: #8d8d8d;
-            --success-green: #2ecc71;
-            --waiting-gray: #6e6e6e;
-        }
+<nav class="top-nav">
+  <button class="btn-back" routerLink="/home">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Regresar al menú
+  </button>
+</nav>
+<div class="presentations-container" *ngIf="authService.userRole$ | async as rol">
+  <!-- Panel de Creación -->
+  <section class="create-section">
+    <h2>Crear Presentación</h2>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-gray);
-            margin: 0;
-            padding: 40px;
-            display: flex;
-            justify-content: center;
-        }
+    <!-- Solo visible para Alumnos -->
+    <div class="form-group" *ngIf="rol === 'ALUMNO'">
+      <div class="label-container">
+        <span class="label-main">Subir presentación</span>
+        <span class="label-hint">Solo formatos ".pdf" o ".pptx"</span>
+      </div>
+      <button class="upload-btn">
+        <span class="material-symbols-outlined">add_circle</span>
+      </button>
+    </div>
 
-        .presentations-container {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            width: 1000px;
-            background: white;
-            border-radius: 25px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
-        }
+    <!-- Solo visible para Docentes -->
+    <div class="docente-controls" *ngIf="rol === 'DOCENTE'">
+      <div class="label-main" style="margin-bottom: 15px">Método de organización</div>
+      <div class="method-selector">
+        <button (click)="metodo = 'orden'" [class.active]="metodo === 'orden'">En Orden</button>
+        <button (click)="metodo = 'sorteo'" [class.active]="metodo === 'sorteo'">Sorteo</button>
+      </div>
 
-        /* --- SECCIÓN IZQUIERDA: CREAR --- */
-        .create-section {
-            padding: 40px 60px;
-        }
-
-        h2 { font-size: 1.5rem; margin-bottom: 40px; }
-
-        .form-group {
-            margin-bottom: 35px;
-        }
-
-        .label-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .label-main { font-weight: 700; font-size: 1.1rem; }
-        .label-hint { color: var(--text-muted); font-size: 0.9rem; }
-
-        .upload-btn, .order-btn {
-            width: 100%;
-            background: var(--primary-purple);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            transition: background 0.2s;
-        }
-
-        .upload-btn:hover, .order-btn:hover { background: var(--light-purple); }
-
-        .btn-finish {
-            background: var(--primary-purple);
-            color: white;
-            border: none;
-            padding: 15px 50px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: block;
-            margin: 50px auto 0;
-        }
-
-        /* --- SECCIÓN DERECHA: SALAS --- */
-        .rooms-section {
-            background: var(--primary-purple);
-            color: white;
-            padding: 30px;
-        }
-
-        .rooms-header {
-            font-size: 1.6rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .room-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .room-name { font-weight: 600; font-size: 1.1rem; }
-
-        .status-badge {
-            padding: 6px 15px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            min-width: 90px;
-            text-align: center;
-        }
-
-        .transmitting { background: var(--success-green); }
-        .waiting { background: var(--waiting-gray); }
-
-        .btn-enter {
-            background: var(--light-purple);
-            color: white;
-            border: none;
-            padding: 6px 15px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-    </style>
-</head>
-<body>
-
-<div class="presentations-container">
-    <!-- Panel de Creación -->
-    <section class="create-section">
-        <h2>Crear Presentación</h2>
-
-        <div class="form-group">
-            <div class="label-container">
-                <span class="label-main">Subir presentación</span>
-                <span class="label-hint">Solo formatos ".pdf" o ".pptx"</span>
-            </div>
-            <button class="upload-btn">
-                <span class="material-symbols-outlined">add_circle</span>
-            </button>
+      <!-- VISTA: EN ORDEN -->
+      <div class="method-view" *ngIf="metodo === 'orden'">
+        <div class="form-group slide-in">
+          <div class="label-container">
+            <span class="label-main">¿Orden para pasar?</span>
+          </div>
+          <button class="order-btn">
+            <span class="material-symbols-outlined">arrow_downward</span>
+          </button>
         </div>
 
-        <div class="form-group">
-            <div class="label-container">
-                <span class="label-main">¿Orden para pasar?</span>
-            </div>
-            <button class="order-btn">
-                <span class="material-symbols-outlined">arrow_downward</span>
-            </button>
+        <div class="table-container slide-in">
+          <table class="simulated-table">
+            <thead>
+              <tr>
+                <th>Grupo</th>
+                <th>Prioridad de paso</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let g of [1, 2, 3, 4]">
+                <td>Grupo #{{ g }}</td>
+                <td>
+                  <select class="select-order">
+                    <option *ngFor="let n of [1, 2, 3, 4]" [value]="n">{{ n }}°</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+      </div>
 
-        <button class="btn-finish">Terminado</button>
-    </section>
-
-    <!-- Panel de Salas -->
-    <aside class="rooms-section">
-        <div class="rooms-header">Salas</div>
-        
-        <div class="room-item">
-            <span class="room-name">Grupo #1</span>
-            <div style="display: flex; align-items: center;">
-                <span class="status-badge transmitting">Transmitiendo</span>
-                <a class="btn-enter" routerLink="/transmission-live">Entrar</a>
-            </div>
+      <!-- VISTA: SORTEO -->
+      <div class="method-view" *ngIf="metodo === 'sorteo'">
+        <div class="sorteo-header slide-in">
+          <button class="btn-sortear" (click)="ejecutarSorteo()">
+            <span class="material-symbols-outlined">casino</span> ¡Sortear!
+          </button>
         </div>
-
-        <div class="room-item">
-            <span class="room-name">Grupo #2</span>
-            <span class="status-badge waiting">En Espera</span>
+        <div class="table-container slide-in">
+          <table class="simulated-table">
+            <thead>
+              <tr>
+                <th>Grupo</th>
+                <th>Resultado Sorteo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let g of gruposSimulados">
+                <td>Grupo #{{ g.id }}</td>
+                <td class="result-cell">{{ g.resultado || '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+      </div>
+    </div>
 
-        <div class="room-item">
-            <span class="room-name">Grupo #3</span>
-            <span class="status-badge waiting">En Espera</span>
-        </div>
+    <button class="btn-finish">Terminado</button>
+  </section>
 
-        <div class="room-item">
-            <span class="room-name">Grupo #4</span>
-            <span class="status-badge waiting">En Espera</span>
-        </div>
-    </aside>
+  <!-- Panel de Salas -->
+  <aside class="rooms-section">
+    <div class="rooms-header">Salas</div>
+    <div class="room-item" *ngFor="let i of [1, 2, 3, 4]">
+      <span class="room-name">Grupo #{{ i }}</span>
+      <div class="status-container">
+        <span class="status-badge" [class.transmitting]="i === 1" [class.waiting]="i !== 1">
+          {{ i === 1 ? 'Transmitiendo' : 'En Espera' }}
+        </span>
+        <a *ngIf="i === 1" class="btn-enter" routerLink="/transmission-live">Entrar</a>
+      </div>
+    </div>
+  </aside>
 </div>
-
-</body>
-</html>

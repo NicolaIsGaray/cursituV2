@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Aviso } from '../../../notices/temp.model.notices';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-notices',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './notices-list.html',
   styleUrl: '../notices.css',
 })

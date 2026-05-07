@@ -1,3 +1,9 @@
+/* === ESTILOS BASE === */
+/* Reset global para evitar desbordamientos por padding/border */
+* {
+  box-sizing: border-box;
+}
+
 .groups-container {
   display: grid;
   grid-template-columns: 1fr 1.2fr;
@@ -9,6 +15,27 @@ h3 {
   font-size: 1.3rem;
   font-weight: 700;
   margin-bottom: 20px;
+  color: #1a1a1a;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--primary-purple);
 }
 
 .selection-panel {
@@ -16,15 +43,6 @@ h3 {
   padding: 30px;
   border-radius: 20px;
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.03);
-}
-
-.search-box input {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  margin-bottom: 25px;
-  font-size: 0.9rem;
 }
 
 .subjects-list {
@@ -45,8 +63,9 @@ h3 {
   transition: transform 0.2s;
 }
 
-.subject-card:hover {
-  transform: translateY(-3px);
+.subject-card.selected {
+  outline: 4px solid rgba(0,0,0,0.1);
+  transform: scale(0.98);
 }
 
 .group-detail-panel {
@@ -78,24 +97,6 @@ h3 {
   border-bottom: 1px solid #f0f0f0;
 }
 
-.member-item:last-child {
-  border-bottom: none;
-}
-
-.member-avatar {
-  width: 55px;
-  height: 55px;
-  border-radius: 10px;
-  overflow: hidden;
-  background: #eee;
-}
-
-.member-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .member-name {
   margin: 0;
   font-weight: 700;
@@ -109,21 +110,19 @@ h3 {
   font-size: 0.85rem;
 }
 
-/* === SECCIÓN DOCENTE CORREGIDA PARA NETBOOK === */
-
+/* === SECCIÓN DOCENTE === */
 .grupos-container {
   display: flex;
   justify-content: center;
-  padding: 10px; /* Reducido */
-  height: calc(100vh - 150px); /* Ajuste dinámico para netbook */
-  box-sizing: border-box;
+  padding: 10px;
+  height: calc(100vh - 160px);
 }
 
 .main-card {
   display: flex;
   width: 100%;
   max-width: 1200px;
-  height: 100%; /* Toma el alto del contenedor padre */
+  height: 100%;
   background: white;
   border-radius: 20px;
   overflow: hidden;
@@ -131,16 +130,17 @@ h3 {
 }
 
 .gestion-form-section {
-  flex: 0 0 350px; /* Ancho fijo para el formulario */
+  flex: 0 0 350px;
   padding: 25px;
   color: white;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* Por si el formulario es largo */
+  overflow-y: auto;
+  min-width: 0; /* Evita que el flex-item se desborde */
 }
 
 .gestion-form-section h2 {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 800;
   text-align: center;
   margin-bottom: 20px;
@@ -148,6 +148,7 @@ h3 {
 
 .form-group {
   margin-bottom: 15px;
+  width: 100%;
 }
 
 .form-group label {
@@ -157,60 +158,53 @@ h3 {
   font-size: 0.9rem;
 }
 
-.input-field {
+.input-field, .select-field {
   width: 100%;
+  max-width: 100%; /* Asegura que no superen al padre */
   border: none;
   border-radius: 8px;
   padding: 10px;
   font-size: 0.9rem;
   background: white;
-  box-sizing: border-box;
+  font-family: inherit;
+  display: block;
+}
+
+.select-field {
+  height: 120px;
 }
 
 .btn-guardar-grupo {
-  margin-top: 15px;
+  margin-top: 20px;
   background: rgba(0,0,0,0.2);
   color: white;
   border: none;
-  padding: 12px;
+  padding: 15px;
   border-radius: 8px;
   font-weight: 800;
-  font-size: 1rem;
   cursor: pointer;
   transition: background 0.3s;
-}
-
-.btn-guardar-grupo:hover {
-  background: rgba(0,0,0,0.3);
+  width: 100%;
 }
 
 .grupos-grid-section {
   flex: 1;
   background: #f8faff;
   padding: 20px;
-  overflow: hidden; /* Importante para que el scroll-container funcione */
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .scroll-container {
   flex: 1;
-  overflow-y: auto; /* Scroll de la grilla de grupos */
-  padding-right: 10px;
-}
-
-/* Personalización de scrollbar para que ocupe menos espacio */
-.scroll-container::-webkit-scrollbar {
-  width: 6px;
-}
-.scroll-container::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 10px;
+  overflow-y: auto;
 }
 
 .grupos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 15px;
 }
 
@@ -223,13 +217,12 @@ h3 {
 }
 
 .grupo-card-header {
-  padding: 10px 12px;
+  padding: 12px;
   color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-weight: 700;
-  font-size: 0.85rem;
 }
 
 .grupo-actions {
@@ -242,38 +235,70 @@ h3 {
   border: none;
   color: white;
   cursor: pointer;
-  padding: 2px;
+  display: flex;
+  align-items: center;
+}
+
+.integrantes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .integrantes-list li {
-  padding: 8px 12px;
+  padding: 10px 15px;
   border-bottom: 1px solid #eee;
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 600;
   color: #444;
 }
 
-.select-field {
-  width: 100%;
-  border: none;
-  border-radius: 8px;
-  padding: 8px;
-  font-size: 0.85rem;
-  background: white;
-  height: 120px; /* Reducido para netbook */
-  box-sizing: border-box;
-}
-
-.help-text {
-  font-size: 0.7rem;
-  margin-top: 5px;
-}
-
-/* Media Query específica para el alto de la netbook */
-@media (max-height: 620px) {
-  .grupos-container {
-    height: calc(100vh - 100px);
+/* === ADAPTACIÓN MÓVIL === */
+@media (max-width: 900px) {
+  .groups-container {
+    display: flex;
+    flex-direction: column;
   }
-  .gestion-form-section h2 { font-size: 1.2rem; }
-  .select-field { height: 90px; }
+
+  .subjects-list {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scrollbar-width: none;
+  }
+
+  .subjects-list::-webkit-scrollbar { display: none; }
+
+  .subject-card {
+    flex: 0 0 160px;
+    padding: 15px;
+  }
+
+  .grupos-container {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .main-card {
+    flex-direction: column;
+    height: auto;
+    background: transparent;
+  }
+
+  .gestion-form-section {
+    flex: none;
+    width: 100%;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    overflow-y: visible;
+  }
+
+  .grupos-grid-section {
+    padding: 0;
+  }
+
+  .grupos-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
 }

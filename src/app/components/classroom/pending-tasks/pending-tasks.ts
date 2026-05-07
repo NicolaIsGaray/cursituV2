@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-pending-tasks',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './pending-tasks.html',
   styleUrl: './pending-tasks.css',
 })

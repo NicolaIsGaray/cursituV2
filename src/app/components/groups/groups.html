@@ -1,11 +1,14 @@
-<h3>Materia Correspondiente</h3>
 <main *ngIf="authService.userRole$ | async as rol">
+  <nav class="top-nav">
+    <button class="btn-back" routerLink="/home">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Regresar al menú
+    </button>
+  </nav>
+  <h3>Materia Correspondiente</h3>
+  <!-- VISTA ALUMNO -->
   <div class="groups-container" *ngIf="rol === 'ALUMNO'">
     <div class="selection-panel">
-      <div class="search-box">
-        <input type="text" placeholder="Buscar materia" />
-      </div>
-
       <div class="subjects-list">
         <div
           class="subject-card"
@@ -39,25 +42,22 @@
     </div>
   </div>
 
+  <!-- VISTA DOCENTE -->
   <div class="grupos-container" *ngIf="rol === 'DOCENTE'">
     <div class="main-card">
       <!-- Lado Izquierdo: Formulario de Gestión -->
       <div class="gestion-form-section" [style.background-color]="'#ff912c'">
         <h2>Gestión de Grupos</h2>
-
         <div class="form-group">
           <label>Número del Grupo</label>
           <input type="text" class="input-field" placeholder="Ej: 4" />
         </div>
-
         <div class="form-group">
           <label>Límite de Integrantes</label>
-          <input type="number" class="input-field" placeholder="Máximo de alumnos" />
+          <input type="number" class="input-field" placeholder="Máximo" />
         </div>
-
         <div class="form-group">
           <label>Integrantes</label>
-          <!-- Selector de Alumnos acorde a la sección -->
           <select class="select-field" multiple>
             <option value="1">Garay, Facundo</option>
             <option value="2">Diaz, Martin</option>
@@ -65,9 +65,7 @@
             <option value="4">Lopez, Maria</option>
             <option value="5">Rodriguez, Cristian</option>
           </select>
-          <small class="help-text">* Mantén Presionado Ctrl para seleccionar varios</small>
         </div>
-
         <button class="btn-guardar-grupo">Guardar Grupo</button>
       </div>
 
@@ -75,7 +73,6 @@
       <div class="grupos-grid-section">
         <div class="scroll-container">
           <div class="grupos-grid">
-            <!-- Card de Grupo (Repetible) -->
             <div class="grupo-card" *ngFor="let i of [1, 2, 3, 4]">
               <header class="grupo-card-header" [style.background-color]="'#ff912c'">
                 <span>Grupo N° {{ i }}</span>
@@ -90,10 +87,8 @@
               </header>
               <ul class="integrantes-list">
                 <li>FACUNDO GARAY</li>
-                <li>FACUNDO GARAY</li>
-                <li>FACUNDO GARAY</li>
-                <li>FACUNDO GARAY</li>
-                <li>FACUNDO GARAY</li>
+                <li>MARTIN DIAZ</li>
+                <li>JUAN PEREZ</li>
               </ul>
             </div>
           </div>

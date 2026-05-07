@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { Materia } from '../../subjects/temp-subjects';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../service/auth-service';
 
 @Component({
   selector: 'app-subjects',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './subjects-list.html',
   styleUrls: ['./subjects-list.css']
 })
