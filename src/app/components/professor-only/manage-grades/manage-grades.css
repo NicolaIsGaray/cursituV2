@@ -1,69 +1,21 @@
+/* =========================================
+   ESTADOS GLOBALES Y VARIABLES
+   ========================================= */
 .notas-container {
   width: 100%;
-}
-
-/* --- SIDEBAR DE MATERIAS --- */
-.sidebar-card {
-  background: white;
-  border-radius: 20px;
-  padding: 1.5rem;
-  box-shadow: 0px 4px 15px rgba(0,0,0,0.05);
-}
-
-.sidebar-card h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-bottom: 1.2rem;
-}
-
-.search-box input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
+  padding: 20px;
   box-sizing: border-box;
+  background-color: var(--bg-gray);
+  min-height: 100vh;
 }
 
-.materias-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.materia-btn {
-  border: none;
-  border-radius: 12px;
-  padding: 15px;
-  color: white;
-  font-weight: 700;
-  font-size: 0.85rem;
-  cursor: pointer;
-  text-align: center;
-  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-}
-
-.materia-btn.orange { background: #ff912c; }
-.materia-btn.green { background: #2ecc71; }
-.materia-btn.blue { background: #4a69bd; }
-
-/* --- PLANILLA CENTRAL --- */
-.planilla-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-/* Contenedor de navegación */
+/* --- NAVEGACIÓN Y CABECERA --- */
 .top-nav {
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
 }
 
-/* Estilo del botón Regresar */
 .btn-back {
   background: none;
   border: none;
@@ -81,15 +33,25 @@
 
 .btn-back:hover {
   background-color: rgba(0, 0, 0, 0.05);
-  color: var(--primary-purple); /* O el color que uses para acentos */
+  color: var(--primary-purple);
 }
 
-.btn-back .material-symbols-outlined {
-  font-size: 1.2rem;
+.planilla-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.planilla-header h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin: 0;
 }
 
 .btn-nueva-nota {
-  background: #2ecc71;
+  background: var(--success-green);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -99,175 +61,215 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  transition: transform 0.2s;
 }
 
+.btn-nueva-nota:active { transform: scale(0.95); }
+
+/* --- FILTRO DE ACTIVIDADES (SEGMENTED CONTROL) --- */
+.filter-wrapper {
+  margin-bottom: 25px;
+  background: white;
+  padding: 12px;
+  border-radius: 18px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.filter-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+  scrollbar-width: none; /* Firefox */
+}
+
+.filter-scroll::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+.filter-chip {
+  white-space: nowrap;
+  background: #f0f2f5;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-chip.active {
+  background: var(--primary-purple);
+  color: white;
+  box-shadow: 0 4px 10px rgba(63, 54, 137, 0.2);
+}
+
+/* --- PLANILLA / TABLA --- */
 .planilla-wrapper {
   background: white;
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0px 4px 20px rgba(0,0,0,0.05);
-  min-height: 500px;
+  box-shadow: 0px 10px 30px rgba(0,0,0,0.05);
 }
 
 .table-header-banner {
-  background: #ff912c;
+  background: var(--accent-orange);
   color: white;
-  padding: 2rem;
+  padding: 1.5rem;
   text-align: center;
   font-weight: 800;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   margin: 20px;
   border-radius: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .notas-table {
-  width: 95%;
-  margin: 0 auto 2rem;
+  width: calc(100% - 40px);
+  margin: 0 auto 20px;
   border-collapse: collapse;
 }
 
 .notas-table th {
   text-align: left;
-  color: #999;
+  color: var(--text-muted);
   padding: 1rem;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  border-bottom: 2px solid #f5f5f5;
 }
 
 .notas-table td {
   padding: 1.2rem 1rem;
   border-bottom: 1px solid #f5f5f5;
+  vertical-align: middle;
 }
 
 .alumno-name {
   font-weight: 700;
-  color: #333;
+  color: var(--text-dark);
 }
 
 /* Inputs de Nota */
 .input-nota {
-  width: 60px;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  width: 65px;
+  padding: 10px;
+  border: 2px solid #eee;
+  border-radius: 10px;
   text-align: center;
-  font-weight: 700;
+  font-weight: 800;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.input-nota:focus {
+  border-color: var(--primary-purple);
+  outline: none;
 }
 
 .input-nota.fail {
-  border-color: #e74c3c;
-  color: #e74c3c;
+  border-color: var(--danger-red);
+  color: var(--danger-red);
+  background: #fff5f5;
 }
 
 /* Botones de acción */
 .actions-cell {
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
 .btn-save, .btn-delete {
-  background: none;
+  background: white;
   border: 1px solid #eee;
-  border-radius: 6px;
-  padding: 5px;
+  border-radius: 8px;
+  padding: 8px;
   cursor: pointer;
   color: #666;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s;
 }
 
-.btn-save:hover { color: #3f3689; border-color: #3f3689; }
-.btn-delete:hover { color: #e74c3c; border-color: #e74c3c; }
+.btn-save:hover { color: var(--primary-purple); border-color: var(--primary-purple); background: #f4f3ff; }
+.btn-delete:hover { color: var(--danger-red); border-color: var(--danger-red); background: #fff5f5; }
 
 /* =========================================
-   ADAPTACIÓN PARA RESOLUCIONES (NETBOOKS)
+   ADAPTACIÓN PARA NETBOOKS (Baja altura)
    ========================================= */
-
-@media (max-width: 1100px) {
-  .notas-container {
-    grid-template-columns: 250px 1fr; /* Sidebar un poco más estrecha */
-    gap: 1.5rem;
-  }
-
-  .sidebar-card {
-    padding: 1rem;
-  }
-
-  .table-header-banner {
-    padding: 1.2rem;
-    font-size: 1rem;
-    margin: 15px;
-  }
-
-  .planilla-wrapper {
-    min-height: auto;
-  }
-}
-
-@media (max-width: 850px) {
-  .notas-container {
-    grid-template-columns: 1fr; /* Sidebar arriba, planilla abajo */
-    display: flex;
-    flex-direction: column;
-  }
-
-  .materias-sidebar {
-    width: 100%;
-  }
-
-  .materias-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 10px;
-  }
-
-  .planilla-content {
-    width: 100%;
-  }
-
-  /* Permitir scroll horizontal en la tabla si los nombres de alumnos son largos */
-  .planilla-wrapper {
-    overflow-x: auto;
-  }
-
-  .notas-table {
-    min-width: 600px;
-  }
-}
-
 @media (max-height: 650px) {
-  /* Optimizaciones para pantallas de poca altura (1024x600) */
-  .notas-container {
-    gap: 1rem;
+  .planilla-header h2 { font-size: 1.4rem; }
+  .table-header-banner { padding: 0.8rem; margin: 10px; font-size: 0.9rem; }
+  .notas-table td { padding: 0.8rem; }
+  .input-nota { padding: 6px; }
+}
+
+/* =========================================
+   ADAPTACIÓN MÓVIL (TABLA TIPO CARD)
+   ========================================= */
+@media (max-width: 768px) {
+  .notas-container { padding: 10px; }
+  
+  .planilla-header { flex-direction: row; margin-bottom: 1rem; }
+  .btn-text { display: none; } /* Solo icono en móvil */
+
+  /* Transformación de Tabla a Cards */
+  .notas-table thead {
+    display: none; /* Escondemos cabeceras */
+  }
+
+  .notas-table, .notas-table tbody, .notas-table tr, .notas-table td {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .notas-table tr {
+    background: white;
+    margin-bottom: 15px;
+    border-radius: 15px;
     padding: 10px;
-  }
-
-  .sidebar-card h3 {
-    margin-bottom: 0.8rem;
-  }
-
-  .search-box input {
-    margin-bottom: 0.8rem;
-    padding: 8px;
-  }
-
-  .materia-btn {
-    padding: 10px;
-    font-size: 0.8rem;
-  }
-
-  .planilla-header h2 {
-    font-size: 1.3rem;
-  }
-
-  .table-header-banner {
-    padding: 0.8rem;
-    margin: 10px;
-    font-size: 0.9rem;
+    border: 1px solid #eee;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
   }
 
   .notas-table td {
-    padding: 0.8rem 1rem;
+    text-align: right;
+    padding: 12px 15px;
+    border-bottom: 1px solid #f9f9f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .notas-table td:last-child { border-bottom: none; }
+
+  /* Inyectar etiquetas desde data-label */
+  .notas-table td::before {
+    content: attr(data-label);
+    font-weight: 800;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    text-align: left;
+  }
+
+  .alumno-name {
+    color: var(--primary-purple) !important;
+    font-size: 1.1rem;
+    background: #f8f9ff;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+
+  .actions-cell {
+    justify-content: flex-end;
+    padding-top: 10px !important;
   }
 
   .input-nota {
-    padding: 5px;
+    width: 80px;
+    padding: 12px;
   }
 }

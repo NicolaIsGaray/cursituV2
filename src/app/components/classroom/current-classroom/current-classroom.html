@@ -1,13 +1,52 @@
+<nav class="top-nav">
+  <button class="btn-back" routerLink="/home">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Regresar al menú
+  </button>
+</nav>
 <div class="course-header">
   <h2>Programación Orientada a Objetos</h2>
 </div>
 
 <div class="classroom-container">
+  <!-- Sidebar / Navegación Horizontal -->
+  <aside class="sections-sidebar" [style.background-color]="materiaColor">
+    <div class="sidebar-header">
+      <h3>Secciones</h3>
+      <div class="divider"></div>
+    </div>
+
+    <ul class="sections-list">
+      <li class="section-item active">
+        <div class="indicator"></div>
+        <p>Introducción</p>
+      </li>
+      
+      <li class="section-item" *ngFor="let i of [1,2,3,4,5]">
+        <p>Clase {{i}}</p>
+      </li>
+
+      <li class="section-item exam">
+        <p>Parcial N° 1</p>
+      </li>
+    </ul>
+  </aside>
+
   <div class="content-area">
-    <!-- El contenido se mantiene igual -->
+    <!-- NUEVO: Botones de gestión para Docente sobre el contenido -->
+    <div class="admin-top-actions" *ngIf="(authService.userRole$ | async) === 'DOCENTE'">
+      <button class="btn-manage edit">
+        <span class="material-symbols-outlined">edit</span>
+        Editar Contenido
+      </button>
+      <button class="btn-manage delete">
+        <span class="material-symbols-outlined">delete</span>
+        Eliminar Sección
+      </button>
+    </div>
+
     <div class="content-card">
-      <h3>Introducción</h3>
-      <div class="teacher-banner" [style.background-color]="'#006054'"> <!-- Color según la imagen -->
+      <div class="teacher-banner" [style.background-color]="'#006054'">
         <div class="teacher-photo">
           <img src="assets/profesor-fontaine.png" alt="Profesor">
         </div>
@@ -18,55 +57,18 @@
           <p class="name">Ignacio G. Fontaine Didier</p>
           <span class="label">Formación académica:</span>
           <p class="bio">Lic. En Informática y Desarrollo de Software</p>
-          <!-- Perfil personal omitido para brevedad -->
         </div>
       </div>
+
       <div class="text-content">
+        <h3>Introducción</h3>
         <p>La materia Programación Orientada a Objetos (POO) introduce...</p>
       </div>
     </div>
   </div>
-
-  <!-- Sidebar: Visible para ambos, pero con controles extra para DOCENTE -->
-  <aside class="sections-sidebar" [style.background-color]="materiaColor">
-    <div class="sidebar-header">
-      <h3>Secciones</h3>
-      <div class="divider"></div>
-    </div>
-
-    <ul class="sections-list">
-      <!-- Introducción (Activa) -->
-      <li class="section-item active">
-        <div class="indicator"></div>
-        <p>Introducción</p>
-        <div class="admin-actions" *ngIf="(authService.userRole$ | async) === 'DOCENTE'">
-          <button class="btn-icon"><span class="material-symbols-outlined">edit</span></button>
-          <button class="btn-icon delete"><span class="material-symbols-outlined">delete</span></button>
-        </div>
-      </li>
-      
-      <!-- Clases dinámicas -->
-      <li class="section-item" *ngFor="let i of [1,2,3,4,5]">
-        <p>Clase {{i}}</p>
-        <div class="admin-actions" *ngIf="(authService.userRole$ | async) === 'DOCENTE'">
-          <button class="btn-icon"><span class="material-symbols-outlined">edit</span></button>
-          <button class="btn-icon delete"><span class="material-symbols-outlined">delete</span></button>
-        </div>
-      </li>
-
-      <!-- Parciales -->
-      <li class="section-item exam">
-        <p>Parcial N° 1</p>
-        <div class="admin-actions" *ngIf="(authService.userRole$ | async) === 'DOCENTE'">
-          <button class="btn-icon"><span class="material-symbols-outlined">edit</span></button>
-          <button class="btn-icon delete"><span class="material-symbols-outlined">delete</span></button>
-        </div>
-      </li>
-    </ul>
-
-    <!-- Botón Agregar: Solo para DOCENTE -->
-    <div class="sidebar-footer" *ngIf="(authService.userRole$ | async) === 'DOCENTE'">
-      <a class="btn-agregar" routerLink="/add-class">Agregar</a>
-    </div>
-  </aside>
 </div>
+
+<!-- Botón Flotante "+" (FAB) mejorado -->
+<button class="fab-add" *ngIf="(authService.userRole$ | async) === 'DOCENTE'" routerLink="/add-class">
+  <span class="material-symbols-outlined">add</span>
+</button>

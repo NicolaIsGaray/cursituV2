@@ -1,23 +1,35 @@
 <main *ngIf="authService.userRole$ | async as rol">
   <div class="notas-container" *ngIf="rol === 'DOCENTE'">
-    <!-- Columna Principal: Planilla -->
     <main class="planilla-content">
       <nav class="top-nav">
         <button class="btn-back" routerLink="/professor-panel">
           <span class="material-symbols-outlined">arrow_back</span>
-          Regresar al Panel
+          Regresar
         </button>
       </nav>
+
       <div class="planilla-header">
-        <h2>Planilla de Calificaciones</h2>
+        <h2>Calificaciones</h2>
         <button class="btn-nueva-nota">
           <span class="material-symbols-outlined">add_circle</span>
-          Nueva Nota
+          <span class="btn-text">Nueva Nota</span>
         </button>
       </div>
 
+      <!-- FILTRO ESTILIZADO (Segmented Control) -->
+      <div class="filter-wrapper">
+        <div class="filter-scroll">
+          <button class="filter-chip active">Todos</button>
+          <button class="filter-chip">TP 1</button>
+          <button class="filter-chip">TP 2</button>
+          <button class="filter-chip">Parcial 1</button>
+          <button class="filter-chip">Parcial 2</button>
+          <button class="filter-chip">Final</button>
+        </div>
+      </div>
+
       <div class="planilla-wrapper">
-        <div class="table-header-banner">PROGRAMACIÓN ORIENTADA A OBJETOS - LISTADO</div>
+        <div class="table-header-banner">POO - LISTADO DE ALUMNOS</div>
 
         <table class="notas-table">
           <thead>
@@ -25,30 +37,33 @@
               <th>Alumno</th>
               <th>Actividad</th>
               <th>Nota</th>
-              <th>Acciones</th>
+              <th class="text-right">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <!-- Fila de ejemplo 1 -->
             <tr>
-              <td class="alumno-name">Facundo Garay</td>
-              <td>Parcial 1</td>
-              <td><input type="number" class="input-nota" value="8" /></td>
-              <td class="actions-cell">
-                <button class="btn-save">
+              <td class="alumno-name" data-label="Alumno">Facundo Garay</td>
+              <td data-label="Actividad">Parcial 1</td>
+              <td data-label="Nota">
+                <input type="number" class="input-nota" value="8" />
+              </td>
+              <td class="actions-cell text-right" data-label="Acciones">
+                <button class="btn-save" title="Guardar">
                   <span class="material-symbols-outlined">save</span>
                 </button>
-                <button class="btn-delete">
+                <button class="btn-delete" title="Borrar">
                   <span class="material-symbols-outlined">delete</span>
                 </button>
               </td>
             </tr>
-            <!-- Fila de ejemplo 2 (Desaprobado) -->
+            
             <tr>
-              <td class="alumno-name">Maria Gomez</td>
-              <td>Parcial 1</td>
-              <td><input type="number" class="input-nota fail" value="5" /></td>
-              <td class="actions-cell">
+              <td class="alumno-name" data-label="Alumno">Maria Gomez</td>
+              <td data-label="Actividad">Parcial 1</td>
+              <td data-label="Nota">
+                <input type="number" class="input-nota fail" value="5" />
+              </td>
+              <td class="actions-cell text-right" data-label="Acciones">
                 <button class="btn-save">
                   <span class="material-symbols-outlined">save</span>
                 </button>

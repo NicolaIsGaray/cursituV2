@@ -138,6 +138,8 @@ h2 {
 
 .action-banner {
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .btn-create-activity {
@@ -259,108 +261,102 @@ h2 {
 }
 
 /* =========================================
-   ADAPTACIÓN HOME (ALUMNO & DOCENTE)
+   ADAPTACIÓN MOBILE (HOME)
    ========================================= */
 
-/* --- AJUSTES GLOBALES --- */
-@media (max-width: 1100px) {
+/* --- AJUSTES PARA TABLETS (768px o menos) --- */
+@media (max-width: 768px) {
   h2 {
     font-size: 1.2rem;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
+    text-align: center; /* Centrado opcional para mejor estética en móvil */
   }
-}
 
-/* --- VISTA ALUMNO (Dashboard Grid) --- */
-@media (max-width: 1100px) {
+  /* VISTA ALUMNO */
   .dashboard-grid {
-    grid-template-columns: repeat(2, 1fr); /* Pasamos a 2 columnas */
+    grid-template-columns: 1fr; /* Una sola columna */
+    grid-auto-rows: auto; /* Altura flexible según contenido */
     gap: 16px;
   }
 
-  .card.wide {
-    grid-column: span 2;
-  }
-
-  .card.tall {
-    grid-column: span 1; /* En netbooks deja de ser tan alta para no romper el flujo */
-    grid-row: span 1;
-  }
-
+  .card.wide,
+  .card.tall,
   .card.small {
-    grid-column: span 1;
-  }
-}
-
-@media (max-width: 768px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr; /* Una sola columna en móviles */
+    grid-column: span 1; /* Todas ocupan el ancho total */
+    grid-row: auto;
+    min-height: 140px;
   }
 
-  .card.wide, .card.tall, .card.small {
-    grid-column: span 1;
-  }
-}
-
-/* --- VISTA DOCENTE (Info Grid & Banner) --- */
-@media (max-width: 1100px) {
-  .btn-create-activity {
-    padding: 1.5rem; /* Reducimos el padding exagerado */
-    border-radius: 16px;
-  }
-
-  .btn-create-activity span {
-    font-size: 1.5rem;
-  }
-
-  .icon-plus {
-    font-size: 2.5rem !important;
-  }
-
+  /* VISTA DOCENTE */
   .info-grid {
-    grid-template-columns: 1fr; /* Apilamos la columna de alumnos abajo */
+    grid-template-columns: 1fr; /* Apila el Aside (Alumnos) al final */
+    gap: 16px;
   }
 
   .main-stats {
-    gap: 1rem;
-  }
-
-  .side-stats .stat-card {
-    min-height: 300px; /* Altura fija para la lista de alumnos cuando se apila */
-  }
-}
-
-@media (max-width: 650px) {
-  .main-stats {
-    grid-template-columns: 1fr; /* Cards de estadísticas una debajo de otra */
+    grid-template-columns: 1fr; /* Stats una debajo de otra */
+    gap: 16px;
   }
 
   .wide-card {
     grid-column: span 1;
   }
-  
+
+  .stat-card {
+    min-height: 180px;
+  }
+
   .btn-create-activity {
-    flex-direction: column;
-    text-align: center;
-    gap: 0.5rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .btn-create-activity span {
+    font-size: 1.4rem;
   }
 }
 
-/* --- OPTIMIZACIÓN ALTURA (NETBOOKS 1024x600) --- */
-@media (max-height: 650px) {
-  .dashboard-grid {
-    grid-auto-rows: minmax(120px, auto); /* Filas más compactas */
-  }
-
+/* --- AJUSTES PARA MÓVILES PEQUEÑOS (480px o menos) --- */
+@media (max-width: 480px) {
+  .card,
   .stat-card {
-    min-height: 160px; /* Reducción de altura mínima */
-    padding: 1rem;
+    padding: 16px;
   }
 
-  .card-content.empty, .empty-state {
-    padding: 10px;
+  .card h3,
+  .stat-card h3 {
+    font-size: 0.95rem;
   }
 
+  .card-content.empty p,
+  .empty-state p {
+    font-size: 0.85rem;
+  }
+
+  /* Ajuste de Banner Docente */
   .btn-create-activity {
-    padding: 1rem;
+    padding: 1.2rem;
+  }
+
+  .btn-create-activity span {
+    font-size: 1.2rem;
+  }
+
+  .success-text {
+    font-size: 0.85rem;
+  }
+}
+
+/* --- CORRECCIÓN PARA DISPOSITIVOS MUY ESTRECHOS O LANDSCAPE CORTO --- */
+@media (max-height: 500px) and (orientation: landscape) {
+  .dashboard-grid,
+  .info-grid {
+    gap: 10px;
+  }
+
+  .stat-card,
+  .card {
+    min-height: auto;
+    padding: 12px;
   }
 }

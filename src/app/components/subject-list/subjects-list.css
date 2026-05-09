@@ -7,7 +7,6 @@ h2 {
   color: #1a1a1a;
 }
 
-/* Contenedores Principales */
 .subjects-container, .materias-container {
   padding: 5px;
 }
@@ -15,130 +14,159 @@ h2 {
 .subjects-card, .materias-wrapper {
   background: white;
   border-radius: 16px;
-  padding: 20px; /* Reducido de 40px/3rem */
+  padding: 20px;
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
-  gap: 15px; /* Espaciado entre filas más ajustado */
-  min-height: auto;
+  gap: 15px;
 }
 
-/* Estructura de Fila (Común para Alumno y Docente) */
+.btn-back {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--primary-purple);
+}
+
+/* Estructura de Fila */
 .subject-row, .materia-row {
   display: flex;
   align-items: center;
-  gap: 12px; /* Reducido de 20px/1.5rem */
-  height: 80px; /* Altura fija reducida de 100px */
+  gap: 10px;
+  height: 85px; /* Ligeramente más alto para mejor touch target */
 }
 
-/* Bloque Principal de Materia */
-.subject-main, .materia-card {
+/* Contenedor Principal Clickable */
+.main-clickable {
   flex-grow: 1;
   height: 100%;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 0 20px;
   display: flex;
   align-items: center;
   color: white;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
-  box-sizing: border-box;
-  overflow: hidden; /* Evita desborde de texto largo */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.2s;
+  overflow: hidden;
 }
 
-/* Ajuste de degradados para Docente */
+.main-clickable:active {
+  transform: scale(0.98);
+  filter: brightness(0.9);
+}
+
 .materia-card.orange { background: linear-gradient(90deg, #ff912c, #ff9e42); }
 .materia-card.purple { background: linear-gradient(90deg, #3f3689, #4c42a1); }
 
 .subject-info h3, .materia-info h3 {
   margin: 0;
-  font-size: 0.95rem; /* Reducido para evitar saltos de línea */
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: 0.3px;
-  white-space: nowrap;
+  white-space: normal; /* Permitimos 2 líneas en móviles si es necesario */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .subject-info p, .materia-info p {
-  margin: 2px 0 0 0;
+  margin: 4px 0 0 0;
   font-size: 0.75rem;
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
-/* Botón de Acción (Flecha) */
-.action-btn-arrow, .btn-arrow {
-  width: 60px; /* Reducido de 100px/80px */
+/* Botón de Horarios (Rediseño Estético) */
+.schedule-btn, .btn-horarios {
+  width: 55px; /* En desktop/tablet es compacto */
   height: 100%;
-  border: none;
-  border-radius: 12px;
-  color: white;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 14px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s;
-  flex-shrink: 0;
-}
-
-.btn-arrow.orange { background: #ff912c; }
-.btn-arrow.purple { background: #3f3689; }
-
-.action-btn-arrow .material-symbols-outlined, 
-.btn-arrow .material-symbols-outlined {
-  font-size: 28px; /* Reducido de 40px */
-}
-
-/* Botón de Horarios */
-.schedule-btn, .btn-horarios {
-  width: 90px; /* Ajustado */
-  height: 100%;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 0.8rem;
-  color: #8d8d8d;
+  gap: 4px;
+  color: #6c757d;
   cursor: pointer;
   transition: all 0.2s;
-  margin-right: 0; /* Eliminado el margen de 8vw que rompía el layout */
   flex-shrink: 0;
+}
+
+.schedule-btn span:not(.material-symbols-outlined),
+.btn-horarios span:not(.material-symbols-outlined) {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.schedule-btn .material-symbols-outlined,
+.btn-horarios .material-symbols-outlined {
+  font-size: 20px;
 }
 
 .schedule-btn:hover, .btn-horarios:hover {
-  background: #f9f9f9;
+  background: #fff;
+  border-color: #3f3689;
   color: #3f3689;
 }
 
-/* === MEDIA QUERIES PARA RESOLUCIONES CRÍTICAS === */
+/* === MEDIA QUERIES (ADAPTACIÓN MÓVIL) === */
 
-@media (max-width: 1024px) {
-  .subject-info h3, .materia-info h3 {
-    font-size: 0.85rem;
-  }
-  
-  .subject-main, .materia-card {
-    padding: 0 15px;
-  }
-}
-
-/* Adaptación para netbooks con altura reducida (600px) o pantallas muy estrechas */
 @media (max-width: 768px) {
   .subject-row, .materia-row {
-    height: 70px; /* Más compacto aún */
+    height: 75px;
     gap: 8px;
   }
 
-  .schedule-btn, .btn-horarios {
-    width: 70px;
-    font-size: 0.7rem;
+  .main-clickable {
+    padding: 0 15px;
   }
 
-  .action-btn-arrow, .btn-arrow {
-    width: 50px;
+  .subject-info h3, .materia-info h3 {
+    font-size: 0.85rem;
   }
 
   .subject-info p, .materia-info p {
-    display: none; /* Ocultamos el docente en pantallas muy pequeñas para priorizar el nombre */
+    font-size: 0.7rem;
+  }
+
+  /* El botón de horarios se mantiene icon-centric en móviles muy pequeños */
+  .schedule-btn, .btn-horarios {
+    width: 50px;
+  }
+  
+  .schedule-btn span:not(.material-symbols-outlined),
+  .btn-horarios span:not(.material-symbols-outlined) {
+    display: none; /* Solo icono en móviles pequeños para no saturar */
+  }
+}
+
+@media (max-width: 400px) {
+  .subjects-card, .materias-wrapper {
+    padding: 12px;
+  }
+  
+  .main-clickable {
+    border-radius: 10px;
+  }
+
+  .schedule-btn, .btn-horarios {
+    border-radius: 10px;
+    width: 45px;
   }
 }

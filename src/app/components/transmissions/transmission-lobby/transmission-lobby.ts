@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from "@angular/router";
+import { AuthService } from '../../../service/auth-service';
 
 interface Sala {
   id: number;
@@ -23,7 +24,7 @@ export class TransmissionLobby implements OnInit{
     { id: 4, nombre: 'Grupo #4', estado: 'En Espera' }
   ];
 
-  constructor() { }
+  constructor(public authService: AuthService) { }
 
   ngOnInit(): void { }
 
@@ -42,4 +43,21 @@ export class TransmissionLobby implements OnInit{
   finalizarConfiguracion(): void {
     alert('Configuración guardada correctamente.');
   }
+
+  // Declaras la variable. Puede empezar vacía o con un valor por defecto.
+  metodo: 'orden' | 'sorteo' | null = null;
+
+  gruposSimulados = [
+    { id: 1, resultado: 0 },
+    { id: 2, resultado: 0 },
+    { id: 3, resultado: 0 },
+    { id: 4, resultado: 0 }
+];
+
+ejecutarSorteo() {
+    let numeros = [1, 2, 3, 4].sort(() => Math.random() - 0.5);
+    this.gruposSimulados.forEach((g, index) => {
+        g.resultado = numeros[index];
+    });
+}
 }

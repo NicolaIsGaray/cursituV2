@@ -1,49 +1,56 @@
-<h2>Materias En Curso</h2>
 <main *ngIf="authService.userRole$ | async as rol">
+  <nav class="top-nav">
+    <button class="btn-back" routerLink="/home">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Regresar al menú
+    </button>
+  </nav>
   <div class="materias-container">
-    <h2>Materias</h2>
+    <h2 *ngIf="rol === 'DOCENTE'">Materias</h2>
 
+    <!-- VISTA DOCENTE -->
     <div class="materias-wrapper" *ngIf="rol === 'DOCENTE'">
-      <!-- Fila de Materia 1 -->
       <div class="materia-row">
-        <div class="materia-card orange">
+        <!-- El contenedor ahora es el link principal -->
+        <div class="materia-card orange main-clickable" (click)="navigateTo('/professor-panel')">
           <div class="materia-info">
             <h3>PROGRAMACIÓN ORIENTADA A OBJETOS</h3>
             <p>Docente: <span>Ignacio Fontaine</span></p>
           </div>
         </div>
-        <button
-          class="action-btn-arrow btn-arrow orange"
-          (click)="navigateTo('/professor-panel')"
-        >
-          <span class="material-symbols-outlined">arrow_forward</span>
+        <!-- Botón de horarios estilizado -->
+        <button class="btn-horarios">
+          <span class="material-symbols-outlined">schedule</span>
+          <span>Horarios</span>
         </button>
-        <button class="btn-horarios">Horarios</button>
       </div>
 
-      <!-- Fila de Materia 2 -->
       <div class="materia-row">
-        <div class="materia-card purple">
+        <div class="materia-card purple main-clickable" (click)="navigateTo('/professor-panel')">
           <div class="materia-info">
             <h3>COMPUTACIÓN EN LA NUBE</h3>
             <p>Docente: <span>Ignacio Fontaine</span></p>
           </div>
         </div>
-        <button
-          class="action-btn-arrow btn-arrow purple"
-          (click)="navigateTo('/professor-panel')"
-        >
-          <span class="material-symbols-outlined">arrow_forward</span>
+        <button class="btn-horarios">
+          <span class="material-symbols-outlined">schedule</span>
+          <span>Horarios</span>
         </button>
-        <button class="btn-horarios">Horarios</button>
       </div>
     </div>
   </div>
 
+  <!-- VISTA ALUMNO -->
   <div class="subjects-container" *ngIf="rol === 'ALUMNO'">
+    <h2>Materias En Curso</h2>
+
     <div class="subjects-card">
       <div class="subject-row" *ngFor="let materia of materias">
-        <div class="subject-main" [style.background-color]="materia.color">
+        <div
+          class="subject-main main-clickable"
+          [style.background-color]="materia.color"
+          (click)="navigateTo('/current-classroom')"
+        >
           <div class="subject-info">
             <h3>{{ materia.nombre | uppercase }}</h3>
             <p>
@@ -52,15 +59,10 @@
           </div>
         </div>
 
-        <button
-          class="action-btn-arrow"
-          [style.background-color]="materia.color"
-          (click)="navigateTo('/current-classroom')"
-        >
-          <span class="material-symbols-outlined">arrow_forward</span>
+        <button class="schedule-btn">
+          <span class="material-symbols-outlined">schedule</span>
+          <span>Horarios</span>
         </button>
-
-        <button class="schedule-btn">Horarios</button>
       </div>
     </div>
   </div>

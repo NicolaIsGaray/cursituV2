@@ -1,16 +1,26 @@
+<nav class="top-nav">
+  <button class="btn-back" routerLink="/home">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Regresar al menú
+  </button>
+</nav>
 <main *ngIf="authService.userRole$ | async as rol">
   <div class="alumnos-lista-container" *ngIf="rol === 'DOCENTE'">
     <header class="seccion-header">
-      <h2>Lista Alumnos</h2>
+      <div class="title-group">
+        <h2>Lista Alumnos</h2>
+        <!-- El botón ahora está junto al título para acceso rápido -->
+        <button class="btn-export-accent">
+          <span class="material-symbols-outlined">ios_share</span>
+          <span>Exportar Lista</span>
+        </button>
+      </div>
+
       <div class="header-tools">
         <div class="search-box">
           <span class="material-symbols-outlined">search</span>
-          <input type="text" placeholder="Buscar alumno...">
+          <input type="text" placeholder="Buscar por nombre o curso...">
         </div>
-        <button class="btn-export">
-          <span class="material-symbols-outlined">ios_share</span>
-          Exportar
-        </button>
       </div>
     </header>
   
@@ -22,12 +32,11 @@
             <th>Curso</th>
             <th>Comisión</th>
             <th>Tiene Grupo</th>
-            <th>Número de Grupo</th>
-            <th>Acciones</th>
+            <th class="text-center">Número de Grupo</th>
+            <!-- Columna de acciones eliminada -->
           </tr>
         </thead>
         <tbody>
-          <!-- Fila de ejemplo basada en la imagen -->
           <tr>
             <td class="col-nombre">
               <div class="alumno-perfil">
@@ -40,13 +49,11 @@
             <td>
               <span class="badge badge-no">NO</span>
             </td>
-            <td><span class="group-number">-</span></td>
-            <td>
-              <button class="btn-info"><span class="material-symbols-outlined">visibility</span></button>
+            <td class="text-center">
+              <span class="group-number">-</span>
             </td>
           </tr>
           
-          <!-- Fila de ejemplo adicional -->
           <tr>
             <td class="col-nombre">
               <div class="alumno-perfil">
@@ -59,9 +66,8 @@
             <td>
               <span class="badge badge-si">SI</span>
             </td>
-            <td><span class="group-number">2</span></td>
-            <td>
-              <button class="btn-info"><span class="material-symbols-outlined">visibility</span></button>
+            <td class="text-center">
+              <span class="group-number">2</span>
             </td>
           </tr>
         </tbody>

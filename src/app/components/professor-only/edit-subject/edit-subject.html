@@ -1,29 +1,45 @@
+<nav class="top-nav">
+  <button class="btn-back" routerLink="/professor-panel">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Regresar
+  </button>
+</nav>
 <main *ngIf="authService.userRole$ | async as rol">
   <div class="edit-materia-container" *ngIf="rol === 'DOCENTE'">
     <div class="edit-card">
-      <!-- Lado Izquierdo: Formulario -->
+      
+      <!-- Lado Izquierdo: Formulario Principal -->
       <div class="form-section">
-        <h3>Editar Materia</h3>
+        <header class="form-header">
+          <h3>Editar Materia</h3>
+          <p>Personaliza el nombre y la identidad visual de tu asignatura.</p>
+        </header>
 
         <div class="input-group">
           <label>Nombre de la materia</label>
-          <input type="text" class="input-field" [value]="materia.nombre" />
+          <input type="text" class="input-field" [value]="materia.nombre" placeholder="Ej: Programación II" />
         </div>
 
-        <a class="btn-guardar" routerLink="/professor-panel">Guardar</a>
+        <div class="actions-footer">
+          <a class="btn-guardar" routerLink="/professor-panel">Guardar Cambios</a>
+        </div>
       </div>
 
-      <!-- Lado Derecho: Selector de Color -->
-      <div class="color-section" [style.background-color]="materia.color">
-        <h3>Color de la materia</h3>
-
-        <div class="color-picker-wrapper">
+      <!-- Lado Derecho / Esquina: Selector de Color -->
+      <div class="color-overlay-section" [style.background-color]="materia.color">
+        <div class="color-picker-float">
           <input type="color" id="colorInput" [value]="materia.color" class="hidden-input" />
-          <label for="colorInput" class="color-icon-btn">
-            <span class="material-symbols-outlined">format_paint</span>
+          <label for="colorInput" class="color-circle-btn" title="Cambiar color de fondo">
+            <span class="material-symbols-outlined">palette</span>
           </label>
         </div>
+        
+        <div class="color-label-mobile">
+          <span class="material-symbols-outlined">format_paint</span>
+          Color de fondo
+        </div>
       </div>
+
     </div>
   </div>
 </main>

@@ -1,21 +1,28 @@
+<nav class="top-nav">
+  <button class="btn-back" routerLink="/home">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Regresar al menú
+  </button>
+</nav>
 <div [ngStyle]="materiaColorStyle">
+  <!-- Encabezado con el nombre de la materia -->
   <div class="course-header">
     <h2>Programación Orientada a Objetos</h2>
   </div>
 
   <div class="assignment-wrapper">
-    <div class="delivery-area">
+    <!-- Área de Entrega (Contenido Principal) -->
+    <main class="delivery-area">
       <div class="delivery-card">
-        <h3 class="assignment-title">Entrega Trabajo Práctico: Manejo de Excepciones</h3>
+        <header class="assignment-header">
+          <h3 class="assignment-title">Entrega: Manejo de Excepciones</h3>
+          <div class="deadline-badge">
+            <span class="material-symbols-outlined">timer</span>
+            <p>Vence: <span>Martes 02 de Abril, 00:00 HS</span></p>
+          </div>
+        </header>
 
-        <div class="subtitle-group">
-          <h4>Subir Trabajo Práctico</h4>
-          <p class="deadline-text">
-            Tiempo de entrega hasta:
-            <span>Martes 02 de Abril del 2026 – 00:00 HS</span>
-          </p>
-        </div>
-
+        <!-- Selector de Formato -->
         <div class="delivery-section">
           <label>Formato de entrega</label>
           <div class="format-buttons">
@@ -25,59 +32,34 @@
           </div>
         </div>
 
+        <!-- Área de Carga -->
         <div class="delivery-section">
-          <label>Archivo (o Carpeta)</label>
-          <div class="upload-container">
+          <label>Archivo o Carpeta</label>
+          <div class="upload-box">
             <button class="upload-area-btn">
-              <span class="material-symbols-outlined">upload</span>
+              <span class="material-symbols-outlined">cloud_upload</span>
+              <span>Seleccionar archivo</span>
             </button>
             <p class="nota-text">
-              <b>Nota:</b> ¡asegurate de revisar todo antes de entregar tu trabajo!
+              <span class="material-symbols-outlined">info</span>
+              <span><b>Importante:</b> Revisa que el archivo sea el correcto antes de confirmar.</span>
             </p>
           </div>
         </div>
 
+        <!-- Comentarios -->
         <div class="delivery-section">
           <label>Comentario (Opcional)</label>
           <div class="comment-container">
-            <textarea placeholder="Escribe tu mensaje aquí..." rows="6"> </textarea>
+            <textarea placeholder="¿Alguna observación para el docente?..." rows="4"></textarea>
           </div>
         </div>
 
+        <!-- Botón de Acción -->
         <div class="submit-container">
           <button class="submit-btn">Realizar Entrega</button>
         </div>
       </div>
-    </div>
-
-    <aside class="sections-sidebar" [style.background-color]="materiaColor">
-      <div class="sidebar-header">
-        <h3>Secciones</h3>
-        <div class="divider"></div>
-      </div>
-
-      <ul class="sections-list">
-        <li class="section-item">
-          <span class="material-symbols-outlined">info</span>
-          <p>Introducción</p>
-        </li>
-
-        <li class="section-item active">
-          <div class="indicator"></div>
-          <span class="material-symbols-outlined">assignment</span>
-          <p>Manejo de Excepciones</p>
-        </li>
-
-        <li class="section-item" *ngFor="let i of [1, 2, 3, 4]">
-          <span class="material-symbols-outlined">menu_book</span>
-          <p>Clase {{ i }}</p>
-        </li>
-
-        <li class="section-item exam">
-          <span class="material-symbols-outlined">grade</span>
-          <p>Parcial N° 1</p>
-        </li>
-      </ul>
-    </aside>
+    </main>
   </div>
 </div>

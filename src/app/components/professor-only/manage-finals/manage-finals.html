@@ -1,3 +1,9 @@
+<nav class="top-nav">
+  <button class="btn-back" routerLink="/professor-panel">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Regresar
+  </button>
+</nav>
 <main *ngIf="authService.userRole$ | async as rol">
     <div class="gestion-parciales-container" *ngIf="rol === 'DOCENTE'">    
       <!-- Panel de Parciales -->
@@ -44,7 +50,6 @@
               <span class="col-name">Alumno</span>
               <span class="col-attendance">Asistencia</span>
               <span class="col-grade">Nota</span>
-              <span class="col-actions">Acciones</span>
             </div>
     
             <div class="table-body">
@@ -52,24 +57,21 @@
               <div class="student-row">
                 <span class="col-name"><strong>Garay, Facundo</strong></span>
                 <span class="col-attendance"><span class="status-badge presente">Presente</span></span>
-                <span class="col-grade"><input type="number" class="mini-grade" value="8"></span>
-                <span class="col-actions"><button class="btn-save-mini"><span class="material-symbols-outlined">save</span></button></span>
+                <span class="col-grade"><p class="mini-grade">8</p></span>
               </div>
     
               <!-- Alumno 2 -->
               <div class="student-row">
                 <span class="col-name"><strong>Diaz, Martin</strong></span>
                 <span class="col-attendance"><span class="status-badge presente">Presente</span></span>
-                <span class="col-grade"><input type="number" class="mini-grade" value="4"></span>
-                <span class="col-actions"><button class="btn-save-mini"><span class="material-symbols-outlined">save</span></button></span>
+                <span class="col-grade"><p class="mini-grade">5</p></span>
               </div>
     
               <!-- Alumno 3 -->
               <div class="student-row">
                 <span class="col-name"><strong>Perez, Juan</strong></span>
                 <span class="col-attendance"><span class="status-badge ausente">Ausente</span></span>
-                <span class="col-grade"><input type="number" class="mini-grade" placeholder="-"></span>
-                <span class="col-actions"><button class="btn-save-mini"><span class="material-symbols-outlined">save</span></button></span>
+                <span class="col-grade"><p class="mini-grade">-</p></span>
               </div>
             </div>
           </div>
