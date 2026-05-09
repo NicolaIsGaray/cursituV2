@@ -12,7 +12,8 @@ public class ClassroomEntity {
     @Id
     private String id;
 
-    private Integer number;
-    private String[] students_id;
-    private String[] subjects_id;
+    private String title;
+    private String[] content;
+    private String assignment_id;
+    private String subject_id;
 }

@@ -1,21 +1,39 @@
 /* You can add global styles to this file, and also import other style files */
 /* src/styles.css */
+/* Valores por defecto (Light) */
+/* Colores por defecto (Light) */
 :root {
-  --primary-purple: #6200ee;
-  --secondary-purple: #3700b3;
-  --bg-white: #ffffff;
-}
-
-:root {
-  --bg-primary: #f8faff;
+  --bg-main: #f4f7fe;
   --bg-card: #ffffff;
-  --text-main: #333333;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --sidebar-shadow: rgba(0, 0, 0, 0.05);
+  --border-color: #f0f0f0;
+  --primary-purple: #3f3689;
 }
 
-[data-theme='dark'] {
-  --bg-primary: #121212;
-  --bg-card: #1e1e1e;
-  --text-main: #f5f5f5;
+/* Colores para Modo Oscuro */
+body.dark-theme {
+  --bg-main: #1a1a1a;
+  --bg-card: #2d2d2d;
+  --text-primary: #f0f0f0;
+  --text-secondary: #b0b0b0;
+  --sidebar-shadow: rgba(0, 0, 0, 0.3);
+  --border-color: #404040;
+}
+
+/* Aplicación en tus estilos */
+.config-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+}
+
+.config-header h2 {
+  color: var(--text-main);
+}
+
+.config-header p {
+  color: var(--text-muted);
 }
 
 body {

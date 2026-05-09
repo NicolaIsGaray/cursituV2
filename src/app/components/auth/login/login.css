@@ -85,6 +85,7 @@
   font-size: 1rem;
   cursor: pointer;
   transition: 0.3s;
+  text-decoration: none;
 }
 
 /* Lado Visual - Ocultar en resoluciones de netbook típicas si es necesario */

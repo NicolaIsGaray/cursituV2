@@ -18,5 +18,6 @@ public class UserEntity {
     private String dni;
     private String role;
     private String[] comission;
+    private Integer classroom_number;
     private String[] subjects_id;
 }

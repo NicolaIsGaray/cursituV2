@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, Renderer2, RendererFactory2 } from '@angular/core';
 
 @Component({
   selector: 'app-page-configuration',
@@ -8,9 +8,29 @@ import { Component } from '@angular/core';
   styleUrl: './page-configuration.css',
 })
 export class PageConfiguration {
-  toggleTheme(event: any) {
-  const theme = event.target.checked ? 'dark' : 'light';
-  document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem('theme', theme); // Guardar preferencia
-}
+  private renderer: Renderer2;
+  public isDark = false;
+
+  constructor(rendererFactory: RendererFactory2) {
+    this.renderer = rendererFactory.createRenderer(null, null);
+    // Cargar preferencia guardada
+    this.isDark = localStorage.getItem('theme') === 'dark';
+    this.applyTheme();
+  }
+
+  toggleTheme() {
+    this.isDark = !this.isDark;
+    localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
+    this.applyTheme();
+  }
+
+  private applyTheme() {
+    if (this.isDark) {
+      this.renderer.addClass(document.body, 'dark-theme');
+    } else {
+      this.renderer.removeClass(document.body, 'dark-theme');
+    }
+  }
+
+  get currentTheme() { return this.isDark; }
 }

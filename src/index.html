@@ -17,4 +17,10 @@
   <body>
     <app-root></app-root>
   </body>
+
+  <script>
+  // Aplicar el tema antes de que se renderice la app
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+</script>
 </html>
