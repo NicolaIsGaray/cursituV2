@@ -49,6 +49,7 @@ public class UserController {
         updatedUser.setDni(userToUpdate.getDni() == null ? updatedUser.getDni() : userToUpdate.getDni());
         updatedUser.setRole(userToUpdate.getRole() == null ? updatedUser.getRole() : userToUpdate.getRole());
         updatedUser.setComission(userToUpdate.getComission() == null ? updatedUser.getComission() : userToUpdate.getComission());
+        updatedUser.setClassroom_number(userToUpdate.getClassroom_number() == null ? updatedUser.getClassroom_number() : userToUpdate.getClassroom_number());
         updatedUser.setSubjects_id(userToUpdate.getSubjects_id() == null ? updatedUser.getSubjects_id() : userToUpdate.getSubjects_id());
 
         userRepo.save(updatedUser);

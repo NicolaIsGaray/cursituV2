@@ -1,7 +1,6 @@
 <div class="login-page">
   <div class="login-container">
     
-    <!-- Lado Izquierdo: Formulario -->
     <section class="login-form-side">
       <div class="brand-header">
         <span class="material-symbols-outlined logo-icon">school</span>
@@ -12,20 +11,31 @@
         <h2>Bienvenido de nuevo</h2>
         <p>Por favor, ingresa tus credenciales para acceder.</p>
 
-        <form class="login-form">
+        <!-- Vinculamos el formulario al FormGroup -->
+        <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          
           <div class="input-group">
-            <label>Correo Institucional</label>
+            <label for="dni">D.N.I.</label>
             <div class="input-wrapper">
-              <span class="material-symbols-outlined">mail</span>
-              <input type="email" placeholder="usuario@itu.uncu.edu.ar">
+              <span class="material-symbols-outlined">id_card</span>
+              <input 
+                id="dni"
+                type="text" 
+                formControlName="dni" 
+                placeholder="40.000.000" 
+                maxlength="8">
             </div>
           </div>
 
           <div class="input-group">
-            <label>Contraseña</label>
+            <label for="password">Contraseña</label>
             <div class="input-wrapper">
               <span class="material-symbols-outlined">lock</span>
-              <input type="password" placeholder="••••••••">
+              <input 
+                id="password"
+                type="password" 
+                formControlName="password" 
+                placeholder="••••••••">
             </div>
           </div>
 
@@ -36,7 +46,13 @@
             <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
           </div>
 
-          <a routerLink="/home" class="btn-login">Iniciar Sesión</a>
+          <!-- Cambiado de <a> a <button> para procesar el submit -->
+          <button 
+            type="submit" 
+            class="btn-login" 
+            [disabled]="loginForm.invalid">
+            Iniciar Sesión
+          </button>
         </form>
       </div>
 
@@ -45,7 +61,6 @@
       </footer>
     </section>
 
-    <!-- Lado Derecho: Visual/Marca -->
     <section class="login-visual-side">
       <div class="overlay"></div>
       <div class="visual-content">

@@ -12,26 +12,13 @@
     <div class="materias-wrapper" *ngIf="rol === 'DOCENTE'">
       <div class="materia-row">
         <!-- El contenedor ahora es el link principal -->
-        <div class="materia-card orange main-clickable" (click)="navigateTo('/professor-panel')">
+        <div class="materia-card orange main-clickable" (click)="navigateToPanel('/professor-panel')">
           <div class="materia-info">
             <h3>PROGRAMACIÓN ORIENTADA A OBJETOS</h3>
             <p>Docente: <span>Ignacio Fontaine</span></p>
           </div>
         </div>
         <!-- Botón de horarios estilizado -->
-        <button class="btn-horarios">
-          <span class="material-symbols-outlined">schedule</span>
-          <span>Horarios</span>
-        </button>
-      </div>
-
-      <div class="materia-row">
-        <div class="materia-card purple main-clickable" (click)="navigateTo('/professor-panel')">
-          <div class="materia-info">
-            <h3>COMPUTACIÓN EN LA NUBE</h3>
-            <p>Docente: <span>Ignacio Fontaine</span></p>
-          </div>
-        </div>
         <button class="btn-horarios">
           <span class="material-symbols-outlined">schedule</span>
           <span>Horarios</span>
@@ -45,16 +32,16 @@
     <h2>Materias En Curso</h2>
 
     <div class="subjects-card">
-      <div class="subject-row" *ngFor="let materia of materias">
+      <div class="subject-row" *ngFor="let subject of (subjectList$ | async)">
         <div
           class="subject-main main-clickable"
-          [style.background-color]="materia.color"
-          (click)="navigateTo('/current-classroom')"
+          [style.background-color]="subject.color"
+          (click)="navigateToClassroom('/current-classroom', subject.classroom_id)"
         >
           <div class="subject-info">
-            <h3>{{ materia.nombre | uppercase }}</h3>
+            <h3>{{ subject.subject_name| uppercase }}</h3>
             <p>
-              Docente: <span>{{ materia.docente }}</span>
+              Docente: <span>{{ subject.professorData?.name || "Cargando..." }}</span>
             </p>
           </div>
         </div>

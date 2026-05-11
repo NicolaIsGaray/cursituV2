@@ -5,66 +5,54 @@
   </button>
 </nav>
 <div class="course-header">
-  <h2>Programación Orientada a Objetos</h2>
+  <h2>{{subject?.subject_name}}</h2>
 </div>
 
 <div class="classroom-container">
-  <!-- Sidebar / Navegación Horizontal -->
-  <aside class="sections-sidebar" [style.background-color]="materiaColor">
+  <!-- Sidebar: Siempre visible si hay lista de temas -->
+  <aside class="sections-sidebar" [style.background-color]="subject?.color">
     <div class="sidebar-header">
       <h3>Secciones</h3>
       <div class="divider"></div>
     </div>
 
-    <ul class="sections-list">
-      <li class="section-item active">
+    <ul class="sections-list" *ngIf="topicsList$ | async as topics">
+      <li *ngFor="let topic of topics" 
+          class="section-item"
+          [class.active]="(selectedTopic$ | async)?.id === topic.id"
+          (click)="seleccionarTema(topic)">
         <div class="indicator"></div>
-        <p>Introducción</p>
-      </li>
-      
-      <li class="section-item" *ngFor="let i of [1,2,3,4,5]">
-        <p>Clase {{i}}</p>
-      </li>
-
-      <li class="section-item exam">
-        <p>Parcial N° 1</p>
+        <p>{{topic.title}}</p>
       </li>
     </ul>
   </aside>
 
+  <!-- Área de Contenido: Solo muestra el card si hay un tema seleccionado -->
   <div class="content-area">
-    <!-- NUEVO: Botones de gestión para Docente sobre el contenido -->
     <div class="admin-top-actions" *ngIf="(authService.userRole$ | async) === 'DOCENTE'">
       <button class="btn-manage edit">
         <span class="material-symbols-outlined">edit</span>
-        Editar Contenido
+        Editar
       </button>
       <button class="btn-manage delete">
         <span class="material-symbols-outlined">delete</span>
-        Eliminar Sección
+        Eliminar
       </button>
     </div>
 
-    <div class="content-card">
-      <div class="teacher-banner" [style.background-color]="'#006054'">
-        <div class="teacher-photo">
-          <img src="assets/profesor-fontaine.png" alt="Profesor">
-        </div>
-        <div class="teacher-data">
-          <span class="label">Espacio Curricular:</span>
-          <h4>Programación Orientada a Objetos</h4>
-          <span class="label">Profesor:</span>
-          <p class="name">Ignacio G. Fontaine Didier</p>
-          <span class="label">Formación académica:</span>
-          <p class="bio">Lic. En Informática y Desarrollo de Software</p>
-        </div>
-      </div>
-
+    <div class="content-card" *ngIf="selectedTopic$ | async as activeTopic; else loadingOrEmpty">
       <div class="text-content">
-        <h3>Introducción</h3>
-        <p>La materia Programación Orientada a Objetos (POO) introduce...</p>
+        <h3>{{activeTopic.title}}</h3>
+        <p>{{activeTopic.content}}</p>
       </div>
     </div>
+
+    <!-- Template opcional para cuando no hay selección todavía -->
+    <ng-template #loadingOrEmpty>
+      <div class="loading-state">
+        <p>Selecciona una sección para ver el contenido.</p>
+      </div>
+    </ng-template>
   </div>
 </div>
 

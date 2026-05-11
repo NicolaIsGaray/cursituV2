@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { UiService } from './service/ui-service';
-import { AuthService, Rol } from './service/auth-service';
+import { UiService } from './services/ui.service';
+import { AuthService, Rol } from './services/auth.service';
+import { User } from './models/user.model';
 
 @Component({
   selector: 'app-root',
@@ -14,11 +15,12 @@ export class App implements OnInit {
   protected readonly title = signal('cursitu');
 
   isSidebarOpen = false;
+  currentUser: User | null = null;
 
   constructor(
     public uiService: UiService,
     public authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {}
 
   menuItems: any[] = [];
@@ -27,6 +29,11 @@ export class App implements OnInit {
     this.authService.userRole$.subscribe((rol) => {
       this.buildMenu(rol);
     });
+    this.getCurrentUser();
+  }
+
+  getCurrentUser() {
+    this.currentUser = this.authService.currentUser;
   }
 
   buildMenu(rol: Rol) {
@@ -58,5 +65,26 @@ export class App implements OnInit {
   // Retorna true si la ruta actual es /login
   isLoginPage(): boolean {
     return this.router.url === '/login';
+  }
+
+  isDropdownOpen = false;
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  // Cierra el dropdown si el usuario hace clic fuera de él
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.user-dropdown-container')) {
+      this.isDropdownOpen = false;
+    }
+  }
+
+  logout() {
+    this.isDropdownOpen = false;
+    localStorage.clear();
+    this.router.navigate(['/login']);
   }
 }

@@ -122,7 +122,7 @@
       <div class="user-profile">
         <span class="material-symbols-outlined user-icon">person</span>
         <div class="user-info">
-          <p class="user-name">Facundo Garay</p>
+          <p class="user-name">{{ currentUser?.name || 'USUARIO' }}</p>
           <p class="user-role" *ngIf="rol === 'ALUMNO'">Estudiante</p>
           <p class="user-role" *ngIf="rol === 'DOCENTE'">Docente</p>
         </div>
@@ -146,28 +146,47 @@
           <div class="profile-thumb">
             <span class="material-symbols-outlined"> face </span>
           </div>
-          <h2 class="welcome-text">¡Buenos dias, <span>FACUNDO GARAY!</span></h2>
+          <h2 class="welcome-text">
+            ¡Buenos dias, <span>{{ currentUser?.name?.toUpperCase() || 'USUARIO' }}!</span>
+          </h2>
         </div>
       </div>
 
       <div class="header-actions">
-        <button class="action-btn active">
+        <button class="action-btn">
           <span class="material-symbols-outlined">forum</span>
         </button>
         <button class="action-btn">
           <span class="material-symbols-outlined">notifications</span>
         </button>
-        <button class="action-btn"><span class="material-symbols-outlined">person</span></button>
 
-        <div class="dev-role-switcher">
-          <select (change)="cambiarRol($event)">
-            <option value="ALUMNO" [selected]="(authService.userRole$ | async) === 'ALUMNO'">
-              A
-            </option>
-            <option value="DOCENTE" [selected]="(authService.userRole$ | async) === 'DOCENTE'">
-              D
-            </option>
-          </select>
+        <!-- Dropdown de Usuario -->
+        <div class="user-dropdown-container">
+          <button class="action-btn profile-trigger" (click)="toggleDropdown()">
+            <span class="material-symbols-outlined">person</span>
+          </button>
+
+          <div class="dropdown-menu" [class.show]="isDropdownOpen">
+            <div class="dropdown-header">
+              <p class="user-name">{{ currentUser?.name || 'USUARIO' }}</p>
+              <p class="user-email">{{ currentUser?.dni }}</p>
+            </div>
+            <hr class="dropdown-divider" />
+            <ul>
+              <li>
+                <a routerLink="/configuration" (click)="isDropdownOpen = false">
+                  <span class="material-symbols-outlined">settings</span>
+                  Ajustes
+                </a>
+              </li>
+              <li>
+                <a (click)="logout()" class="logout-item">
+                  <span class="material-symbols-outlined">logout</span>
+                  Cerrar Sesión
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </header>

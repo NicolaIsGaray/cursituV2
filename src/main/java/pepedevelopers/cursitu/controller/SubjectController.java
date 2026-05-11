@@ -12,7 +12,7 @@ import java.util.List;
 import static java.lang.IO.println;
 
 @RestController
-@RequestMapping("/subjects")
+@RequestMapping("/api/subjects")
 @CrossOrigin(origins = "*")
 public class SubjectController {
     private final ISubject subjectRepo;
@@ -46,7 +46,11 @@ public class SubjectController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Materia no encontrada.");
         }
 
-        updatedSubject.setSubject_name(subjectToUpdate.getSubject_name());
+        updatedSubject.setSubject_name(subjectToUpdate.getSubject_name() == null ? updatedSubject.getSubject_name() : subjectToUpdate.getSubject_name());
+        updatedSubject.setColor(subjectToUpdate.getColor() == null ? (updatedSubject.getColor() == null ? "#000000" : updatedSubject.getColor()) : subjectToUpdate.getColor());
+        updatedSubject.setImportant_dates(subjectToUpdate.getImportant_dates() == null ? updatedSubject.getImportant_dates() : subjectToUpdate.getImportant_dates());
+        updatedSubject.setProfessor_id(subjectToUpdate.getProfessor_id() == null ? updatedSubject.getProfessor_id() : subjectToUpdate.getProfessor_id());
+        updatedSubject.setClassroom_id(subjectToUpdate.getClassroom_id() == null ? updatedSubject.getClassroom_id() : subjectToUpdate.getClassroom_id());
 
         subjectRepo.save(updatedSubject);
 

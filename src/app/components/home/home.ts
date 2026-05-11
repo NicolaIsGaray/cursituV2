@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../services/auth-service';
+import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
 
@@ -29,6 +29,7 @@ export class Home implements OnInit{
   ];
 
   users: User[] = [];
+  currentUser: User | null = null;
 
   constructor(
     private router: Router,
@@ -38,6 +39,11 @@ export class Home implements OnInit{
 
   ngOnInit(): void {
     this.getAllUsers();
+    this.getCurrentUser();
+  }
+
+  getCurrentUser() {
+    this.currentUser = this.authService.currentUser;
   }
 
   getAllUsers() {

@@ -5,5 +5,6 @@ export type User = {
     dni: string,
     role: string,
     comission: string[],
+    classroom_number: number,
     subjects_id: string[]
 }

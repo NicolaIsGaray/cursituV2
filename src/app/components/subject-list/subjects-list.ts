@@ -1,26 +1,56 @@
-import { Component } from '@angular/core';
-import { Materia } from '../../subjects/temp-subjects';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../service/auth-service';
+import { AuthService } from '../../services/auth.service';
+import { Subject } from '../../models/subject.model';
+import { SubjectService } from '../../services/subject.service';
+import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
+import { User } from '../../models/user.model';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-subjects',
   imports: [CommonModule, RouterModule],
   templateUrl: './subjects-list.html',
-  styleUrls: ['./subjects-list.css']
+  styleUrls: ['./subjects-list.css'],
 })
-export class SubjectsList {
-  materias: Materia[] = [
-    { id: 1, nombre: 'Programación Orientada a Objetos', docente: 'Ignacio Fontaine', color: '#ff8c2e' },
-    { id: 2, nombre: 'Base de Datos Avanzada', docente: 'Luis Chiaramonte', color: '#2ecc71' },
-    { id: 3, nombre: 'Sistemas Operativos Aplicados', docente: 'Mauricio Prades', color: '#3b67be' },
-    { id: 4, nombre: 'Redes y Sistemas Distribuidos', docente: 'Gerardo Abrego', color: '#797a2d' }
-  ];
+export class SubjectsList implements OnInit {
+  subjectList$?: Observable<Subject[]>;
 
-  constructor(private router: Router, public authService: AuthService) {}
+  constructor(
+    private router: Router,
+    public authService: AuthService,
+    private subjectService: SubjectService,
+    private userService: UserService
+  ) {}
 
-  navigateTo(path: string) {
-    this.router.navigate([path]);
+  ngOnInit(): void {
+    this.loadUserSubjects();
+  }
+
+  loadUserSubjects() {
+    const ids = this.authService.currentUser?.subjects_id;
+    
+    if (ids && ids.length > 0) {
+      const requests = ids.map((id) => this.subjectService.getSubjectById(id).pipe(
+        switchMap(subject => 
+          this.userService.getUserById(subject.professor_id).pipe(
+            map(prof => ({...subject, professorData: prof}))
+          )
+        )
+      ));
+      this.subjectList$ = forkJoin(requests);
+      
+    } else {
+      this.subjectList$ = this.subjectService.getAllSubjects();
+    }
+  }
+
+  navigateToClassroom(path: string, subjectId: string) {
+    this.router.navigate([path, subjectId]);
+  }
+
+  navigateToPanel(path: string) {
+    this.router.navigate([path])
   }
 }

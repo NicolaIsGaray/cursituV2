@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/classrooms")
+@RequestMapping("/api/classrooms")
 @CrossOrigin(origins = "*")
 public class ClassroomController {
 
@@ -29,9 +29,9 @@ public class ClassroomController {
         return new ResponseEntity<>(classRepo.save(classroom), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{classNum}")
-    public ResponseEntity<ClassroomEntity> searchClassroom(@PathVariable Integer classNum) {
-        ClassroomEntity classroom = classRepo.findByNumber(classNum);
+    @GetMapping("/{id}")
+    public ResponseEntity<ClassroomEntity> searchClassroom(@PathVariable String id) {
+        ClassroomEntity classroom = classRepo.findById(id).orElse(null);
         return classroom != null ? ResponseEntity.ok(classroom) : ResponseEntity.notFound().build();
     }
 
@@ -40,25 +40,22 @@ public class ClassroomController {
         return ResponseEntity.ok(classRepo.findAll());
     }
 
-    @PutMapping("/{classNum}")
-    public ResponseEntity<String> modifyClassroom(@PathVariable Integer classNum, @RequestBody ClassroomEntity updatedData) {
-        ClassroomEntity existingClassroom = classRepo.findByNumber(classNum);
-        String[] studentsEmpty = {};
+    @PutMapping("/{id}")
+    public ResponseEntity<String> modifyClassroom(@PathVariable String id, @RequestBody ClassroomEntity updatedData) {
+        ClassroomEntity existingClassroom = classRepo.findById(id).orElse(null);
 
         if (existingClassroom == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso no encontrado.");
 
-        existingClassroom.setTitle(updatedData.getTitle());
-        existingClassroom.setContent(updatedData.getContent());
-        existingClassroom.setSubject_id(updatedData.getSubject_id());
-        existingClassroom.setAssignment_id(updatedData.getAssignment_id());
+        existingClassroom.setSubject_id(updatedData.getSubject_id() == null ? existingClassroom.getSubject_id() : updatedData.getSubject_id());
+        existingClassroom.setTopics_id(updatedData.getTopics_id() == null ? existingClassroom.getTopics_id() : updatedData.getTopics_id());
         classRepo.save(existingClassroom);
 
         return ResponseEntity.ok("Curso modificado exitosamente.");
     }
 
-    @DeleteMapping("/{classNum}")
-    public ResponseEntity<String> deleteClassroom(@PathVariable Integer classNum) {
-        ClassroomEntity classroom = classRepo.findByNumber(classNum);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteClassroom(@PathVariable String id) {
+        ClassroomEntity classroom = classRepo.findById(id).orElse(null);
 
         if (classroom == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso no encontrado.");
 

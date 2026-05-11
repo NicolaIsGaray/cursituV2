@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, Validators, FormBuilder, FormGroup } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
+import { User } from '../../../models/user.model';
 
 @Component({
   selector: 'app-login',
@@ -11,9 +13,12 @@ import { RouterModule } from '@angular/router';
 })
 export class Login {
   loginForm!: FormGroup;
+  userData!: User;
 
   constructor(
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public authService: AuthService,
+    private router: Router
   ) {
     this.initForm();
   }
@@ -23,5 +28,36 @@ export class Login {
       dni: ['', [Validators.required]],
       password: ['', Validators.required]
     });
+  }
+
+onSubmit() {
+    if (this.loginForm.valid) {
+      // Extraemos los valores del formulario
+      const credentials = this.loginForm.value as any;
+
+      this.authService.login(credentials).subscribe({
+        next: (user) => {
+          console.log('Login exitoso:', user);
+          this.router.navigate(['/home']);
+        },
+        error: (err) => {
+          alert('Credenciales inválidas. Intenta de nuevo.');
+          console.error(err);
+        }
+      });
+    }
+  }
+
+  login() : void {
+    this.authService.login(this.userData).subscribe({
+      next: (response) => {
+        alert("Login exitoso.");
+        this.router.navigate(['/home'])
+      },
+      error: (err) => {
+        alert("Usuario no encontrado.")
+        console.error(err);
+      }
+    })
   }
 }

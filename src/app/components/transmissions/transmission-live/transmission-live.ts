@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, Renderer2, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { UiService } from '../../../service/ui-service';
+import { UiService } from '../../../services/ui.service';
 
 @Component({
   selector: 'app-transmission-live',

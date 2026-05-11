@@ -43,7 +43,7 @@ export const routes: Routes = [
     { path: 'students', component: StudentsList },
     { path: 'my-notices', component: MyNotices },
 
-    { path: 'current-classroom', component: CurrentClassroom },
+    { path: 'current-classroom/:id', component: CurrentClassroom },
     { path: 'pending-tasks', component: PendingTasks },
     { path: 'send-task', component: SendTask },
     { path: 'notices', component: NoticesList },
