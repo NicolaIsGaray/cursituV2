@@ -8,5 +8,7 @@ export type Subject = {
     professor_id: string,
     professorData?: User,
     classroom_id: string,
+    year_level: number,
+    academic_period: number,
     important_dates: Date[] 
 }

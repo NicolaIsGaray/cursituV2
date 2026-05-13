@@ -51,6 +51,8 @@ public class SubjectController {
         updatedSubject.setImportant_dates(subjectToUpdate.getImportant_dates() == null ? updatedSubject.getImportant_dates() : subjectToUpdate.getImportant_dates());
         updatedSubject.setProfessor_id(subjectToUpdate.getProfessor_id() == null ? updatedSubject.getProfessor_id() : subjectToUpdate.getProfessor_id());
         updatedSubject.setClassroom_id(subjectToUpdate.getClassroom_id() == null ? updatedSubject.getClassroom_id() : subjectToUpdate.getClassroom_id());
+        updatedSubject.setYear_level(subjectToUpdate.getYear_level() == null ? updatedSubject.getYear_level() : subjectToUpdate.getYear_level());
+        updatedSubject.setAcademic_period(subjectToUpdate.getAcademic_period() == null ? updatedSubject.getAcademic_period() : subjectToUpdate.getAcademic_period());
 
         subjectRepo.save(updatedSubject);
 

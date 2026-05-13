@@ -12,30 +12,31 @@
       <div class="subjects-list">
         <div
           class="subject-card"
-          *ngFor="let m of materias"
+          *ngFor="let m of (subjectList$ | async)"
           [style.background-color]="m.color"
-          (click)="seleccionarMateria(m)"
-          [class.selected]="m.id === materiaSeleccionada.id"
+          (click)="getSelectedSubject(m.id)"
+          [class.selected]="m.id === selectedSubject?.id"
         >
-          {{ m.nombre | uppercase }}
+          {{ m.subject_name | uppercase }}
         </div>
       </div>
     </div>
 
-    <div class="group-detail-panel" *ngIf="materiaSeleccionada">
-      <div class="group-header" [style.background-color]="materiaSeleccionada.color">
-        <span class="group-number">Grupo N° {{ grupoActual.numero }}</span>
-        <span class="members-count">Integrantes: {{ grupoActual.integrantes.length }}</span>
-      </div>
-
-      <div class="members-list">
-        <div class="member-item" *ngFor="let member of grupoActual.integrantes">
-          <div class="member-avatar">
-            <img [src]="member.foto" alt="Avatar" />
-          </div>
-          <div class="member-info">
-            <p class="member-name">{{ member.nombre }} – {{ member.comision }}</p>
-            <p class="member-role">{{ member.rol }}</p>
+    <div class="group-detail-panel" *ngIf="selectedSubject">
+      <div *ngFor="let g of groupList">
+        <div class="group-header" [style.background-color]="selectedSubject.color">
+          <span class="group-number">Grupo N° {{ g.number }}</span>
+          <span class="members-count">Integrantes: {{ g.members_id.length }}</span>
+        </div>
+        <div class="members-list">
+          <div class="member-item" *ngFor="let member of members">
+            <div class="member-avatar">
+              <img [src]="member.classroom_number" alt="Avatar" />
+            </div>
+            <div class="member-info">
+              <p class="member-name">{{ (member.id === authService.currentUser?.id ? `${member.name} (Tú)` : member.name) }} – {{ member.comission }}</p>
+              <p class="member-role">{{ member.role }}</p>
+            </div>
           </div>
         </div>
       </div>

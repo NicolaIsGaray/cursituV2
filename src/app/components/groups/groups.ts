@@ -1,7 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { RouterModule } from '@angular/router';
+import { forkJoin, Observable } from 'rxjs';
+import { Subject } from '../../models/subject.model';
+import { Group } from '../../models/group.model';
+import { SubjectService } from '../../services/subject.service';
+import { GroupService } from '../../services/group.service';
+import { User } from '../../models/user.model';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-groups',
@@ -9,30 +16,67 @@ import { RouterModule } from '@angular/router';
   templateUrl: './groups.html',
   styleUrl: './groups.css',
 })
-export class Groups {
-  materias = [
-    { id: 1, nombre: 'Programación Orientada a Objetos', color: '#ff8c2e' },
-    { id: 2, nombre: 'Base de Datos Avanzada', color: '#2ecc71' },
-    { id: 3, nombre: 'Sistemas Operativos Aplicados', color: '#3b67be' },
-    { id: 4, nombre: 'Redes y Comunicaciones Distribuidas', color: '#b5b200' }
-  ];
+export class Groups implements OnInit {
+  subjectList$?: Observable<Subject[]>;
+  groupList?: Group[];
+  members?: User[];
+  selectedSubject?: Subject;
 
-  materiaSeleccionada = this.materias[0];
-
-  grupoActual = {
-    numero: 4,
-    integrantes: [
-      { nombre: 'Facundo Garay Gonzalez', comision: 'Comisión A', rol: 'Estudiante', foto: 'assets/user.jpg' },
-      { nombre: 'Facundo Garay Gonzalez', comision: 'Comisión A', rol: 'Estudiante', foto: 'assets/user.jpg' },
-      { nombre: 'Facundo Garay Gonzalez', comision: 'Comisión A', rol: 'Estudiante', foto: 'assets/user.jpg' },
-      { nombre: 'Facundo Garay Gonzalez', comision: 'Comisión A', rol: 'Estudiante', foto: 'assets/user.jpg' }
-    ]
-  };
-
-  constructor(public authService: AuthService) {}
-
-  seleccionarMateria(materia: any) {
-    this.materiaSeleccionada = materia;
-    // Aquí podrías llamar a un servicio para cargar los integrantes de esta materia
+  ngOnInit(): void {
+    this.loadGroupSubjects()
   }
+
+  loadGroupSubjects() {
+    const ids = this.authService.currentUser?.subjects_id;
+
+    if (ids && ids.length > 0) {
+      const requests = ids.map((id) => this.subjectService.getSubjectById(id));
+
+      this.subjectList$ = forkJoin(requests);
+      this.getAllGroups();
+    }
+  }
+
+  loadGroupMembers() {
+  const ids = this.groupList?.flatMap(g => g.members_id) || [];
+  const uniqueIds = [...new Set(ids)];
+
+  if (uniqueIds.length > 0) {
+    const requests = uniqueIds.map(id => this.userService.getUserById(id));
+    
+    forkJoin(requests).subscribe({
+      next: (data) => {
+        this.members = data;
+        console.log(this.members);
+      },
+      error: (err) => console.error(err)
+    })
+  }
+}
+
+  getAllGroups() {
+    this.groupService.getAllGroups().subscribe({
+      next: (data) => {
+        this.groupList = data;
+        this.loadGroupMembers()
+      },
+      error: (err) => console.error(err)
+    })
+  }
+
+  getSelectedSubject(id: string) {
+    this.subjectService.getSubjectById(id).subscribe({
+      next: (data) => {
+        this.selectedSubject = data;
+      },
+      error: (err) => console.error(err)
+    })
+  }
+
+  constructor(
+    public authService: AuthService,
+    private subjectService: SubjectService,
+    private groupService: GroupService,
+    private userService: UserService
+  ) {}
 }

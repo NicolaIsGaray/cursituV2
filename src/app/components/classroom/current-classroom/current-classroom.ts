@@ -49,7 +49,6 @@ export class CurrentClassroom implements OnInit {
   if (ids && ids.length > 0) {
     const requests = ids.map(id => this.topicService.getTopicById(id));
     
-    // Asignamos el Observable procesado
     this.topicsList$ = forkJoin(requests).pipe(
       tap(topics => {
         if (topics.length > 0 && !this.selectedTopicSubject.value) {

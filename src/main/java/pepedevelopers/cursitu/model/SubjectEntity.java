@@ -17,6 +17,8 @@ public class SubjectEntity {
     private String color;
     private String professor_id;
     private String classroom_id;
+    private Integer year_level;
+    private Integer[] academic_period;
 
     private List<DateEntity> important_dates;
 }
