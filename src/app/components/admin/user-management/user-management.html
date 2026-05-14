@@ -1,0 +1,119 @@
+<div class="admin-container">
+  <!-- Lado Izquierdo: Menú de Acciones -->
+  <div class="selection-panel">
+    <h3>Gestión de Usuarios</h3>
+    <p class="section-description">Selecciona una operación para administrar la base de datos.</p>
+    
+    <div class="admin-actions-list">
+      <button 
+        class="admin-btn create" 
+        [class.active]="modo === 'crear'"
+        (click)="cambiarModo('crear')">
+        <span class="material-symbols-outlined">person_add</span>
+        Crear Usuario
+      </button>
+      
+      <button 
+        class="admin-btn edit" 
+        [class.active]="modo === 'editar'"
+        (click)="cambiarModo('editar')">
+        <span class="material-symbols-outlined">edit_square</span>
+        Editar Usuario
+      </button>
+      
+      <button 
+        class="admin-btn delete" 
+        [class.active]="modo === 'eliminar'"
+        (click)="cambiarModo('eliminar')">
+        <span class="material-symbols-outlined">person_remove</span>
+        Eliminar Usuario
+      </button>
+    </div>
+  </div>
+
+  <!-- Lado Derecho: Formulario Dinámico -->
+  <div class="action-panel">
+    <!-- FORMULARIO CREAR / EDITAR -->
+    <div class="form-card" *ngIf="modo === 'crear' || modo === 'editar'">
+      <header class="form-header" [style.background-color]="modo === 'crear' ? '#3f3689' : '#2ecc71'">
+        <h4>{{ modo === 'crear' ? 'Nuevo Usuario' : 'Modificar Usuario' }}</h4>
+      </header>
+
+      <form class="admin-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre Completo</label>
+            <input type="text" placeholder="Ej: Juan Pérez" class="admin-input">
+          </div>
+          <div class="form-group">
+            <label>Correo Electrónico</label>
+            <input type="email" placeholder="usuario@itu.com" class="admin-input">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>DNI</label>
+            <input type="text" placeholder="Sin puntos" class="admin-input">
+          </div>
+          <div class="form-group">
+            <label>Rol del Usuario</label>
+            <select class="admin-input">
+              <option value="ALUMNO">ALUMNO</option>
+              <option value="DOCENTE">DOCENTE</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Comisión</label>
+            <select class="admin-input multi" multiple>
+              <option>Comisión A</option>
+              <option>Comisión B</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>N° de Curso</label>
+            <input type="number" placeholder="Ej: 102" class="admin-input">
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label>Materias Asignadas</label>
+          <select class="admin-input multi" multiple>
+            <option>Programación I</option>
+            <option>Bases de Datos</option>
+            <option>Laboratorio de Computación</option>
+            <option>Matemática III</option>
+          </select>
+        </div>
+
+        <button class="btn-submit" [style.background-color]="modo === 'crear' ? '#3f3689' : '#2ecc71'">
+          {{ modo === 'crear' ? 'Registrar Usuario' : 'Guardar Cambios' }}
+        </button>
+      </form>
+    </div>
+
+    <!-- FORMULARIO ELIMINAR -->
+    <div class="form-card delete-card" *ngIf="modo === 'eliminar'">
+      <header class="form-header delete-header">
+        <h4>Eliminar Usuario</h4>
+      </header>
+      <div class="delete-content">
+        <p>Ingresa el DNI del usuario que deseas dar de baja permanentemente.</p>
+        <div class="form-group">
+          <label>DNI del Usuario</label>
+          <input type="text" placeholder="Ej: 42333444" class="admin-input error-focus">
+        </div>
+        <button class="btn-submit btn-delete">Eliminar Permanentemente</button>
+      </div>
+    </div>
+
+    <!-- VISTA VACÍA -->
+    <div class="empty-state" *ngIf="!modo">
+      <span class="material-symbols-outlined">manage_accounts</span>
+      <p>Selecciona una acción para comenzar</p>
+    </div>
+  </div>
+</div>

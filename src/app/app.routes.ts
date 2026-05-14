@@ -22,6 +22,9 @@ import { ManageFinals } from './components/professor-only/manage-finals/manage-f
 import { StudentsList } from './components/students-list/students-list';
 import { MyNotices } from './components/professor-only/my-notices/my-notices';
 import { PageConfiguration } from './components/page-configuration/page-configuration';
+import { UserManagement } from './components/admin/user-management/user-management';
+import { SubjectManagement } from './components/admin/subject-management/subject-management';
+import { AnnouncementPanel } from './components/admin/announcement-panel/announcement-panel';
 
 export const routes: Routes = [
     { path: '', component: Home, pathMatch: 'full' },
@@ -31,6 +34,10 @@ export const routes: Routes = [
     { path: 'groups', component: Groups },
     { path: 'transmission-lobby', component: TransmissionLobby },
     { path: 'transmission-live', component: TransmissionLive },
+
+    { path: 'user-management', component: UserManagement},
+    { path: 'subject-management', component: SubjectManagement},
+    { path: 'announcement-panel', component: AnnouncementPanel},
 
     { path: 'professor-panel', component: ProfessorPanel },
     { path: 'manage-grades', component: ManageGrades },

@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { UiService } from './services/ui.service';
-import { AuthService, Rol } from './services/auth.service';
+import { AuthService } from './services/auth.service';
 import { User } from './models/user.model';
+import { Role } from './models/roles';
 
 @Component({
   selector: 'app-root',
@@ -26,6 +27,7 @@ export class App implements OnInit {
   menuItems: any[] = [];
 
   ngOnInit() {
+    this.authService.getAuthStatus()
     this.authService.userRole$.subscribe((rol) => {
       this.buildMenu(rol);
     });
@@ -36,7 +38,7 @@ export class App implements OnInit {
     this.currentUser = this.authService.currentUser;
   }
 
-  buildMenu(rol: Rol) {
+  buildMenu(rol: Role) {
     const baseMenu = [
       { path: '/home', icon: 'home', label: 'Inicio' },
       { path: '/subjects', icon: 'widgets', label: 'Materias' },

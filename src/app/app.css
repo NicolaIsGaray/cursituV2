@@ -182,7 +182,7 @@ body {
   margin-bottom: 1rem;
 }
 
-.user-icon { font-size: 32px; color: #ccc; }
+.user-icon { font-size: 32px; color: #333; }
 
 .user-name {
   font-weight: 700;
@@ -193,7 +193,7 @@ body {
 
 .user-role {
   font-size: 0.7rem;
-  color: #999;
+  color: #707070;
   margin: 0;
 }
 

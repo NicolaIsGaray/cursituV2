@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 @Configuration
 public class MongoConfig extends AbstractMongoClientConfiguration {
     // USER TO ACCESS
-    String MONGO_URI = System.getenv("MONGO_URI_ADMIN");
+    String MONGO_URI = System.getenv("MONGO_URI_TESTER");
 
   @Override
     protected String getDatabaseName() {

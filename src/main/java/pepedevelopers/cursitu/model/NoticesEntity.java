@@ -13,7 +13,7 @@ public class NoticesEntity {
   private String id;
 
   private String title;
-  private String message;
+  private String[] message;
   private String emisor_id;
   private LocalDateTime created_at;
   private String[] read_by;

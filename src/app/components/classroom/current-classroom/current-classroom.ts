@@ -49,13 +49,12 @@ export class CurrentClassroom implements OnInit {
   if (ids && ids.length > 0) {
     const requests = ids.map(id => this.topicService.getTopicById(id));
     
-    this.topicsList$ = forkJoin(requests).pipe(
-      tap(topics => {
-        if (topics.length > 0 && !this.selectedTopicSubject.value) {
-          this.seleccionarTema(topics[0]);
+    this.topicsList$ = forkJoin(requests);
+    this.topicsList$.forEach(t => {
+      if (t.length > 0 && !this.selectedTopicSubject.value) {
+          this.seleccionarTema(t[0]);
         }
-      })
-    );
+    })
   } else {
     console.error("No hay temas cargados.");
   }

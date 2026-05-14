@@ -47,7 +47,6 @@ export class Groups implements OnInit {
     forkJoin(requests).subscribe({
       next: (data) => {
         this.members = data;
-        console.log(this.members);
       },
       error: (err) => console.error(err)
     })

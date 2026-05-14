@@ -19,6 +19,26 @@
 
     <div class="sidebar-section" *ngIf="authService.userRole$ | async as rol">
       <span class="section-title">Menu</span>
+      <ul class="menu-items" *ngIf="rol === 'ADMIN'">
+        <li routerLinkActive="active">
+          <a routerLink="/user-management" (click)="isSidebarOpen = false">
+            <span class="material-symbols-outlined">group</span>
+            <p>Gestión Usuarios</p>
+          </a>
+        </li>
+        <li routerLinkActive="active">
+          <a routerLink="/subject-management" (click)="isSidebarOpen = false">
+            <span class="material-symbols-outlined">widgets</span>
+            <p>Gestión Materias</p>
+          </a>
+        </li>
+        <li routerLinkActive="active">
+          <a routerLink="/announcement-panel" (click)="isSidebarOpen = false">
+            <span class="material-symbols-outlined">breaking_news</span>
+            <p>Panel de Anuncios</p>
+          </a>
+        </li>
+      </ul>
       <ul class="menu-items" *ngIf="rol === 'ALUMNO'">
         <li routerLinkActive="active">
           <a routerLink="/home" (click)="isSidebarOpen = false">
@@ -125,6 +145,7 @@
           <p class="user-name">{{ currentUser?.name || 'USUARIO' }}</p>
           <p class="user-role" *ngIf="rol === 'ALUMNO'">Estudiante</p>
           <p class="user-role" *ngIf="rol === 'DOCENTE'">Docente</p>
+          <p class="user-role" *ngIf="rol === 'ADMIN'">Administrador</p>
         </div>
       </div>
       <a class="settings-btn" routerLink="/configuration" (click)="isSidebarOpen = false">
@@ -180,7 +201,7 @@
                 </a>
               </li>
               <li>
-                <a (click)="logout()" class="logout-item">
+                <a (click)="this.authService.logout()" class="logout-item">
                   <span class="material-symbols-outlined">logout</span>
                   Cerrar Sesión
                 </a>
