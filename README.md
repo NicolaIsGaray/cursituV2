@@ -1,31 +1,68 @@
-# Cursitu  v0.3
-Un aula virtual dedicada a la **Institución Tecnológica Universitaria de la Universidad de Cuyo**.
+# Cursitu v0.3 — Guía de Configuración para Testing Funcional
 
-Proyecto desarrollado por los estudiantes de dicha institución, con el fin de presentar como **EGI** para __Metodología y Testing__.
+Este documento detalla los pasos necesarios para desplegar el entorno local de **Cursitu**, una plataforma de aula virtual desarrollada para el Instituto Tecnológico Universitario de la Universidad Nacional de Cuyo. Esta versión está preparada específicamente para las pruebas de integración y validación del equipo de QA.
 
-# Backend API - [Cursitu]
-## Descripción
-Servicio backend desarrollado con **Java** y **Spring Boot.** Esta versión está configurada específicamente para pruebas de integración y validación de funcionalidades por parte del equipo de QA/Testers.
+---
 
-## Requisitos Previos
-**Java JDK:** Versión 25.
+## 1. Requisitos de Software
 
-**Maven:** 3.8+.
+Antes de comenzar, asegurate de tener instaladas las siguientes herramientas:
 
-**Base de Datos:** MongoDB.
+| Herramienta | Versión mínima | Descripción |
+|---|---|---|
+| Java JDK | 25 | Compilación y ejecución del backend |
+| Maven | 3.8+ | Gestor de dependencias del proyecto |
+| MongoDB | — | Motor de base de datos no relacional |
+| IntelliJ IDEA | — | IDE recomendado para ejecutar el backend |
+| Node.js + Angular CLI | — | Necesarios para levantar el frontend |
 
-**IDE Recomendado:** IntelliJ IDEA.
+---
 
-## Configuración y Ejecución
-**1. Clonar el repositorio:**
+## 2. Preparación del Proyecto
+
+### Clonar el repositorio
+
 ```bash
 git clone https://github.com/NicolaIsGaray/cursituV2.git
 ```
 
-**2. Configurar variables de entorno:**
-Asegúrate de configurar las siguientes variables en tu sistema:
+### Configurar la base de datos
 
-`MONGO_URI_TESTER`: URL de la base de datos.
+El sistema requiere una variable de entorno para conectarse a MongoDB:
 
-**3. Ejecución**
-En el IDE, busca la aplicación a ejecutar `src/main/java/pepedevelopers/cursitu/CursituApplication.java`. Selecciona el archivo y ejecutalo.
+- **Nombre:** `MONGO_URI_TESTER`
+- **Valor:** URL de conexión provista por el administrador del clúster
+  - Ejemplo: `mongodb://localhost:27017/cursitu_test`
+
+---
+
+## 3. Ejecución del Backend (Java + Spring Boot)
+
+1. Abrí IntelliJ IDEA y seleccioná la carpeta del proyecto clonado.
+2. Esperá a que Maven descargue todas las dependencias (barra de progreso en la esquina inferior derecha).
+3. Navegá hasta el archivo principal: src/main/java/pepedevelopers/cursitu/CursituApplication.java
+4. Hacé clic derecho sobre `CursituApplication.java` → **Run 'CursituApplication'**.
+5. Verificá en la consola el mensaje: Started CursituApplication in X seconds
+
+---
+
+## 4. Ejecución del Frontend (Angular)
+
+Con el backend corriendo, abrí una nueva terminal en la carpeta donde se encuentre el archivo `package.json` y ejecutá:
+
+```bash
+npm install
+```
+
+```bash
+ng serve
+```
+
+Una vez finalizado el proceso, accedé desde el navegador a: http://localhost:4200
+
+---
+
+## 5. Notas para el Tester
+
+- **Persistencia:** Todos los datos creados durante las pruebas se almacenan en la base de datos definida en `MONGO_URI_TESTER`.
+- **Logs:** Ante un error `500`, revisá la consola de IntelliJ para obtener el detalle técnico del fallo.
