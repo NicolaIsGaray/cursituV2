@@ -14,7 +14,7 @@
           class="subject-card"
           *ngFor="let m of (subjectList$ | async)"
           [style.background-color]="m.color"
-          (click)="getSelectedSubject(m.id)"
+          (click)="getSelectedSubject(m.id!)"
           [class.selected]="m.id === selectedSubject?.id"
         >
           {{ m.subject_name | uppercase }}
@@ -34,7 +34,7 @@
               <img [src]="member.classroom_number" alt="Avatar" />
             </div>
             <div class="member-info">
-              <p class="member-name">{{ (member.id === authService.currentUser?.id ? `${member.name} (Tú)` : member.name) }} – {{ member.comission }}</p>
+              <p class="member-name">{{ (member.id === authService.currentUserValue?.id ? `${member.name} (Tú)` : member.name) }} – {{ member.comission }}</p>
               <p class="member-role">{{ member.role }}</p>
             </div>
           </div>

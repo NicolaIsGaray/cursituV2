@@ -35,7 +35,7 @@ export class App implements OnInit {
   }
 
   getCurrentUser() {
-    this.currentUser = this.authService.currentUser;
+    this.currentUser = this.authService.currentUserValue;
   }
 
   buildMenu(rol: Role) {

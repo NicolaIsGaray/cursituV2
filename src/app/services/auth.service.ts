@@ -15,31 +15,41 @@ export interface LoginData {
 })
 export class AuthService {
   private http = inject(HttpClient);
+  private route = inject(Router); // Consistencia con inject()
   private apiUrl = 'http://localhost:8080/api/auth';
 
-  // Clave para guardar el rol en el navegador
   private readonly ROL_KEY = 'cursitu_mock_role';
   private readonly USER_KEY = 'cursitu_mock_user';
+
+  // 1. Inicializamos el BehaviorSubject del usuario leyendo el localStorage de forma segura
+  private userSubject = new BehaviorSubject<User | null>(this.getUserFromLocalStorage());
+  
+  // 2. Exponemos el Observable público para los componentes (Navbar, Home, etc.)
+  currentUser$ = this.userSubject.asObservable();
+
+  // Observable existente para el rol
+  private roleSubject = new BehaviorSubject<Role>(
+    (localStorage.getItem(this.ROL_KEY) as Role) || 'ALUMNO'
+  );
+  userRole$ = this.roleSubject.asObservable();
+
+  constructor() {}
 
   login(user: LoginData): Observable<User> {
     return this.http.post<User>(`${this.apiUrl}/login`, user).pipe(
       map((loggedUser) => {
         if (loggedUser && loggedUser.role) {
+          // Guardamos el rol de forma reactiva
           this.setSimulatedRole(loggedUser.role as Role);
+          
+          // Guardamos el usuario en localStorage y notificamos al Subject reactivo
           localStorage.setItem(this.USER_KEY, JSON.stringify(loggedUser));
+          this.userSubject.next(loggedUser);
         }
         return loggedUser;
-      }),
+      })
     );
   }
-
-  // Observable que emitirá el rol actual a toda la app
-  private roleSubject = new BehaviorSubject<Role>(
-    (localStorage.getItem(this.ROL_KEY) as Role) || 'ALUMNO',
-  );
-  userRole$ = this.roleSubject.asObservable();
-
-  constructor(private route: Router) {}
 
   setSimulatedRole(nuevoRol: Role) {
     localStorage.setItem(this.ROL_KEY, nuevoRol);
@@ -50,7 +60,35 @@ export class AuthService {
     return this.roleSubject.value;
   }
 
-  get currentUser(): User | null {
+  // Getter síncrono por si necesitas el valor instantáneo en código TS sin suscribirte
+  get currentUserValue(): User | null {
+    return this.userSubject.value;
+  }
+
+  logout() {
+    localStorage.removeItem(this.USER_KEY);
+    localStorage.removeItem(this.ROL_KEY);
+    
+    // Notificamos a los flujos reactivos que ya no hay usuario ni rol administrador
+    this.userSubject.next(null);
+    this.roleSubject.next('ALUMNO' as Role); 
+
+    this.getAuthStatus();
+  }
+
+  getAuthStatus() {
+    if (!this.currentUserValue) {
+      this.route.navigate(['/login']);
+      return;
+    }
+
+    if (this.currentRole === 'ADMIN') {
+      this.route.navigate(['/user-management']);
+    }
+  }
+
+  // Método auxiliar privado para el constructor del Subject
+  private getUserFromLocalStorage(): User | null {
     const userData = localStorage.getItem(this.USER_KEY);
     if (!userData) return null;
 
@@ -61,22 +99,4 @@ export class AuthService {
       return null;
     }
   }
-
-  logout() {
-    localStorage.removeItem(this.USER_KEY);
-    localStorage.removeItem(this.ROL_KEY);
-    this.getAuthStatus();
-  }
-
-  // Método para verificar estado de autenticación
-  getAuthStatus() {
-    if (!this.currentUser) {
-      this.route.navigate(['/login'])
-    }
-
-    if(this.currentRole === 'ADMIN') {
-      this.route.navigate(['/user-management'])
-    }
-  }
-
 }

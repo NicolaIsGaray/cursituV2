@@ -43,16 +43,18 @@ export class Home implements OnInit{
   }
 
   getCurrentUser() {
-    this.currentUser = this.authService.currentUser;
+    this.currentUser = this.authService.currentUserValue;
   }
 
   getAllUsers() {
-    this.userService.allUsers().subscribe({
-      next: (data) => {
-        this.users = data;
-        console.log(this.users);
-      }
-    })
+    if (this.authService.currentRole === 'DOCENTE') {
+      this.userService.allUsers().subscribe({
+        next: (data) => {
+          this.users = data;
+          console.log(this.users);
+        }
+      })
+    }
   }
 
   navigateTo(path: string) {

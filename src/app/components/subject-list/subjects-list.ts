@@ -29,7 +29,7 @@ export class SubjectsList implements OnInit {
   }
 
   loadUserSubjects() {
-    const ids = this.authService.currentUser?.subjects_id;
+    const ids = this.authService.currentUserValue?.subjects_id;
     
     if (ids && ids.length > 0) {
       const requests = ids.map((id) => this.subjectService.getSubjectById(id).pipe(

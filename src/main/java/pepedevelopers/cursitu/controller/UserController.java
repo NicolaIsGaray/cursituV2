@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import pepedevelopers.cursitu.repository.IUser;
 import pepedevelopers.cursitu.model.UserEntity;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.IO.println;
 
@@ -30,13 +32,16 @@ public class UserController {
         return userRepo.findById(id).orElse(null);
     }
 
+    @GetMapping("/dni/{dni}")
+    public List<UserEntity> searchByDni(@PathVariable String dni) { return userRepo.findByDniContaining(dni).orElse(null); }
+
     @GetMapping
     public ResponseEntity<List<UserEntity>> allUsers() {
         return ResponseEntity.ok(userRepo.findAll());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable String id, @RequestBody UserEntity userToUpdate) {
+    public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody UserEntity userToUpdate) {
         UserEntity updatedUser = userRepo.findById(id).orElse(null);
 
         if (updatedUser == null) {
@@ -44,7 +49,7 @@ public class UserController {
         }
 
         updatedUser.setName(userToUpdate.getName() == null ? updatedUser.getName() : userToUpdate.getName());
-        updatedUser.setEmail(userToUpdate.getEmail() == null ? updatedUser.getEmail() : userToUpdate.getName());
+        updatedUser.setEmail(userToUpdate.getEmail() == null ? updatedUser.getEmail() : userToUpdate.getEmail());
         updatedUser.setPassword(userToUpdate.getPassword() == null ? updatedUser.getPassword() : userToUpdate.getPassword());
         updatedUser.setDni(userToUpdate.getDni() == null ? updatedUser.getDni() : userToUpdate.getDni());
         updatedUser.setRole(userToUpdate.getRole() == null ? updatedUser.getRole() : userToUpdate.getRole());
@@ -54,7 +59,10 @@ public class UserController {
 
         userRepo.save(updatedUser);
 
-        return ResponseEntity.ok("Usuario modificado.");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Usuario modificado.");
+
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
