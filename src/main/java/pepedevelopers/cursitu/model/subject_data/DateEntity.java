@@ -11,5 +11,6 @@ public class DateEntity {
   private String id;
 
   private String event;
+  private Boolean important;
   private Date date;
 }

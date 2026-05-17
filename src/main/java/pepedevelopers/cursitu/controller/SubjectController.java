@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import pepedevelopers.cursitu.model.SubjectEntity;
 import pepedevelopers.cursitu.repository.ISubject;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.IO.println;
 
@@ -39,7 +41,7 @@ public class SubjectController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> modifySubject(@PathVariable String id, @RequestBody SubjectEntity subjectToUpdate) {
+    public ResponseEntity<?> modifySubject(@PathVariable String id, @RequestBody SubjectEntity subjectToUpdate) {
         SubjectEntity updatedSubject = subjectRepo.findById(id).orElse(null);
 
         if (updatedSubject == null) {
@@ -56,11 +58,14 @@ public class SubjectController {
 
         subjectRepo.save(updatedSubject);
 
-        return ResponseEntity.ok("Materia modificada.");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Materia modificada con éxito.");
+
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteSubject(@PathVariable String id) {
+    public ResponseEntity<?> deleteSubject(@PathVariable String id) {
         SubjectEntity deletedSubject = subjectRepo.findById(id).orElse(null);
 
         if (deletedSubject == null) {
@@ -69,6 +74,9 @@ public class SubjectController {
 
         subjectRepo.delete(deletedSubject);
 
-        return ResponseEntity.ok("Materia eliminada exitosamente.");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Materia eliminada con éxito.");
+
+        return ResponseEntity.ok(response);
     }
 }

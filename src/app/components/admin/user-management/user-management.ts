@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '../../../models/user.model';
 import { Subject } from '../../../models/subject.model';
 import { AuthService } from '../../../services/auth.service';
@@ -28,7 +28,6 @@ export class UserManagement implements OnInit {
   newUser: User = new User();
   userToUpdateId: string | null = null;
   userToDeleteSel: any = null;
-  userList$!: Observable<User[]>;
 
   roleList = [{ name: 'ALUMNO' }, { name: 'DOCENTE' }];
   comissionList = ['A', 'B'];
@@ -37,7 +36,7 @@ export class UserManagement implements OnInit {
   subjectList: Subject[] = [];
 
   dniControl = new FormControl('');
-  usersFound: User[] = [];
+  usersFound$!: Observable<User[]>;
 
   constructor(
     public authService: AuthService,
@@ -66,7 +65,7 @@ export class UserManagement implements OnInit {
     this.addComissionCheckboxes();
   }
 
-  get comissionFormArray(): FormArray {
+  get comissionFromArray(): FormArray {
     return this.userForm.get('comissions') as FormArray;
   }
 
@@ -74,13 +73,12 @@ export class UserManagement implements OnInit {
     return this.userForm.get('assigned_subjects') as FormArray;
   }
 
-  private addComissionCheckboxes(userComissions: any[] = []): void {
-    this.comissionFormArray.clear();
+  private addComissionCheckboxes(userCommissions: string[] = []): void {
+    this.comissionFromArray.clear();
 
-    this.comissionList.forEach(() => {
-      const isMarked = userComissions.some((c) => c === 'A' || 'B');
-
-      this.comissionFormArray.push(new FormControl(isMarked));
+    this.comissionList.forEach((com) => {
+      const isMarked = userCommissions.includes(com);
+      this.comissionFromArray.push(new FormControl(isMarked));
     });
   }
 
@@ -113,27 +111,25 @@ export class UserManagement implements OnInit {
     });
   }
 
-  onSubmit(e: Event): void {
-
+  onSubmit(): void {
     if (this.userForm.invalid) {
       this.userForm.markAllAsTouched();
       return;
     }
 
     const { fullname, dni, email, role, classroom_number } = this.userForm.value;
-    const comission = this.getSelectedValuesToString(this.comissionFormArray, this.comissionList);
+    const comission = this.getSelectedValuesToString(this.comissionFromArray, this.comissionList);
     const assigned_subjects = this.getSelectedValuesToString(
       this.subjectFormArray,
       this.subjectToAssignList,
     );
 
     this.newUser = {
-      // Si estamos editando, conservamos el ID original
       ...(this.modo === 'editar' && { id: this.userToUpdateId! }),
       name: fullname.trim(),
       email: email.trim(),
       dni: dni,
-      password: dni, // Nota de seguridad: el backend suele encargarse de esto, pero si lo requieres aquí, está bien.
+      password: this.modo === 'editar' ? this.newUser.password : dni,
       role: role,
       comission: comission,
       classroom_number: classroom_number,
@@ -142,7 +138,6 @@ export class UserManagement implements OnInit {
 
     console.log('Datos listos para enviar al backend:', this.newUser);
 
-    // Le pasamos el ID correcto que guardamos en memoria, o vacío si es creación
     this.submitUser(this.userToUpdateId || '');
   }
 
@@ -151,7 +146,8 @@ export class UserManagement implements OnInit {
       this.userService.createUser(this.newUser).subscribe({
         next: () => {
           alert('Usuario Registrado Exitosamente.');
-          this.userForm.reset(); // Limpieza post-envío
+          this.userForm.reset();
+          window.location.reload();
         },
         error: (err) => console.error('Hubo un error al registrar al usuario: ', err),
       });
@@ -163,8 +159,9 @@ export class UserManagement implements OnInit {
       this.userService.modifyUser(id, this.newUser).subscribe({
         next: () => {
           alert('Usuario Modificado Exitosamente.');
-          this.userToUpdateId = null; // Reseteamos el estado de edición
+          this.userToUpdateId = null;
           this.userForm.reset();
+          window.location.reload();
         },
         error: (err) => console.error('Hubo un error al modificar al usuario:', err),
       });
@@ -188,15 +185,10 @@ export class UserManagement implements OnInit {
     });
   }
 
-  // Método que se ejecuta al hacer clic en una tarjeta de la lista flotante
   seleccionarUsuarioParaEliminar(user: any): void {
     this.userToDeleteSel = user;
 
-    // Seteamos el DNI en el input de forma visual
     this.dniControl.setValue(user.dni, { emitEvent: false });
-
-    // Vaciamos la lista para cerrar el desplegable
-    this.usersFound = [];
   }
 
   // Método de eliminación final
@@ -213,6 +205,7 @@ export class UserManagement implements OnInit {
           alert('Usuario eliminado con éxito.');
           this.userToDeleteSel = null;
           this.dniControl.setValue('');
+          window.location.reload();
         },
         error: (err) => console.error('Error al eliminar:', err),
       });
@@ -220,24 +213,12 @@ export class UserManagement implements OnInit {
   }
 
   searchDNI() {
-    this.dniControl.valueChanges
-      .pipe(
-        filter((valor) => valor !== null && valor.length >= 1),
-
-        debounceTime(300),
-
-        // Si el valor es idéntico al anterior, no hace nada
-        distinctUntilChanged(),
-
-        // Cancela la petición anterior si entra una nueva (Evita condiciones de carrera)
-        switchMap((valor) => this.userService.searchUserByDni(valor!)),
-      )
-      .subscribe({
-        next: (resultados) => {
-          this.usersFound = resultados;
-        },
-        error: (err) => console.error('Error en la búsqueda', err),
-      });
+    this.usersFound$ = this.dniControl.valueChanges.pipe(
+      filter((dni) => dni !== null && dni.length >= 1),
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((dni) => this.userService.searchUserByDni(dni!)),
+    );
   }
 
   cambiarModo(nuevoModo: 'crear' | 'editar' | 'eliminar'): void {

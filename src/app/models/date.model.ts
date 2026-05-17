@@ -1,4 +1,6 @@
-export type Date = {
-    event: string,
-    date: string
+export class Date {
+    id?: string;
+    event!: string;
+    important!: boolean;
+    date!: string;
 }

@@ -178,15 +178,152 @@
   align-items: center;
   gap: 8px;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--text-secondary);
   cursor: pointer;
 }
 
-.radio-option input[type="radio"] {
+.radio-option input[type="checkbox"] {
   accent-color: var(--primary-purple);
   width: 18px;
   height: 18px;
+}
+
+/* Contenedor principal de la lista */
+.subject-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 200px;
+  overflow-y: scroll;
+}
+
+/* Elemento de la lista */
+.subject-item {
+  width: 100%;
+}
+
+/* Tarjeta interactiva (Botón) */
+.subject-card {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  /* Efecto al pasar el mouse o enfocar con teclado */
+  &:hover, &:focus {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    outline: none;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* Contenedor circular */
+.subject-color {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+
+/* Contenedor de textos */
+.subject-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Nombre de la materia */
+.subject-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* Contenedor Principal de la Advertencia */
+.warning-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #fff5f5; /* Fondo rojizo muy suave */
+  border-left: 5px solid #dc3545; /* Barra lateral roja de peligro */
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin: 16px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Alineación de la Cabecera (Icono + Texto ¡ADVERTENCIA!) */
+.warning-content > span:nth-child(1) {
+  color: #dc3545; /* Color del icono */
+  font-size: 28px;
+  align-self: flex-start;
+}
+
+.warning-content > span:nth-child(2) {
+  color: #bd2130; /* Rojo oscuro para el título */
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-top: -4px; /* Ajuste de alineación con el icono */
+}
+
+/* Bloque de Mensajes */
+.warning-message {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Separación entre párrafos */
+}
+
+.warning-message p {
+  margin: 0;
+  color: #495057; /* Gris oscuro para legibilidad */
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Énfasis en el texto crítico */
+.warning-message strong {
+  color: #dc3545;
+  background-color: #ffe3e3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+/* Párrafo de Recomendación (Opcional: un tono un poco más sutil) */
+.warning-message p:last-child {
+  color: #6c757d; /* Gris intermedio */
+  font-size: 13.5px;
+  border-top: 1px solid #f8d7da; /* Línea divisoria muy tenue */
+  padding-top: 8px;
+  margin-top: 4px;
 }
 
 /* RESPONSIVE NETBOOK */

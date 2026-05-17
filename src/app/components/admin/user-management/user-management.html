@@ -48,10 +48,10 @@
 
         <div class="admin-form" *ngIf="modo === 'editar'">
           <label for="dni-input">Buscar por DNI:</label>
-          <input class="admin-input" type="text" id="dni-input" [formControl]="dniControl" />
+          <input class="admin-input" type="text" placeholder="Sin puntos" id="dni-input" [formControl]="dniControl" />
 
           <ul class="user-list">
-            <li *ngFor="let user of usersFound" [id]="user.id" class="user-item">
+            <li *ngFor="let user of usersFound$ | async" [id]="user.id" class="user-item">
               <button type="button" class="user-card" (click)="userToEdit(user)">
                 <!-- Avatar con iniciales o placeholder -->
                 <div class="user-avatar">
@@ -70,7 +70,7 @@
           </ul>
         </div>
 
-        <form class="admin-form" [formGroup]="userForm" (ngSubmit)="onSubmit($event)">
+        <form class="admin-form" [formGroup]="userForm" (ngSubmit)="onSubmit()">
           <div class="form-row">
             <div class="form-group">
               <label>Nombre Completo *</label>
@@ -170,7 +170,7 @@
               <div class="checkbox-group-container" formArrayName="comissions">
                 <div
                   class="checkbox-item"
-                  *ngFor="let control of comissionFormArray.controls; let i = index"
+                  *ngFor="let control of comissionFromArray.controls; let i = index"
                 >
                   <input type="checkbox" [formControlName]="i" [id]="'comission-' + i" />
                   <label [for]="'comission-' + i">Comisión {{ comissionList[i] }}</label>
@@ -248,7 +248,7 @@
             <!-- Desplegable flotante de resultados estilo Card -->
             <ul
               class="autocomplete-results"
-              *ngIf="usersFound.length > 0"
+              *ngIf="usersFound$"
               style="
                 position: absolute;
                 top: 100%;
@@ -260,7 +260,7 @@
                 margin: 4px 0 0 0;
               "
             >
-              <li *ngFor="let user of usersFound" class="user-item" style="width: 100%">
+              <li *ngFor="let user of usersFound$ | async" class="user-item" style="width: 100%">
                 <button
                   type="button"
                   class="user-card"

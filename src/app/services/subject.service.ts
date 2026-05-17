@@ -17,4 +17,16 @@ export class SubjectService {
   getSubjectById(id: string) : Observable<Subject> {
     return this.http.get<Subject>(`${this.apiUrl}/${id}`);
   }
+
+  createSubject(subject: Subject): Observable<Object> {
+    return this.http.post(this.apiUrl, subject);
+  }
+
+  modifySubject(id: string, subject: Subject) {
+    return this.http.put(`${this.apiUrl}/${id}`, subject);
+  }
+
+  deleteSubject(id: string) {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }

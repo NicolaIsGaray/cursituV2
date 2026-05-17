@@ -1,4 +1,5 @@
-export type Classroom = {
-    subject_id: string,
-    topics_id: string[]
+export class Classroom {
+    id?: string;
+    subject_id?: string;
+    topics_id?: string[];
 }

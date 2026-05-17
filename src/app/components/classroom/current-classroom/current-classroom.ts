@@ -79,7 +79,7 @@ export class CurrentClassroom implements OnInit {
     this.classroomService.getClassroomById(id).subscribe({
       next: (data) => {
         this.classroom = data;
-        this.getLinkedSubject(this.classroom.subject_id);
+        this.getLinkedSubject(this.classroom.subject_id!);
       },
       error: (err) => console.error("Hubo un error al obtener el curso: ", err)
       

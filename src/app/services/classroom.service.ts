@@ -13,4 +13,8 @@ export class ClassroomService {
   getClassroomById(id: string) : Observable<Classroom> {
     return this.http.get<Classroom>(`${this.apiUrl}/${id}`)
   }
+
+  createClassroom(classroom: Classroom): Observable<Object> {
+    return this.http.post(this.apiUrl, classroom)
+  }
 }
