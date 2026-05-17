@@ -38,6 +38,8 @@ export class UserManagement implements OnInit {
   dniControl = new FormControl('');
   usersFound$!: Observable<User[]>;
 
+  roleSwitch = true;
+
   constructor(
     public authService: AuthService,
     private fb: FormBuilder,
@@ -57,7 +59,7 @@ export class UserManagement implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       dni: ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^\d+$/)]],
       role: ['', Validators.required],
-      classroom_number: ['', Validators.required],
+      classroom_number: [''],
       comissions: this.fb.array([]),
       assigned_subjects: this.fb.array([]),
     });
@@ -173,8 +175,16 @@ export class UserManagement implements OnInit {
     this.userToUpdateId = user.id!;
     this.newUser = user;
 
+    if (this.newUser.role === 'ALUMNO') {
+      this.roleSwitch = true;
+    } else {
+      this.roleSwitch = false;
+    }
+
     this.addComissionCheckboxes(this.newUser.comission);
-    this.addSubjectCheckboxes(this.newUser.subjects_id);
+    if (this.newUser.role !== 'DOCENTE') {
+      this.addSubjectCheckboxes(this.newUser.subjects_id);
+    }
 
     this.userForm.patchValue({
       fullname: this.newUser.name,
@@ -219,6 +229,17 @@ export class UserManagement implements OnInit {
       distinctUntilChanged(),
       switchMap((dni) => this.userService.searchUserByDni(dni!)),
     );
+  }
+
+  switchSubjectCheckboxes(e: Event) {
+    const element = e.target as HTMLSelectElement;
+    const value = element.value;
+
+    if (value === 'ALUMNO') {
+      this.roleSwitch = true;
+    } else {
+      this.roleSwitch = false;
+    }
   }
 
   cambiarModo(nuevoModo: 'crear' | 'editar' | 'eliminar'): void {

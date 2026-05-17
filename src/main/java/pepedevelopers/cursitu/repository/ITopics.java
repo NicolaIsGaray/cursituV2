@@ -1,4 +1,4 @@
-package pepedevelopers.cursitu.repository.classroom;
+package pepedevelopers.cursitu.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import pepedevelopers.cursitu.model.classroom_data.TopicsEntity;

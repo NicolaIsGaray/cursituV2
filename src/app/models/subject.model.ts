@@ -1,4 +1,4 @@
-import { Date } from "./date.model"
+import { DateEvent } from "./date-event.model"
 
 export class Subject {
     id?: string;
@@ -8,5 +8,5 @@ export class Subject {
     classroom_id?: string;
     year_level!: number;
     academic_period!: number[];
-    important_dates?: Date[];
+    important_dates?: DateEvent[];
 }

@@ -16,7 +16,6 @@ import { SubjectService } from '../../../services/subject.service';
 import { UserService } from '../../../services/user.service';
 import { Classroom } from '../../../models/classroom.model';
 import { ClassroomService } from '../../../services/classroom.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-subject-management',
@@ -44,8 +43,7 @@ export class SubjectManagement implements OnInit {
     private fb: FormBuilder,
     private subjectService: SubjectService,
     private userService: UserService,
-    private classroomService: ClassroomService,
-    private route: Router
+    private classroomService: ClassroomService
   ) {}
 
   ngOnInit(): void {

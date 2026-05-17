@@ -1,205 +1,208 @@
-<div class="admin-container">
-  <!-- Lado Izquierdo: Acciones de Materias -->
-  <div class="selection-panel">
-    <h3>Gestión de Materias</h3>
-    <p class="section-description">
-      Configura las materias, asigna docentes y define periodos académicos.
-    </p>
-
-    <div class="admin-actions-list">
-      <button
-        class="admin-btn create"
-        [class.active]="modo === 'crear'"
-        (click)="cambiarModo('crear')"
-      >
-        <span class="material-symbols-outlined">library_add</span>
-        Nueva Materia
-      </button>
-
-      <button
-        class="admin-btn edit"
-        [class.active]="modo === 'editar'"
-        (click)="cambiarModo('editar')"
-      >
-        <span class="material-symbols-outlined">edit_note</span>
-        Editar Materia
-      </button>
-
-      <button
-        class="admin-btn delete"
-        [class.active]="modo === 'eliminar'"
-        (click)="cambiarModo('eliminar')"
-      >
-        <span class="material-symbols-outlined">delete_sweep</span>
-        Eliminar Materia
-      </button>
-    </div>
-  </div>
-
-  <!-- Lado Derecho: Formulario -->
-  <div class="action-panel">
-    <!-- FORMULARIO CREAR / EDITAR -->
-    <div class="form-card" *ngIf="modo === 'crear' || modo === 'editar'">
-      <header
-        class="form-header"
-        [style.background-color]="modo === 'crear' ? 'var(--primary-purple)' : '#2ecc71'"
-      >
-        <h4>{{ modo === 'crear' ? 'Configurar Materia' : 'Actualizar Materia' }}</h4>
-      </header>
-
-      <div class="admin-form" *ngIf="modo === 'editar'">
-        <div class="form-group">
-          <label>Seleccionar Materia a editar</label>
-          <ul class="subject-list">
-            <li *ngFor="let subject of subjectList$ | async" [id]="subject.id" class="subject-item">
-              <button type="button" class="subject-card" (click)="subjectToEdit(subject)">
-                <!-- Avatar con iniciales o placeholder -->
-                <div class="subject-color" [style.background-color]="subject.color">
-                  {{ subject.subject_name.charAt(0).toUpperCase() }}
-                </div>
-
-                <!-- Información del usuario -->
-                <div class="subject-info">
-                  <span class="subject-name">{{ subject.subject_name }}</span>
-                </div>
-              </button>
-            </li>
-          </ul>
-        </div>
+<main *ngIf="authService.userRole$ | async as rol">
+  <div class="admin-container" *ngIf="rol === 'ADMIN'">
+    <!-- Lado Izquierdo: Acciones de Materias -->
+    <div class="selection-panel">
+      <h3>Gestión de Materias</h3>
+      <p class="section-description">
+        Configura las materias, asigna docentes y define periodos académicos.
+      </p>
+  
+      <div class="admin-actions-list">
+        <button
+          class="admin-btn create"
+          [class.active]="modo === 'crear'"
+          (click)="cambiarModo('crear')"
+        >
+          <span class="material-symbols-outlined">library_add</span>
+          Nueva Materia
+        </button>
+  
+        <button
+          class="admin-btn edit"
+          [class.active]="modo === 'editar'"
+          (click)="cambiarModo('editar')"
+        >
+          <span class="material-symbols-outlined">edit_note</span>
+          Editar Materia
+        </button>
+  
+        <button
+          class="admin-btn delete"
+          [class.active]="modo === 'eliminar'"
+          (click)="cambiarModo('eliminar')"
+        >
+          <span class="material-symbols-outlined">delete_sweep</span>
+          Eliminar Materia
+        </button>
       </div>
-
-      <form class="admin-form" [formGroup]="subjectForm" (ngSubmit)="onSubmit()">
-        <div class="form-row">
+    </div>
+  
+    <!-- Lado Derecho: Formulario -->
+    <div class="action-panel">
+      <!-- FORMULARIO CREAR / EDITAR -->
+      <div class="form-card" *ngIf="modo === 'crear' || modo === 'editar'">
+        <header
+          class="form-header"
+          [style.background-color]="modo === 'crear' ? 'var(--primary-purple)' : '#2ecc71'"
+        >
+          <h4>{{ modo === 'crear' ? 'Configurar Materia' : 'Actualizar Materia' }}</h4>
+        </header>
+  
+        <div class="admin-form" *ngIf="modo === 'editar'">
           <div class="form-group">
-            <label>Nombre de la Materia *</label>
-            <input
-              type="text"
-              placeholder="Ej: Metodología y Testing"
-              id="name"
-              formControlName="name"
-              class="admin-input"
-            />
+            <label>Seleccionar Materia a editar</label>
+            <ul class="subject-list">
+              <li *ngFor="let subject of subjectList$ | async" [id]="subject.id" class="subject-item">
+                <button type="button" class="subject-card" (click)="subjectToEdit(subject)">
+                  <!-- Avatar con iniciales o placeholder -->
+                  <div class="subject-color" [style.background-color]="subject.color">
+                    {{ subject.subject_name.charAt(0).toUpperCase() }}
+                  </div>
+  
+                  <!-- Información del usuario -->
+                  <div class="subject-info">
+                    <span class="subject-name">{{ subject.subject_name }}</span>
+                  </div>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+  
+        <form class="admin-form" [formGroup]="subjectForm" (ngSubmit)="onSubmit()">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nombre de la Materia *</label>
+              <input
+                type="text"
+                placeholder="Ej: Metodología y Testing"
+                id="name"
+                formControlName="name"
+                class="admin-input"
+              />
+              <span
+                *ngIf="
+                  subjectForm.get('name')?.touched && subjectForm.get('name')?.errors?.['required']
+                "
+                style="color: var(--error-red)"
+              >
+                Porfavor, ingrese un nombre.
+              </span>
+            </div>
+  
+            <div class="form-group">
+              <label>Identificador Visual (Color)</label>
+              <div class="color-picker-wrapper">
+                <input
+                  type="color"
+                  class="color-input"
+                  value="#3f3689"
+                  id="color"
+                  formControlName="color"
+                />
+                <span class="color-hint"
+                  >Este color se verá principalmente en las interfaces de la materia. Evita colores
+                  fuertes.</span
+                >
+              </div>
+            </div>
+          </div>
+  
+          <div class="form-group full-width">
+            <label>Profesor Titular (Seleccionar uno) *</label>
+            <select class="admin-input" formControlName="professor">
+              <option ngValue="" disabled selected>Seleccione un docente...</option>
+              <option *ngFor="let p of professorList$ | async" [ngValue]="p.id" id="professor">
+                {{ p.name }} - DNI: {{ p.dni }}
+              </option>
+            </select>
             <span
               *ngIf="
-                subjectForm.get('name')?.touched && subjectForm.get('name')?.errors?.['required']
+                subjectForm.get('professor')?.touched &&
+                subjectForm.get('professor')?.errors?.['required']
               "
               style="color: var(--error-red)"
             >
-              Porfavor, ingrese un nombre.
+              Porfavor, elige un profesor.
             </span>
           </div>
-
-          <div class="form-group">
-            <label>Identificador Visual (Color)</label>
-            <div class="color-picker-wrapper">
-              <input
-                type="color"
-                class="color-input"
-                value="#3f3689"
-                id="color"
-                formControlName="color"
-              />
-              <span class="color-hint"
-                >Este color se verá principalmente en las interfaces de la materia. Evita colores
-                fuertes.</span
+  
+          <div class="form-row">
+            <div class="form-group">
+              <label>Año Correspondiente *</label>
+              <select class="admin-input" formControlName="year">
+                <option *ngFor="let year of yearList" [ngValue]="year">{{year}}° Año</option>
+              </select>
+            </div>
+  
+            <div class="form-group">
+              <label>Periodos Académicos *</label>
+              <div
+                class="radio-group"
+                *ngFor="let control of periodFromArray.controls; let i = index"
+                formArrayName="periods"
               >
+                <input type="checkbox" [formControlName]="i" [id]="'period-' + i" />
+                <label [for]="'period-' + i" class="radio-option"
+                  >{{ periodList[i] }}° Cuatrimestre</label
+                >
+              </div>
             </div>
           </div>
-        </div>
-
-        <div class="form-group full-width">
-          <label>Profesor Titular (Seleccionar uno) *</label>
-          <select class="admin-input" formControlName="professor">
-            <option ngValue="" disabled selected>Seleccione un docente...</option>
-            <option *ngFor="let p of professorList$ | async" [ngValue]="p.id" id="professor">
-              {{ p.name }} - DNI: {{ p.dni }}
-            </option>
-          </select>
-          <span
-            *ngIf="
-              subjectForm.get('professor')?.touched &&
-              subjectForm.get('professor')?.errors?.['required']
-            "
-            style="color: var(--error-red)"
+  
+          <button
+            class="btn-submit"
+            [style.background-color]="modo === 'crear' ? 'var(--primary-purple)' : '#2ecc71'"
           >
-            Porfavor, elige un profesor.
-          </span>
-        </div>
-
-        <div class="form-row">
+            {{ modo === 'crear' ? 'Crear Materia' : 'Guardar Cambios' }}
+          </button>
+        </form>
+      </div>
+  
+      <!-- FORMULARIO ELIMINAR (Búsqueda por Nombre o ID) -->
+      <div class="form-card delete-card" *ngIf="modo === 'eliminar'">
+        <header class="form-header delete-header">
+          <h4>Eliminar Materia</h4>
+        </header>
+        <div class="delete-content">
+          <div class="warning-content">
+            <!-- Cabecera alineada flex -->
+            <div style="display: flex; align-items: center; gap: 8px">
+              <span class="material-symbols-outlined">warning</span>
+              <span style="font-weight: 700; color: #bd2130; letter-spacing: 0.5px"
+                >¡ADVERTENCIA!</span
+              >
+            </div>
+  
+            <div class="warning-message">
+              <p>
+                Esta acción incluye la eliminación <strong>TOTAL</strong> de la materia y sus cursos
+                creados (Clases, Parciales, Cuestionarios y demás información).
+              </p>
+              <p>
+                Recomendación: Si la materia lleva tiempo en vigencia o ésta acción se toma a mitad de
+                año, por favor, comunicate con el profesor asignado para evitar malentendidos.
+              </p>
+            </div>
+          </div>
           <div class="form-group">
-            <label>Año Correspondiente *</label>
-            <select class="admin-input" formControlName="year">
-              <option *ngFor="let year of yearList" [ngValue]="year">{{year}}° Año</option>
+            <label>Seleccionar Materia a dar de baja</label>
+            <select class="admin-input error-focus" (change)="selectSubjectToDelete($event)">
+              <option *ngFor="let subject of subjectList$ | async" [value]="subject.id" id="subject">
+                {{subject.subject_name}}
+              </option>
             </select>
           </div>
-
-          <div class="form-group">
-            <label>Periodos Académicos *</label>
-            <div
-              class="radio-group"
-              *ngFor="let control of periodFromArray.controls; let i = index"
-              formArrayName="periods"
-            >
-              <input type="checkbox" [formControlName]="i" [id]="'period-' + i" />
-              <label [for]="'period-' + i" class="radio-option"
-                >{{ periodList[i] }}° Cuatrimestre</label
-              >
-            </div>
-          </div>
+          <button class="btn-submit btn-delete" (click)="deleteSubject()">Confirmar Eliminación</button>
         </div>
-
-        <button
-          class="btn-submit"
-          [style.background-color]="modo === 'crear' ? 'var(--primary-purple)' : '#2ecc71'"
-        >
-          {{ modo === 'crear' ? 'Crear Materia' : 'Guardar Cambios' }}
-        </button>
-      </form>
-    </div>
-
-    <!-- FORMULARIO ELIMINAR (Búsqueda por Nombre o ID) -->
-    <div class="form-card delete-card" *ngIf="modo === 'eliminar'">
-      <header class="form-header delete-header">
-        <h4>Eliminar Materia</h4>
-      </header>
-      <div class="delete-content">
-        <div class="warning-content">
-          <!-- Cabecera alineada flex -->
-          <div style="display: flex; align-items: center; gap: 8px">
-            <span class="material-symbols-outlined">warning</span>
-            <span style="font-weight: 700; color: #bd2130; letter-spacing: 0.5px"
-              >¡ADVERTENCIA!</span
-            >
-          </div>
-
-          <div class="warning-message">
-            <p>
-              Esta acción incluye la eliminación <strong>TOTAL</strong> de la materia y sus cursos
-              creados (Clases, Parciales, Cuestionarios y demás información).
-            </p>
-            <p>
-              Recomendación: Si la materia lleva tiempo en vigencia o ésta acción se toma a mitad de
-              año, por favor, comunicate con el profesor asignado para evitar malentendidos.
-            </p>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Seleccionar Materia a dar de baja</label>
-          <select class="admin-input error-focus" (change)="selectSubjectToDelete($event)">
-            <option *ngFor="let subject of subjectList$ | async" [value]="subject.id" id="subject">
-              {{subject.subject_name}}
-            </option>
-          </select>
-        </div>
-        <button class="btn-submit btn-delete" (click)="deleteSubject()">Confirmar Eliminación</button>
+      </div>
+  
+      <!-- ESTADO INICIAL -->
+      <div class="empty-state" *ngIf="!modo">
+        <span class="material-symbols-outlined">auto_stories</span>
+        <p>Gestión de currícula académica</p>
       </div>
     </div>
-
-    <!-- ESTADO INICIAL -->
-    <div class="empty-state" *ngIf="!modo">
-      <span class="material-symbols-outlined">auto_stories</span>
-      <p>Gestión de currícula académica</p>
-    </div>
   </div>
-</div>
+</main>
+

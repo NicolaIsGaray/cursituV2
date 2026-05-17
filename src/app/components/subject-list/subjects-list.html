@@ -32,16 +32,16 @@
     <h2>Materias En Curso</h2>
 
     <div class="subjects-card">
-      <div class="subject-row" *ngFor="let subject of (subjectList$ | async)">
+      <div class="subject-row" *ngFor="let subject of subjectsWithProfessor$ | async">
         <div
           class="subject-main main-clickable"
           [style.background-color]="subject.color"
-          (click)="navigateToClassroom('/current-classroom', subject.classroom_id)"
+          (click)="navigateToClassroom('/current-classroom', subject.classroom_id!)"
         >
           <div class="subject-info">
             <h3>{{ subject.subject_name| uppercase }}</h3>
             <p>
-              Docente: <span>{{ subject.professorData?.name || "Cargando..." }}</span>
+              Docente: <span>{{ subject.professorName || "Cargando..." }}</span>
             </p>
           </div>
         </div>

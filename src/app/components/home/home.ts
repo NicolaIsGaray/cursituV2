@@ -38,6 +38,8 @@ export class Home implements OnInit{
   ) {}
 
   ngOnInit(): void {
+    this.authService.getAuthStatus();
+
     this.getAllUsers();
     this.getCurrentUser();
   }

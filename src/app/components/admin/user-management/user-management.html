@@ -148,8 +148,9 @@
               </span>
             </div>
             <div class="form-group">
-              <label>Rol del Usuario</label>
-              <select class="admin-input" id="role" formControlName="role">
+              <label>Rol del Usuario *</label>
+              <select class="admin-input" id="role" formControlName="role" (change)="switchSubjectCheckboxes($event)">
+                <option value="" selected disabled>-- Selecciona un rol --</option>
                 <option *ngFor="let role of roleList" [value]="role.name">
                   {{ role.name }}
                 </option>
@@ -177,8 +178,8 @@
                 </div>
               </div>
             </div>
-            <div class="form-group">
-              <label>N° de Curso *</label>
+            <div class="form-group" *ngIf="roleSwitch">
+              <label>N° de Curso</label>
               <input
                 type="number"
                 placeholder="Ej: 24"
@@ -186,20 +187,11 @@
                 id="classroom_number"
                 formControlName="classroom_number"
               />
-              <span
-                *ngIf="
-                  userForm.get('classroom_number')?.touched &&
-                  userForm.get('classroom_number')?.errors?.['required']
-                "
-                style="color: var(--error-red)"
-              >
-                Porfavor, ingresa un número de curso.
-              </span>
             </div>
           </div>
 
           <!-- Checkboxes de Materias Asignadas -->
-          <div class="form-group full-width">
+          <div class="form-group full-width" [style.display]="roleSwitch ? 'block' : 'none'">
             <label>Materias Asignadas</label>
             <div class="checkbox-group-container horizontal" formArrayName="assigned_subjects">
               <div
@@ -250,14 +242,13 @@
               class="autocomplete-results"
               *ngIf="usersFound$"
               style="
-                position: absolute;
-                top: 100%;
-                left: 0;
                 width: 100%;
                 z-index: 1000;
                 list-style: none;
                 padding: 0;
                 margin: 4px 0 0 0;
+                overflow-y: scroll;
+                max-height: 200px;
               "
             >
               <li *ngFor="let user of usersFound$ | async" class="user-item" style="width: 100%">

@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pepedevelopers.cursitu.model.classroom_data.TopicsEntity;
-import pepedevelopers.cursitu.repository.classroom.ITopics;
+import pepedevelopers.cursitu.repository.ITopics;
 
 import java.util.List;
 
