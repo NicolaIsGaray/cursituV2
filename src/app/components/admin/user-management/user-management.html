@@ -80,6 +80,7 @@
                 class="admin-input"
                 formControlName="fullname"
                 id="fullname"
+                autocomplete="off"
               />
               <span
                 *ngIf="
@@ -99,6 +100,7 @@
                 class="admin-input"
                 id="email"
                 formControlName="email"
+                autocomplete="off"
               />
               <span
                 *ngIf="
@@ -127,6 +129,7 @@
                 id="dni"
                 formControlName="dni"
                 maxlength="8"
+                autocomplete="off"
               />
               <span
                 *ngIf="userForm.get('dni')?.touched && userForm.get('dni')?.errors?.['required']"

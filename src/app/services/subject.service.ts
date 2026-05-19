@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Subject } from '../models/subject.model';
 
 @Injectable({
@@ -9,6 +9,17 @@ import { Subject } from '../models/subject.model';
 export class SubjectService {
   private http = inject(HttpClient);
   private apiUrl = "http://localhost:8080/api/subjects"
+
+  private readonly SUBJECT_KEY = "cursitu_selected_subject"
+
+  setItemInStorage(value: any): void {
+    localStorage.setItem(this.SUBJECT_KEY, JSON.stringify(value));
+  }
+
+  getItemFromStorage<T>(): T | null {
+    const item = localStorage.getItem(this.SUBJECT_KEY);
+    return item ? JSON.parse(item) : null;
+  }
 
   getAllSubjects() : Observable<Subject[]> {
     return this.http.get<Subject[]>(this.apiUrl);

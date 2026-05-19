@@ -9,7 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Subject } from '../../../models/subject.model';
-import { map, Observable } from 'rxjs';
+import { forkJoin, map, Observable, of, switchMap, take } from 'rxjs';
 import { User } from '../../../models/user.model';
 import { AuthService } from '../../../services/auth.service';
 import { SubjectService } from '../../../services/subject.service';
@@ -33,6 +33,8 @@ export class SubjectManagement implements OnInit {
   subjectList$!: Observable<Subject[]>;
 
   professorList$!: Observable<User[]>;
+  professorAsigned!: User;
+  professorToRevoke!: User;
   periodList = [1, 2];
   yearList = [1, 2, 3];
 
@@ -43,7 +45,7 @@ export class SubjectManagement implements OnInit {
     private fb: FormBuilder,
     private subjectService: SubjectService,
     private userService: UserService,
-    private classroomService: ClassroomService
+    private classroomService: ClassroomService,
   ) {}
 
   ngOnInit(): void {
@@ -69,14 +71,13 @@ export class SubjectManagement implements OnInit {
   }
 
   private addPeriodCheckboxes(userCommissions: number[] = []): void {
-  this.periodFromArray.clear();
+    this.periodFromArray.clear();
 
-  this.periodList.forEach((period) => {
-    const isMarked = userCommissions.includes(period);
-
-    this.periodFromArray.push(new FormControl(isMarked));
-  });
-}
+    this.periodList.forEach((period) => {
+      const isMarked = userCommissions.includes(period);
+      this.periodFromArray.push(new FormControl(isMarked));
+    });
+  }
 
   private getSelectedValues(formArray: FormArray, referenceList: number[]): number[] {
     return formArray.value
@@ -95,6 +96,25 @@ export class SubjectManagement implements OnInit {
       .pipe(map((users) => users.filter((u) => u.role === role)));
   }
 
+  getProfessorToAssign(id: string) {
+    this.userService.getUserById(id).subscribe({
+      next: (data) => {
+        this.professorAsigned = data;
+      },
+      error: (err) => console.error('Hubo un error al buscar al profesor: ', err),
+    });
+  }
+
+  getProfessorToRevoke(id: string) {
+    this.userService.getUserById(id).subscribe({
+      next: (data) => {
+        this.professorToRevoke = data;
+        console.log('Profesor anterior identificado: ', this.professorToRevoke.name);
+      },
+      error: (err) => console.error('Hubo un error al obtener el profesor anterior: ', err),
+    });
+  }
+
   onSubmit() {
     if (this.subjectForm.invalid) {
       this.subjectForm.markAllAsTouched();
@@ -104,17 +124,26 @@ export class SubjectManagement implements OnInit {
     const { name, color, professor, year } = this.subjectForm.value;
     const periods = this.getSelectedValues(this.periodFromArray, this.periodList);
 
+    const newProfessorId = professor.includes(': ') ? professor.split(': ')[1] : professor.trim();
+
     this.newSubject = {
       ...(this.modo === 'editar' && { id: this.subjectToUpdateId! }),
       subject_name: name.trim(),
       color: color,
-      professor_id: professor.trim(),
+      professor_id: newProfessorId,
       year_level: year,
       academic_period: periods,
     };
 
-    console.log('Datos listos para enviar: ', this.newSubject);
-    this.submitSubject(this.subjectToUpdateId || '');
+    this.userService.getUserById(newProfessorId).subscribe({
+      next: (profData) => {
+        this.professorAsigned = profData;
+        console.log('Nuevo profesor listo para asignar: ', this.professorAsigned.name);
+
+        this.submitSubject(this.subjectToUpdateId || '');
+      },
+      error: (err) => console.error('Error al obtener el nuevo profesor asignado: ', err),
+    });
   }
 
   submitSubject(id: string): void {
@@ -123,8 +152,9 @@ export class SubjectManagement implements OnInit {
         next: (subject) => {
           alert('Materia Creada Exitosamente.');
           this.subjectForm.reset();
+          this.newSubject.id = (subject as Subject).id;
+          this.updateProfessorsRelation();
           this.createAndAssignClassroom(subject as Subject);
-          window.location.reload();
         },
         error: (err) => console.error('Hubo un error al crear la materia: ', err),
       });
@@ -133,11 +163,11 @@ export class SubjectManagement implements OnInit {
     if (this.modo === 'editar') {
       this.subjectService.modifySubject(id, this.newSubject).subscribe({
         next: () => {
-          alert("Materia Modificada Exitosamente.")
-          window.location.reload();
+          alert('Materia Modificada Exitosamente.');
+          this.updateProfessorsRelation();
         },
-        error: (err) => console.error("Hubo un error al modificar la materia: ", err)
-      })
+        error: (err) => console.error('Hubo un error al modificar la materia: ', err),
+      });
     }
   }
 
@@ -145,7 +175,7 @@ export class SubjectManagement implements OnInit {
     this.modo = 'editar';
     this.subjectToUpdateId = subject.id!;
     this.newSubject = subject;
-    
+
     this.addPeriodCheckboxes(this.newSubject.academic_period);
 
     this.subjectForm.patchValue({
@@ -154,6 +184,61 @@ export class SubjectManagement implements OnInit {
       professor: this.newSubject.professor_id,
       year: this.newSubject.year_level,
     });
+
+    const initialProfessorId = subject.professor_id.includes(': ')
+      ? subject.professor_id.split(': ')[1]
+      : subject.professor_id;
+
+    this.getProfessorToRevoke(initialProfessorId);
+  }
+
+  updateProfessorsRelation() {
+    const subjectId = this.newSubject.id!;
+
+    const isProfessorSwitch =
+      this.modo === 'editar' &&
+      this.professorToRevoke &&
+      this.professorToRevoke.id !== this.professorAsigned.id;
+
+    if (isProfessorSwitch) {
+      this.professorToRevoke = {
+        ...this.professorToRevoke,
+        subjects_id: (this.professorToRevoke.subjects_id || []).filter(
+          (id: string) => id !== subjectId,
+        ),
+      };
+
+      this.userService.modifyUser(this.professorToRevoke.id!, this.professorToRevoke).subscribe({
+        next: () => {
+          console.log('Materia removida con éxito del profesor anterior.');
+          this.addSubjectToNewProfessor(subjectId);
+        },
+        error: (err) => console.error('Error al remover materia del profesor anterior: ', err),
+      });
+    } else {
+      this.addSubjectToNewProfessor(subjectId);
+    }
+  }
+
+  addSubjectToNewProfessor(subjectId: string) {
+    const currentSubjects = this.professorAsigned.subjects_id || [];
+
+    if (!currentSubjects.includes(subjectId)) {
+      this.professorAsigned = {
+        ...this.professorAsigned,
+        subjects_id: [...currentSubjects, subjectId],
+      };
+
+      this.userService.modifyUser(this.professorAsigned.id!, this.professorAsigned).subscribe({
+        next: () => {
+          console.log('Materia agregada con éxito al nuevo profesor.');
+          window.location.reload();
+        },
+        error: (err) => console.error('Error al agregar materia al nuevo profesor: ', err),
+      });
+    } else {
+      window.location.reload();
+    }
   }
 
   createAndAssignClassroom(subject: Subject) {
@@ -170,7 +255,7 @@ export class SubjectManagement implements OnInit {
           error: (err) => console.error('Hubo un error al asignar el curso creado: ', err),
         });
       },
-      error: (err) => console.error('Hubo un error al crear el curso: ', err),
+      error: (err) => console.error('Hubo un error al crear the curso: ', err),
     });
   }
 
@@ -182,26 +267,56 @@ export class SubjectManagement implements OnInit {
       next: (data) => {
         this.subjectToDeleteSel = data;
       },
-      error: (err) => console.error("Error al seleccionar la materia: ", err)      
-    })
+      error: (err) => console.error('Error al seleccionar la materia: ', err),
+    });
   }
 
   deleteSubject(): void {
     if (!this.subjectToDeleteSel) return;
 
     const confirmation = confirm(
-      `¿Estás seguro de que deseas eliminar permanentemente la materia ${this.subjectToDeleteSel.subject_name}?`
+      `¿Estás seguro de que deseas eliminar permanentemente la materia ${this.subjectToDeleteSel.subject_name} y desvincularla de todos los usuarios?`,
     );
 
-    if (confirmation) {
-      this.subjectService.deleteSubject(this.subjectToDeleteSel.id!).subscribe({
+    if (!confirmation) return;
+
+    const subjectId = this.subjectToDeleteSel.id!;
+
+    this.userService
+      .allUsers()
+      .pipe(
+        take(1),
+        switchMap((users) => {
+          const usersToUpdate = users.filter(
+            (user) => user.subjects_id && user.subjects_id.includes(subjectId),
+          );
+
+          if (usersToUpdate.length === 0) {
+            return of([]);
+          }
+
+          const updateRequests = usersToUpdate.map((user) => {
+            const updatedUser = {
+              ...user,
+              subjects_id: user.subjects_id!.filter((id) => id !== subjectId),
+            };
+            return this.userService.modifyUser(updatedUser.id!, updatedUser);
+          });
+
+          return forkJoin(updateRequests);
+        }),
+        switchMap(() => this.subjectService.deleteSubject(subjectId)),
+      )
+      .subscribe({
         next: () => {
-          alert("Materia Eliminada Exitosamente.")
+          alert('Materia eliminada y desvinculada de todos los usuarios exitosamente.');
           window.location.reload();
         },
-        error: (err) => console.error("Error al intentar eliminar la materia: ", err)
-      })
-    }
+        error: (err) => {
+          console.error('Hubo un error en el proceso de eliminación o desvinculación: ', err);
+          alert('Ocurrió un error al procesar la solicitud.');
+        },
+      });
   }
 
   cambiarModo(nuevoModo: 'crear' | 'editar' | 'eliminar') {

@@ -7,7 +7,7 @@ import { ClassroomService } from '../../../services/classroom.service';
 import { SubjectService } from '../../../services/subject.service';
 import { Subject } from '../../../models/subject.model';
 import { Topic } from '../../../models/topic.model';
-import { BehaviorSubject, forkJoin, Observable, tap } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
 import { TopicService } from '../../../services/topic.service';
 
 @Component({
@@ -20,6 +20,7 @@ export class CurrentClassroom implements OnInit {
   classroomId: string | null = null;
   subject?: Subject;
   classroom?: Classroom;
+
   topicsList$?: Observable<Topic[]>;
   
   private selectedTopicSubject = new BehaviorSubject<Topic | null>(null);
@@ -39,26 +40,34 @@ export class CurrentClassroom implements OnInit {
     if (this.classroomId) {
       this.loadClassroom(this.classroomId);
     } else {
-      console.error('No se ha encontrado el ID de la materia.');
+      console.error('No se ha encontrado el ID del curso.');
     }
   }
 
   loadClassroomTopics() {
-  const ids = this.classroom?.topics_id;
+    const ids = this.classroom?.topics_id;
 
-  if (ids && ids.length > 0) {
-    const requests = ids.map(id => this.topicService.getTopicById(id));
-    
-    this.topicsList$ = forkJoin(requests);
-    this.topicsList$.forEach(t => {
-      if (t.length > 0 && !this.selectedTopicSubject.value) {
-          this.seleccionarTema(t[0]);
-        }
-    })
-  } else {
-    console.error("No hay temas cargados.");
+    if (ids && ids.length > 0) {
+      const requests = ids.map(id => this.topicService.getTopicById(id));
+      
+      this.topicsList$ = forkJoin(requests);
+
+      this.topicsList$.subscribe({
+        next: (topics) => {
+          if (topics.length > 0 && !this.selectedTopicSubject.value) {
+            this.seleccionarTema(topics[0]);
+          }
+        },
+        error: (err) => console.error('Error al resolver los temas individuales: ', err)
+      });
+
+    } else {
+      console.warn("No hay temas cargados en este curso. Activando estado de bienvenida.");
+      
+      this.topicsList$ = of([]); 
+      this.selectedTopicSubject.next(null);
+    }
   }
-}
 
   seleccionarTema(topic: Topic) {
     this.selectedTopicSubject.next(topic);
@@ -67,12 +76,11 @@ export class CurrentClassroom implements OnInit {
   getLinkedSubject(id: string) {
     this.subjectService.getSubjectById(id).subscribe({
       next: (data) => {
-        this.subject = data
+        this.subject = data;
         this.loadClassroomTopics();
       },
       error: (err) => console.error("No se ha podido obtener la materia asignada: ", err)
-      
-    })
+    });
   }
 
   loadClassroom(id: string) {
@@ -82,7 +90,6 @@ export class CurrentClassroom implements OnInit {
         this.getLinkedSubject(this.classroom.subject_id!);
       },
       error: (err) => console.error("Hubo un error al obtener el curso: ", err)
-      
-    })
+    });
   }
 }

@@ -1,4 +1,4 @@
-# Cursitu v0.3 — Guía de Configuración para Testing Funcional
+# Cursitu v0.65 — Guía de Configuración para Testing Funcional
 
 Este documento detalla los pasos necesarios para desplegar el entorno local de **Cursitu**, una plataforma de aula virtual desarrollada para el Instituto Tecnológico Universitario de la Universidad Nacional de Cuyo. Esta versión está preparada específicamente para las pruebas de integración y validación del equipo de QA.
 

@@ -29,9 +29,13 @@ export class SubjectsList implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.authService.currentUser$ && this.authService.currentUserValue?.role === 'ALUMNO' || 'DOCENTE') {
+    this.subjectService.setItemInStorage(null);
+
+    if (
+      (this.authService.currentUser$ && this.authService.currentUserValue?.role === 'ALUMNO') ||
+      'DOCENTE'
+    ) {
       this.loadUserSubjects();
-    } else {
       this.obtainProfessorInSubjects();
     }
   }
@@ -44,7 +48,6 @@ export class SubjectsList implements OnInit {
         this.subjectService.getSubjectById(id).pipe(
           switchMap((subject) =>
             this.userService.getUserById(subject.professor_id).pipe(
-              // UNIFICACIÓN: Mapeamos para estructurar 'professorName' igual que el otro flujo
               map((prof) => ({
                 ...subject,
                 professorName: prof ? prof.name : 'Sin asignar',
@@ -53,10 +56,8 @@ export class SubjectsList implements OnInit {
           ),
         ),
       );
-      // Asignamos el flujo combinado a la misma variable que usará el HTML
       this.subjectsWithProfessor$ = forkJoin(requests);
     } else {
-      // Si el alumno no tiene materias, usamos la lógica por defecto de buscar todos
       this.obtainProfessorInSubjects();
     }
   }
@@ -73,10 +74,11 @@ export class SubjectsList implements OnInit {
     this.subjectsWithProfessor$ = combineLatest([this.subjectList$, this.professorList$]).pipe(
       map(([subjects, professors]) => {
         return subjects.map((subject) => {
-          // CORRECCIÓN: Se debe comparar contra subject.professor_id, no contra subject.id
           const assignedProfessor = professors.find((p) => p.id === subject.professor_id);
+
           return {
             ...subject,
+            professorData: assignedProfessor ? assignedProfessor : null,
             professorName: assignedProfessor ? assignedProfessor.name : 'Sin asignar',
           };
         });
@@ -84,11 +86,13 @@ export class SubjectsList implements OnInit {
     );
   }
 
-  navigateToClassroom(path: string, subjectId: string) {
-    this.router.navigate([path, subjectId]);
+  navigateToClassroom(path: string, classroomId: string) {
+    this.router.navigate([path, classroomId]);
   }
 
-  navigateToPanel(path: string) {
+  navigateToPanel(path: string, subjectId: string) {
+    this.subjectService.setItemInStorage(subjectId);
+
     this.router.navigate([path]);
   }
 }

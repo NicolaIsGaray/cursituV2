@@ -9,10 +9,152 @@
   position: relative;
 }
 
+/* CONTENEDOR PRINCIPAL DEL ESTADO VACÍO */
+.empty-course-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 350px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  padding: 40px;
+  box-sizing: border-box;
+  text-align: center;
+  border: 2px dashed #e2e8f0; /* Efecto de zona vacía/disponible */
+}
+
+.message-wrapper {
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ICONO CENTRAL GRANDE */
+.central-icon {
+  font-size: 64px;
+  color: #a0aec0;
+  margin-bottom: 8px;
+}
+
+.empty-course-state h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #2d3748;
+  font-weight: 700;
+}
+
+.empty-course-state p {
+  margin: 0;
+  font-size: 1rem;
+  color: #718096;
+  line-height: 1.5;
+}
+
+/* CUADRO DE INDICACIÓN PARA EL DOCENTE */
+.teacher-hint {
+  margin-top: 24px;
+  padding: 16px;
+  background: #f7fafc;
+  border-radius: 12px;
+  border: 1px solid #edf2f7;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.teacher-hint p {
+  font-size: 0.9rem;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+/* FLECHA SUTIL QUE SEÑALA HACIA EL FAB (+) */
+.hint-arrow {
+  font-size: 28px;
+  color: #3f3689; /* Color de tu app o botón */
+  margin-top: 12px;
+  animation: bounceArrow 2s infinite;
+}
+
+/* ANIMACIÓN DE MOVIMIENTO DE LA FLECHA */
+@keyframes bounceArrow {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(5px, 5px);
+  }
+}
+
+/* ESTADO DE CARGA COMPATIBLE */
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #718096;
+  font-size: 0.95rem;
+}
+
+.loading-state-global {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  color: #718096;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
 .content-area {
   flex: 1;
   padding: 40px;
   position: relative;
+  width: 75%;
+  text-overflow: clip;
+}
+
+/* Asegura que la tarjeta no se estire horizontalmente */
+.content-card {
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden; /* Recorta cualquier escape inesperado */
+}
+
+/* Controla el flujo del texto inyectado */
+.text-content {
+  width: 100%;
+  word-wrap: break-word;      /* Fuerza el salto de línea en palabras largas */
+  overflow-wrap: break-word;  /* Estándar moderno para romper líneas */
+  word-break: break-word;     /* Compatibilidad con navegadores antiguos */
+}
+
+/* Especificidad para el contenido renderizado por Quill */
+.text-content [innerHTML] {
+  display: block;
+  width: 100%;
+}
+
+/* Corrección crítica para bloques de código o texto preformateado de Quill */
+.text-content pre, 
+.text-content code {
+  white-space: pre-wrap;       /* Respeta espacios pero aplica salto de línea */
+  word-wrap: break-word;       /* Evita el scroll horizontal en código largo */
+  max-width: 100%;             /* No permite que exceda el ancho del padre */
+  display: block;
+  overflow-x: auto;            /* Si es código muy estricto, añade scroll interno en vez de romper la tarjeta */
+}
+
+/* Corrección para imágenes que el docente pueda pegar en el editor */
+.text-content img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 /* === NAVEGACIÓN Y BOTONES === */

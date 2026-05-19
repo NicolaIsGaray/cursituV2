@@ -3,7 +3,7 @@ package pepedevelopers.cursitu.model;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import pepedevelopers.cursitu.model.subject_data.DateEntity;
+import pepedevelopers.cursitu.model.subject_submodel.DateEntity;
 
 import java.util.List;
 

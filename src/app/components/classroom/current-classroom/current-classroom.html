@@ -4,18 +4,22 @@
     Regresar al menú
   </button>
 </nav>
+
 <div class="course-header">
   <h2>{{subject?.subject_name}}</h2>
 </div>
 
+<!-- El contenedor carga SIEMPRE, garantizando que la estructura de la página aparezca de inmediato -->
 <div class="classroom-container">
-  <!-- Sidebar: Siempre visible si hay lista de temas -->
+  
+  <!-- Sidebar: Visible siempre. Se adapta si hay o no elementos -->
   <aside class="sections-sidebar" [style.background-color]="subject?.color">
     <div class="sidebar-header">
       <h3>Secciones</h3>
       <div class="divider"></div>
     </div>
 
+    <!-- Escuchamos los temas. Si es un arreglo vacío o nulo, simplemente no renderiza items -->
     <ul class="sections-list" *ngIf="topicsList$ | async as topics">
       <li *ngFor="let topic of topics" 
           class="section-item"
@@ -27,9 +31,9 @@
     </ul>
   </aside>
 
-  <!-- Área de Contenido: Solo muestra el card si hay un tema seleccionado -->
+  <!-- Área de Contenido -->
   <div class="content-area">
-    <div class="admin-top-actions" *ngIf="(authService.userRole$ | async) === 'DOCENTE'">
+    <div class="admin-top-actions" *ngIf="(authService.userRole$ | async) === 'DOCENTE' && !selectedTopic$">
       <button class="btn-manage edit">
         <span class="material-symbols-outlined">edit</span>
         Editar
@@ -40,23 +44,55 @@
       </button>
     </div>
 
-    <div class="content-card" *ngIf="selectedTopic$ | async as activeTopic; else loadingOrEmpty">
+    <!-- FLUJO 1: El usuario hizo clic y hay un tema activo en pantalla -->
+    <div class="content-card" *ngIf="selectedTopic$ | async as activeTopic; else evaluateEmptyState">
       <div class="text-content">
         <h3>{{activeTopic.title}}</h3>
-        <p>{{activeTopic.content}}</p>
+        <div [innerHTML]="activeTopic.content" [style.width]="'100%'"></div>
       </div>
     </div>
 
-    <!-- Template opcional para cuando no hay selección todavía -->
-    <ng-template #loadingOrEmpty>
-      <div class="loading-state">
-        <p>Cargando...</p>
-      </div>
+    <!-- FLUJO 2: No hay ningún tema seleccionado (Evaluamos si es curso nuevo o falta selección) -->
+    <ng-template #evaluateEmptyState>
+      <ng-container *ngIf="topicsList$ | async as topics; else loadingData">
+        
+        <!-- CASO A: La lista llegó de la BD pero tiene 0 elementos (Curso Nuevo) -->
+        <div class="empty-course-state" *ngIf="topics.length === 0">
+          <div class="message-wrapper">
+            <span class="material-symbols-outlined central-icon">school</span>
+            <h3>¡Bienvenido a tu nuevo curso!</h3>
+            <p>Aún no hay material de estudio registrado en esta materia.</p>
+            
+            <div class="teacher-hint" *ngIf="(authService.userRole$ | async) === 'DOCENTE'">
+              <p>Para comenzar a cargar contenido, haz clic en el botón flotante situado abajo a la derecha.</p>
+              <span class="material-symbols-outlined hint-arrow">south_east</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- CASO B: La lista tiene elementos, pero todavía no se hizo clic en ninguno -->
+        <div class="empty-course-state" *ngIf="topics.length > 0">
+          <div class="message-wrapper">
+            <span class="material-symbols-outlined central-icon">arrow_back</span>
+            <h3>Selecciona una sección</h3>
+            <p>Elige un tema de la barra lateral para visualizar su contenido.</p>
+          </div>
+        </div>
+
+      </ng-container>
+
+      <!-- CASO C: Estado de espera estricto (Mientras la petición HTTP está viajando) -->
+      <ng-template #loadingData>
+        <div class="loading-state">
+          <p>Cargando contenidos del curso...</p>
+        </div>
+      </ng-template>
     </ng-template>
+
   </div>
 </div>
 
-<!-- Botón Flotante "+" (FAB) mejorado -->
+<!-- Botón Flotante "+" (FAB) - Visible siempre para el docente -->
 <button class="fab-add" *ngIf="(authService.userRole$ | async) === 'DOCENTE'" routerLink="/add-class">
   <span class="material-symbols-outlined">add</span>
 </button>

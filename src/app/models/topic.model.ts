@@ -3,4 +3,5 @@ export class Topic {
     title!: string;
     content!: string[];
     assignment_id?: string;
+    classroom_id!: string;
 }

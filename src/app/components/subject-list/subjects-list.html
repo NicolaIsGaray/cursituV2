@@ -10,12 +10,12 @@
 
     <!-- VISTA DOCENTE -->
     <div class="materias-wrapper" *ngIf="rol === 'DOCENTE'">
-      <div class="materia-row">
+      <div class="materia-row" *ngFor="let subjectProf of subjectsWithProfessor$ | async">
         <!-- El contenedor ahora es el link principal -->
-        <div class="materia-card orange main-clickable" (click)="navigateToPanel('/professor-panel')">
+        <div class="materia-card main-clickable" (click)="navigateToPanel('/professor-panel', subjectProf.id)" [style.background-color]="subjectProf.color">
           <div class="materia-info">
-            <h3>PROGRAMACIÓN ORIENTADA A OBJETOS</h3>
-            <p>Docente: <span>Ignacio Fontaine</span></p>
+            <h3>{{subjectProf.subject_name | uppercase}}</h3>
+            <p>Docente: <span>{{subjectProf.professorData.name}}</span></p>
           </div>
         </div>
         <!-- Botón de horarios estilizado -->

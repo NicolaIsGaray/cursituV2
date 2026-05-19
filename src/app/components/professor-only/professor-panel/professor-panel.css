@@ -1,6 +1,6 @@
 /* === LAYOUT BASE === */
 .curso-container {
-  padding: 2rem;
+  padding: 1rem;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -95,15 +95,8 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 }
-
-/* Paleta de Colores (Variantes de Naranja y Púrpura) */
-.color-1 { background: linear-gradient(135deg, #ff912c, #ffab5e); box-shadow: 0 10px 20px rgba(255,145,44,0.3); }
-.color-2 { background: linear-gradient(135deg, #3f3689, #5246a5); box-shadow: 0 10px 20px rgba(63,54,137,0.3); }
-.color-3 { background: linear-gradient(135deg, #ff912c, #ffab5e); box-shadow: 0 10px 20px rgba(255,145,44,0.3); }
-.color-4 { background: linear-gradient(135deg, #3f3689, #5246a5); box-shadow: 0 10px 20px rgba(63,54,137,0.3); }
-.color-5 { background: linear-gradient(135deg, #ff912c, #ffab5e); box-shadow: 0 10px 20px rgba(255,145,44,0.3); }
-.color-6 { background: linear-gradient(135deg, #3f3689, #5246a5); box-shadow: 0 10px 20px rgba(63,54,137,0.3); }
 
 .action-card:hover {
   transform: translateY(-8px);

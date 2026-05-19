@@ -79,6 +79,7 @@
                 id="name"
                 formControlName="name"
                 class="admin-input"
+                autocomplete="off"
               />
               <span
                 *ngIf="
@@ -188,6 +189,7 @@
           <div class="form-group">
             <label>Seleccionar Materia a dar de baja</label>
             <select class="admin-input error-focus" (change)="selectSubjectToDelete($event)">
+              <option value="" selected disabled>Selecciona una materia...</option>
               <option *ngFor="let subject of subjectList$ | async" [value]="subject.id" id="subject">
                 {{subject.subject_name}}
               </option>

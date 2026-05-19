@@ -7,9 +7,7 @@ import pepedevelopers.cursitu.model.ClassroomEntity;
 import pepedevelopers.cursitu.repository.IClassroom;
 import pepedevelopers.cursitu.model.UserEntity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/classrooms")
@@ -41,7 +39,7 @@ public class ClassroomController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> modifyClassroom(@PathVariable String id, @RequestBody ClassroomEntity updatedData) {
+    public ResponseEntity<?> modifyClassroom(@PathVariable String id, @RequestBody ClassroomEntity updatedData) {
         ClassroomEntity existingClassroom = classRepo.findById(id).orElse(null);
 
         if (existingClassroom == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso no encontrado.");
@@ -50,16 +48,22 @@ public class ClassroomController {
         existingClassroom.setTopics_id(updatedData.getTopics_id() == null ? existingClassroom.getTopics_id() : updatedData.getTopics_id());
         classRepo.save(existingClassroom);
 
-        return ResponseEntity.ok("Curso modificado exitosamente.");
+      Map<String, String> response = new HashMap<>();
+      response.put("message", "Curso modificado con éxito.");
+
+      return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteClassroom(@PathVariable String id) {
+    public ResponseEntity<?> deleteClassroom(@PathVariable String id) {
         ClassroomEntity classroom = classRepo.findById(id).orElse(null);
 
         if (classroom == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso no encontrado.");
 
         classRepo.delete(classroom);
-        return ResponseEntity.ok("Curso eliminado con éxito.");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Curso eliminado con éxito.");
+
+        return ResponseEntity.ok(response);
     }
 }

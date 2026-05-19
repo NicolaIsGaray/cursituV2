@@ -1,12 +1,14 @@
-package pepedevelopers.cursitu.controller.classroom;
+package pepedevelopers.cursitu.controller.subject;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pepedevelopers.cursitu.model.classroom_data.TopicsEntity;
+import pepedevelopers.cursitu.model.subject_submodel.TopicsEntity;
 import pepedevelopers.cursitu.repository.ITopics;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/topics")
@@ -36,7 +38,7 @@ public class TopicController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<String> modifyTopic(@PathVariable String id, @RequestBody TopicsEntity updatedTopic) {
+  public ResponseEntity<?> modifyTopic(@PathVariable String id, @RequestBody TopicsEntity updatedTopic) {
     TopicsEntity existingTopic = topicsRepo.findById(id).orElse(null);
 
     if (existingTopic == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se ha encontrado");
@@ -47,16 +49,22 @@ public class TopicController {
 
     topicsRepo.save(existingTopic);
 
-    return ResponseEntity.ok("Tema actualizado exitosamente.");
+    Map<String, String> response = new HashMap<>();
+    response.put("message", "Tema modificado con éxito.");
+
+    return ResponseEntity.ok(response);
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<String> deleteTopic(@PathVariable String id) {
+  public ResponseEntity<?> deleteTopic(@PathVariable String id) {
     TopicsEntity existingTopic = topicsRepo.findById(id).orElse(null);
 
     if (existingTopic == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tema no encontrado");
 
     topicsRepo.delete(existingTopic);
-    return ResponseEntity.ok("Tema eliminado exitosamente.");
+    Map<String, String> response = new HashMap<>();
+    response.put("message", "Tema eliminado con éxito.");
+
+    return ResponseEntity.ok(response);
   }
 }

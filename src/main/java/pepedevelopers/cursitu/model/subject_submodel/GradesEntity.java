@@ -1,4 +1,4 @@
-package pepedevelopers.cursitu.model.subject_data;
+package pepedevelopers.cursitu.model.subject_submodel;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;

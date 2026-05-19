@@ -191,7 +191,7 @@ export class UserManagement implements OnInit {
       email: this.newUser.email,
       dni: this.newUser.dni,
       role: this.newUser.role,
-      classroom_number: this.newUser.classroom_number,
+      classroom_number: this.newUser.classroom_number
     });
   }
 

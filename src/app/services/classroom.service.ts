@@ -10,11 +10,15 @@ export class ClassroomService {
   private http = inject(HttpClient)
   private apiUrl = "http://localhost:8080/api/classrooms"
 
-  getClassroomById(id: string) : Observable<Classroom> {
+  getClassroomById(id: string): Observable<Classroom> {
     return this.http.get<Classroom>(`${this.apiUrl}/${id}`)
   }
 
   createClassroom(classroom: Classroom): Observable<Object> {
     return this.http.post(this.apiUrl, classroom)
+  }
+
+  modifyClassroom(id: string, classroom: Classroom) {
+    return this.http.put(`${this.apiUrl}/${id}`, classroom);
   }
 }

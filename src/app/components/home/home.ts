@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
+import { map, Observable } from 'rxjs';
 
 interface HomeOption {
   title: string;
@@ -28,8 +29,7 @@ export class Home implements OnInit{
     { title: 'Tareas Pendientes', icon: 'assignment', description: 'Organiza tus entregas.', route: '/pending-tasks' }
   ];
 
-  users: User[] = [];
-  currentUser: User | null = null;
+  studentList$!: Observable<User[]>;
 
   constructor(
     private router: Router,
@@ -40,22 +40,14 @@ export class Home implements OnInit{
   ngOnInit(): void {
     this.authService.getAuthStatus();
 
-    this.getAllUsers();
-    this.getCurrentUser();
+    this.getAllStudents();
   }
 
-  getCurrentUser() {
-    this.currentUser = this.authService.currentUserValue;
-  }
-
-  getAllUsers() {
+  getAllStudents() {
     if (this.authService.currentRole === 'DOCENTE') {
-      this.userService.allUsers().subscribe({
-        next: (data) => {
-          this.users = data;
-          console.log(this.users);
-        }
-      })
+      this.studentList$ = this.userService.allUsers().pipe(
+        map((students) => students.filter((s) => s.role === 'ALUMNO'))
+      )
     }
   }
 

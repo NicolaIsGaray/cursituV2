@@ -33,8 +33,7 @@ export class Login {
       const credentials = this.loginForm.value as any;
 
       this.authService.login(credentials).subscribe({
-        next: (user) => {
-          console.log('Login exitoso:', user);
+        next: () => {
           this.router.navigate(['/home']);
         },
         error: (err) => {
