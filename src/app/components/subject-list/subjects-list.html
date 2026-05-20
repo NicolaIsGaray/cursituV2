@@ -1,8 +1,8 @@
 <main *ngIf="authService.userRole$ | async as rol">
   <nav class="top-nav">
-    <button class="btn-back" routerLink="/home">
+    <button class="btn-back" (click)="goBack()">
       <span class="material-symbols-outlined">arrow_back</span>
-      Regresar al menú
+      Regresar atrás
     </button>
   </nav>
   <div class="materias-container">
@@ -28,29 +28,36 @@
   </div>
 
   <!-- VISTA ALUMNO -->
-  <div class="subjects-container" *ngIf="rol === 'ALUMNO'">
-    <h2>Materias En Curso</h2>
+<div class="subjects-container" *ngIf="rol === 'ALUMNO'">
+  <h2>Materias En Curso</h2>
 
-    <div class="subjects-card">
-      <div class="subject-row" *ngFor="let subject of subjectsWithProfessor$ | async">
-        <div
-          class="subject-main main-clickable"
-          [style.background-color]="subject.color"
-          (click)="navigateToClassroom('/current-classroom', subject.classroom_id!)"
-        >
-          <div class="subject-info">
-            <h3>{{ subject.subject_name| uppercase }}</h3>
-            <p>
-              Docente: <span>{{ subject.professorName || "Cargando..." }}</span>
-            </p>
-          </div>
-        </div>
-
-        <button class="schedule-btn">
-          <span class="material-symbols-outlined">schedule</span>
-          <span>Horarios</span>
-        </button>
-      </div>
+  <div class="subjects-card" *ngIf="subjectsWithProfessor$ | async as materias">
+    
+    <!-- Mensaje amigable si el array de materias asignadas está vacío -->
+    <div class="empty-subjects-state" *ngIf="materias.length === 0">
+      <span class="material-symbols-outlined">auto_stories</span>
+      <p>No te encuentras matriculado en ninguna materia todavía.</p>
     </div>
+
+    <!-- Lista de materias real -->
+    <div class="subject-row" *ngFor="let subject of materias">
+      <div
+        class="subject-main main-clickable"
+        [style.background-color]="subject.color"
+        (click)="navigateToClassroom('/current-classroom', subject.classroom_id!)"
+      >
+        <div class="subject-info">
+          <h3>{{ subject.subject_name | uppercase }}</h3>
+          <p>Docente: <span>{{ subject.professorName || "Sin asignar" }}</span></p>
+        </div>
+      </div>
+
+      <button class="schedule-btn">
+        <span class="material-symbols-outlined">schedule</span>
+        <span>Horarios</span>
+      </button>
+    </div>
+
   </div>
+</div>
 </main>

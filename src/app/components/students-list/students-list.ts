@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { RouterModule } from '@angular/router';
@@ -10,5 +10,12 @@ import { RouterModule } from '@angular/router';
   styleUrl: './students-list.css',
 })
 export class StudentsList {
-  constructor(public authService: AuthService) {}
+  constructor(
+    public authService: AuthService,
+    private location: Location,
+  ) {}
+
+  goBack() {
+    this.location.back();
+  }
 }

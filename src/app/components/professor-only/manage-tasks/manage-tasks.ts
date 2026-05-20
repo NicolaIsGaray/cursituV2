@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
@@ -10,5 +10,9 @@ import { AuthService } from '../../../services/auth.service';
   styleUrl: './manage-tasks.css',
 })
 export class ManageTasks {
-  constructor(public authService: AuthService) {}
+  constructor(public authService: AuthService, private location: Location) {}
+
+  goBack() {
+    this.location.back();
+  }
 }

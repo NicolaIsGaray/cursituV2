@@ -4,6 +4,7 @@ import { BehaviorSubject, map, Observable, of } from 'rxjs';
 import { User } from '../models/user.model';
 import { Role } from '../models/roles';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment.development';
 
 export interface LoginData {
   dni: string;
@@ -15,8 +16,8 @@ export interface LoginData {
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private route = inject(Router); // Consistencia con inject()
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private route = inject(Router);
+  private apiUrl = `${environment.api}/auth`
 
   private readonly ROL_KEY = 'cursitu_mock_role';
   private readonly USER_KEY = 'cursitu_mock_user';

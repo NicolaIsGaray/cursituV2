@@ -108,7 +108,7 @@
 }
 
 .format-btn.active {
-  background-color: var(--materia-color);
+  background-color: var(--subject-color);
   color: white;
   box-shadow: 0 8px 15px rgba(0,0,0,0.1);
 }
@@ -123,7 +123,7 @@
 .upload-area-btn {
   flex: 0 0 250px;
   height: 70px;
-  background-color: var(--materia-color);
+  background-color: var(--subject-color);
   border: none;
   border-radius: 15px;
   color: white;
@@ -161,7 +161,7 @@
 
 .comment-container textarea:focus {
   outline: none;
-  border-color: var(--materia-color);
+  border-color: var(--subject-color);
   background: white;
 }
 
@@ -228,7 +228,7 @@
 }
 
 .submit-btn {
-  background-color: var(--materia-color);
+  background-color: var(--subject-color);
   color: white;
   border: none;
   padding: 18px 50px;
@@ -238,6 +238,269 @@
   cursor: pointer;
   box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.15);
   transition: all 0.3s;
+}
+
+.assignment-wrapper {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.delivery-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Encabezado */
+.assignment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 20px;
+  margin-bottom: 25px;
+  gap: 15px;
+}
+
+.header-main-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.assignment-hero-icon {
+  font-size: 32px;
+  color: var(--subject-color, #1a73e8);
+}
+
+.assignment-title {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.deadline-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 8px 14px;
+  border-radius: 20px;
+}
+
+.deadline-badge p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.deadline-badge span {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Caja de la Consigna (Quill render) */
+.assignment-instruction-box {
+  background: #f8fafc;
+  border-left: 4px solid var(--subject-color, #1a73e8);
+  padding: 20px;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 25px;
+}
+
+.assignment-instruction-box h4 {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.instruction-body {
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+/* Banner de Disponibilidad Abierta */
+.delivery-status-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+.delivery-status-banner.available {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+}
+
+.delivery-status-banner .material-symbols-outlined {
+  font-size: 28px;
+}
+
+.banner-text h5 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.banner-text p {
+  margin: 2px 0 0 0;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+/* Inputs y Áreas de Carga */
+.delivery-section {
+  margin-bottom: 25px;
+}
+
+.delivery-section label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 10px;
+}
+
+.format-indicator-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #475569;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
+.upload-box {
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 25px;
+  text-align: center;
+  background: #fafafa;
+  transition: border-color 0.2s;
+}
+
+.upload-box:hover {
+  border-color: var(--subject-color, #1a73e8);
+}
+
+.upload-area-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #334155;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.nota-text {
+  margin: 12px 0 0 0;
+  font-size: 0.8rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.comment-container textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+/* Botón Guardar */
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--subject-color, #1a73e8);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.submit-btn:hover {
+  filter: brightness(0.9);
+}
+
+/* Resumen del Envío completado */
+.submission-summary-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 12px;
+  margin-bottom: 15px;
+}
+
+.summary-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #1e293b;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.status-badge.on-time {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.late {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.receipt-checkmark {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  color: #16a34a;
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
 .submit-btn:hover { transform: translateY(-3px); filter: brightness(1.1); }

@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Topic } from '../models/topic.model';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TopicService {
   private http = inject(HttpClient);
-  private apiUrl = "http://localhost:8080/api/topics"
+  private apiUrl = `${environment.api}/topics`
 
   getAllTopics(): Observable<Topic[]> {
     return this.http.get<Topic[]>(this.apiUrl);
@@ -26,7 +27,7 @@ export class TopicService {
     return this.http.put(`${this.apiUrl}/${id}`, topic);
   }
 
-  deleteTopic(id: string) {
-    this.http.delete(`${this.apiUrl}/${id}`);
+  deleteTopic(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

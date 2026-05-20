@@ -9,7 +9,10 @@
   --sidebar-shadow: rgba(0, 0, 0, 0.05);
   --border-color: #f0f0f0;
   --primary-purple: #3f3689;
-  --error-red: #b61b1b
+  --light-purple: #665abb;
+  --error-red: #b61b1b;
+  --success-green: #37f050;
+  --waiting-gray: #c4c4c4;
 }
 
 /* Colores para Modo Oscuro */

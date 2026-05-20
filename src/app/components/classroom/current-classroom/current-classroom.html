@@ -1,39 +1,40 @@
 <nav class="top-nav">
-  <button class="btn-back" routerLink="/home">
+  <button class="btn-back" (click)="goBack()">
     <span class="material-symbols-outlined">arrow_back</span>
-    Regresar al menú
+    Regresar atrás
   </button>
 </nav>
 
 <div class="course-header">
-  <h2>{{subject?.subject_name}}</h2>
+  <h2>{{ subject?.subject_name }}</h2>
 </div>
 
-<!-- El contenedor carga SIEMPRE, garantizando que la estructura de la página aparezca de inmediato -->
 <div class="classroom-container">
-  
-  <!-- Sidebar: Visible siempre. Se adapta si hay o no elementos -->
   <aside class="sections-sidebar" [style.background-color]="subject?.color">
     <div class="sidebar-header">
       <h3>Secciones</h3>
       <div class="divider"></div>
     </div>
 
-    <!-- Escuchamos los temas. Si es un arreglo vacío o nulo, simplemente no renderiza items -->
     <ul class="sections-list" *ngIf="topicsList$ | async as topics">
-      <li *ngFor="let topic of topics" 
-          class="section-item"
-          [class.active]="(selectedTopic$ | async)?.id === topic.id"
-          (click)="seleccionarTema(topic)">
+      <li
+        *ngFor="let topic of topics"
+        class="section-item"
+        [class.active]="(selectedTopic$ | async)?.id === topic.id"
+        (click)="seleccionarTema(topic)"
+      >
         <div class="indicator"></div>
-        <p>{{topic.title}}</p>
+        <p>{{ topic.title }}</p>
       </li>
     </ul>
   </aside>
 
   <!-- Área de Contenido -->
   <div class="content-area">
-    <div class="admin-top-actions" *ngIf="(authService.userRole$ | async) === 'DOCENTE' && !selectedTopic$">
+    <div
+      class="admin-top-actions"
+      *ngIf="(authService.userRole$ | async) === 'DOCENTE' && !selectedTopic$"
+    >
       <button class="btn-manage edit">
         <span class="material-symbols-outlined">edit</span>
         Editar
@@ -44,33 +45,79 @@
       </button>
     </div>
 
-    <!-- FLUJO 1: El usuario hizo clic y hay un tema activo en pantalla -->
-    <div class="content-card" *ngIf="selectedTopic$ | async as activeTopic; else evaluateEmptyState">
+    <div
+      class="content-card"
+      *ngIf="selectedTopic$ | async as activeTopic; else evaluateEmptyState"
+    >
       <div class="text-content">
-        <h3>{{activeTopic.title}}</h3>
-        <div [innerHTML]="activeTopic.content" [style.width]="'100%'"></div>
+        <h3>{{ activeTopic.title }}</h3>
+        <div [innerHTML]="activeTopic.content"></div>
+      </div>
+
+      <!-- NUEVO: Contenedor de Recursos y Actividades del Tema -->
+      <div class="topic-resources-container">
+        <!-- Columna Izquierda: Placeholder de Archivos Subidos -->
+        <div class="resources-files-box">
+          <h4>Material Adjunto</h4>
+          <ul class="resources-file-list">
+            <li>
+              <span class="material-symbols-outlined icon-pdf">description</span>
+              <span class="file-info">
+                <span class="file-name">Apunte_Teorico_Testing.pdf</span>
+                <span class="file-size">2.4 MB</span>
+              </span>
+            </li>
+            <li>
+              <span class="material-symbols-outlined icon-zip">folder_zip</span>
+              <span class="file-info">
+                <span class="file-name">Proyecto_Base_Pruebas.zip</span>
+                <span class="file-size">14.8 MB</span>
+              </span>
+            </li>
+            <li>
+              <span class="material-symbols-outlined icon-link">link</span>
+              <span class="file-info">
+                <span class="file-name">Documentación Oficial (Link)</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Columna Derecha: Acceso Directo a la Actividad / Tarea -->
+        <div class="resources-activity-box" *ngIf="assignedActivity$ | async as activity">
+          <div class="activity-status-card">
+            <span class="material-symbols-outlined activity-icon">assignment</span>
+            <div class="activity-meta">
+              <h5>{{ activity.title }}</h5>
+              <p>Fecha límite: {{ formatDate(activity.date_limit) }}</p>
+            </div>
+          </div>
+          <button class="btn-go-activity" [routerLink]="['/send-task', activity.id]">
+            <span>Ir a la Actividad</span>
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- FLUJO 2: No hay ningún tema seleccionado (Evaluamos si es curso nuevo o falta selección) -->
     <ng-template #evaluateEmptyState>
       <ng-container *ngIf="topicsList$ | async as topics; else loadingData">
-        
-        <!-- CASO A: La lista llegó de la BD pero tiene 0 elementos (Curso Nuevo) -->
         <div class="empty-course-state" *ngIf="topics.length === 0">
           <div class="message-wrapper">
             <span class="material-symbols-outlined central-icon">school</span>
             <h3>¡Bienvenido a tu nuevo curso!</h3>
             <p>Aún no hay material de estudio registrado en esta materia.</p>
-            
+
             <div class="teacher-hint" *ngIf="(authService.userRole$ | async) === 'DOCENTE'">
-              <p>Para comenzar a cargar contenido, haz clic en el botón flotante situado abajo a la derecha.</p>
+              <p>
+                Para comenzar a cargar contenido, haz clic en el botón flotante situado abajo a la
+                derecha.
+              </p>
               <span class="material-symbols-outlined hint-arrow">south_east</span>
             </div>
           </div>
         </div>
-        
-        <!-- CASO B: La lista tiene elementos, pero todavía no se hizo clic en ninguno -->
+
         <div class="empty-course-state" *ngIf="topics.length > 0">
           <div class="message-wrapper">
             <span class="material-symbols-outlined central-icon">arrow_back</span>
@@ -78,21 +125,22 @@
             <p>Elige un tema de la barra lateral para visualizar su contenido.</p>
           </div>
         </div>
-
       </ng-container>
 
-      <!-- CASO C: Estado de espera estricto (Mientras la petición HTTP está viajando) -->
       <ng-template #loadingData>
         <div class="loading-state">
           <p>Cargando contenidos del curso...</p>
         </div>
       </ng-template>
     </ng-template>
-
   </div>
 </div>
 
 <!-- Botón Flotante "+" (FAB) - Visible siempre para el docente -->
-<button class="fab-add" *ngIf="(authService.userRole$ | async) === 'DOCENTE'" routerLink="/add-class">
+<button
+  class="fab-add"
+  *ngIf="(authService.userRole$ | async) === 'DOCENTE'"
+  routerLink="/add-class"
+>
   <span class="material-symbols-outlined">add</span>
 </button>

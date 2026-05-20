@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { RouterModule } from "@angular/router";
 
 @Component({
@@ -10,5 +10,9 @@ import { RouterModule } from "@angular/router";
   styleUrl: './manage-grades.css',
 })
 export class ManageGrades {
-  constructor (public authService: AuthService) {}
+  constructor (public authService: AuthService, private location: Location) {}
+
+  goBack() {
+    this.location.back();
+  }
 }

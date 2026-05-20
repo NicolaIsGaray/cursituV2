@@ -52,7 +52,7 @@ export const routes: Routes = [
 
     { path: 'current-classroom/:id', component: CurrentClassroom },
     { path: 'pending-tasks', component: PendingTasks },
-    { path: 'send-task', component: SendTask },
+    { path: 'send-task/:id', component: SendTask },
     { path: 'notices', component: NoticesList },
     { path: 'notices/:id', component: NoticeDetails },
     { path: 'configuration', component: PageConfiguration },

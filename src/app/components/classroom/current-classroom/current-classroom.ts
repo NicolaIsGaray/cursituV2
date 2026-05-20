@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Classroom } from '../../../models/classroom.model';
@@ -7,8 +7,20 @@ import { ClassroomService } from '../../../services/classroom.service';
 import { SubjectService } from '../../../services/subject.service';
 import { Subject } from '../../../models/subject.model';
 import { Topic } from '../../../models/topic.model';
-import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  forkJoin,
+  Observable,
+  of,
+  shareReplay,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import { TopicService } from '../../../services/topic.service';
+import { Assignment } from '../../../models/assignment.model';
+import { AssignmentService } from '../../../services/assignment.service';
 
 @Component({
   selector: 'app-classroom',
@@ -21,8 +33,10 @@ export class CurrentClassroom implements OnInit {
   subject?: Subject;
   classroom?: Classroom;
 
-  topicsList$?: Observable<Topic[]>;
-  
+  // Los Observables que consumirá el HTML directamente
+  topicsList$!: Observable<Topic[]>;
+  assignedActivity$: Observable<Assignment | null> = of(null);
+
   private selectedTopicSubject = new BehaviorSubject<Topic | null>(null);
   selectedTopic$ = this.selectedTopicSubject.asObservable();
 
@@ -31,65 +45,103 @@ export class CurrentClassroom implements OnInit {
     private route: ActivatedRoute,
     private classroomService: ClassroomService,
     private subjectService: SubjectService,
-    private topicService: TopicService
+    private assignmentService: AssignmentService,
+    private topicService: TopicService,
+    private cdr: ChangeDetectorRef,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
     this.classroomId = this.route.snapshot.paramMap.get('id');
 
-    if (this.classroomId) {
-      this.loadClassroom(this.classroomId);
-    } else {
+    if (!this.classroomId) {
       console.error('No se ha encontrado el ID del curso.');
+      return;
     }
-  }
 
-  loadClassroomTopics() {
-    const ids = this.classroom?.topics_id;
+    // FLUJO UNIFICADO: Vinculamos la carga del Aula, Materia y Temas en una sola cadena reactiva
+    this.topicsList$ = this.classroomService.getClassroomById(this.classroomId).pipe(
+      take(1),
+      tap((classroomData) => {
+        this.classroom = classroomData;
+      }),
+      // Una vez obtenida el aula, buscamos la materia asociada
+      switchMap((classroomData) => {
+        if (!classroomData?.subject_id) return of(null);
+        return this.subjectService.getSubjectById(classroomData.subject_id).pipe(take(1));
+      }),
+      tap((subjectData) => {
+        if (subjectData) {
+          this.subject = subjectData;
+        }
+      }),
+      // Una vez que tenemos la materia y el aula en memoria, resolvemos sus temas individuales
+      switchMap(() => {
+        const ids = this.classroom?.topics_id || [];
+        if (ids.length === 0) {
+          console.warn('No hay temas cargados en este curso. Activando estado de bienvenida.');
+          this.selectedTopicSubject.next(null);
+          return of([]);
+        }
 
-    if (ids && ids.length > 0) {
-      const requests = ids.map(id => this.topicService.getTopicById(id));
-      
-      this.topicsList$ = forkJoin(requests);
+        const requests = ids.map((id) => this.topicService.getTopicById(id).pipe(take(1)));
+        return forkJoin(requests);
+      }),
+      // Cuando el forkJoin emita la lista de temas completa:
+      tap((topics) => {
+        if (topics.length > 0 && !this.selectedTopicSubject.value) {
+          this.seleccionarTema(topics[0]);
+        }
+        // Avisamos a Angular de manera explícita que los datos están listos para pintar
+        this.cdr.detectChanges();
+      }),
+      catchError((err) => {
+        console.error('Error crítico en la cadena de carga del Classroom: ', err);
+        return of([]);
+      }),
+      // Compartimos el flujo para que el HTML no repita las peticiones HTTP internas
+      shareReplay(1),
+    );
 
-      this.topicsList$.subscribe({
-        next: (topics) => {
-          if (topics.length > 0 && !this.selectedTopicSubject.value) {
-            this.seleccionarTema(topics[0]);
-          }
-        },
-        error: (err) => console.error('Error al resolver los temas individuales: ', err)
-      });
-
-    } else {
-      console.warn("No hay temas cargados en este curso. Activando estado de bienvenida.");
-      
-      this.topicsList$ = of([]); 
-      this.selectedTopicSubject.next(null);
-    }
+    // Flujo de actividades dependiente del tema seleccionado (Se mantiene reactivo)
+    this.assignedActivity$ = this.selectedTopicSubject.asObservable().pipe(
+      switchMap((topic: Topic | null) => {
+        if (!topic || !topic.assignment_id) {
+          return of(null);
+        }
+        return this.assignmentService.getAssignmentById(topic.assignment_id).pipe(
+          catchError((err) => {
+            console.error('Hubo un error al obtener la actividad asignada: ', err);
+            return of(null);
+          }),
+        );
+      }),
+      tap(() => this.cdr.detectChanges()), // Fuerza actualización al cambiar de actividad
+    );
   }
 
   seleccionarTema(topic: Topic) {
     this.selectedTopicSubject.next(topic);
   }
 
-  getLinkedSubject(id: string) {
-    this.subjectService.getSubjectById(id).subscribe({
-      next: (data) => {
-        this.subject = data;
-        this.loadClassroomTopics();
-      },
-      error: (err) => console.error("No se ha podido obtener la materia asignada: ", err)
+  formatDate(original: Date | string): string {
+    const date = new Date(original);
+    const formatter = new Intl.DateTimeFormat('es-AR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
     });
+
+    let formattedDate = formatter.format(date);
+    formattedDate = formattedDate.replace(/,/g, '');
+    formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    return formattedDate.replace(/\./g, '').toUpperCase();
   }
 
-  loadClassroom(id: string) {
-    this.classroomService.getClassroomById(id).subscribe({
-      next: (data) => {
-        this.classroom = data;
-        this.getLinkedSubject(this.classroom.subject_id!);
-      },
-      error: (err) => console.error("Hubo un error al obtener el curso: ", err)
-    });
+  goBack() {
+    this.location.back();
   }
 }

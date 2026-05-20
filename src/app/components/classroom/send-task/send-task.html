@@ -1,65 +1,137 @@
 <nav class="top-nav">
-  <button class="btn-back" routerLink="/home">
+  <button class="btn-back" (click)="goBack()">
     <span class="material-symbols-outlined">arrow_back</span>
-    Regresar al menú
+    Regresar atrás
   </button>
 </nav>
-<div [ngStyle]="materiaColorStyle">
+<div *ngIf="currentSubject$ | async as subject">
   <!-- Encabezado con el nombre de la materia -->
   <div class="course-header">
-    <h2>Programación Orientada a Objetos</h2>
+    <h2>{{subject.subject_name}}</h2>
   </div>
 
-  <div class="assignment-wrapper">
-    <!-- Área de Entrega (Contenido Principal) -->
-    <main class="delivery-area">
-      <div class="delivery-card">
-        <header class="assignment-header">
-          <h3 class="assignment-title">Entrega: Manejo de Excepciones</h3>
-          <div class="deadline-badge">
-            <span class="material-symbols-outlined">timer</span>
-            <p>Vence: <span>Martes 02 de Abril, 00:00 HS</span></p>
-          </div>
-        </header>
+  <div class="assignment-wrapper" *ngIf="currentActivity$ | async as activity">
+  
+  <!-- Área Principal de la Actividad -->
+  <main class="delivery-area">
+    <div class="delivery-card">
+      
+      <!-- Encabezado de la Tarea -->
+      <header class="assignment-header">
+        <div class="header-main-info">
+          <span class="material-symbols-outlined assignment-hero-icon">assignment</span>
+          <h3 class="assignment-title">Entrega: {{ activity.title }}</h3>
+        </div>
+        
+        <!-- Badge de Fecha Límite -->
+        <div class="deadline-badge">
+          <span class="material-symbols-outlined">timer</span>
+          <p>Vence: <span>{{ formatDate(activity.date_limit) }}</span></p>
+        </div>
+      </header>
 
-        <!-- Selector de Formato -->
-        <div class="delivery-section">
-          <label>Formato de entrega</label>
-          <div class="format-buttons">
-            <button class="format-btn active">Archivo</button>
-            <button class="format-btn">Carpeta</button>
-            <button class="format-btn">Texto</button>
+      <!-- NUEVO: Contenedor con la Consigna del Docente -->
+      <section class="assignment-instruction-box">
+        <h4>Consigna de la Actividad</h4>
+        <div class="instruction-body" [innerHTML]="activity.content"></div>
+      </section>
+
+      <!-- NUEVO: Cuadro indicador de disponibilidad para entregar (Cerca de la fecha límite) -->
+      <div class="delivery-status-banner available" *ngIf="isDeliveryOpen(activity.date_limit) && !hasSubmitted">
+        <span class="material-symbols-outlined">lock_open</span>
+        <div class="banner-text">
+          <h5>Habilitado para entrega</h5>
+          <p>El período de recepción de soluciones se encuentra activo actualmente.</p>
+        </div>
+      </div>
+
+      <!-- SECCIÓN DE CARGA / ESCRITURA (Visible solo si no ha entregado aún) -->
+      <div class="submission-form-container" *ngIf="!hasSubmitted">
+        
+        <!-- Variante 1: El formato requerido por el docente es Texto Plano -->
+        <div class="delivery-section" *ngIf="activity.allowed_format === 'texto'">
+          <label for="student-response">Tu respuesta escrita:</label>
+          <div class="editor-wrapper">
+            <quill-editor
+              class="content-editor"
+              id="student-response"
+              theme="snow"
+              [modules]="editorModules"
+              placeholder="Desarrolla o redacta tu entrega académica aquí..."
+            ></quill-editor>
           </div>
         </div>
 
-        <!-- Área de Carga -->
-        <div class="delivery-section">
-          <label>Archivo o Carpeta</label>
+        <!-- Variante 2: El formato requerido es Archivo o Carpeta ZIP -->
+        <div class="delivery-section" *ngIf="activity.allowed_format === 'archivo' || activity.allowed_format === 'carpeta'">
+          <label>Carga de entregable estructurado</label>
           <div class="upload-box">
-            <button class="upload-area-btn">
-              <span class="material-symbols-outlined">cloud_upload</span>
-              <span>Seleccionar archivo</span>
-            </button>
-            <p class="nota-text">
+            <div class="format-indicator-label">
               <span class="material-symbols-outlined">info</span>
-              <span><b>Importante:</b> Revisa que el archivo sea el correcto antes de confirmar.</span>
+              <p>Esta tarea requiere un formato de tipo: <strong>{{ activity.allowed_format | uppercase }}</strong></p>
+            </div>
+            
+            <button type="button" class="upload-area-btn" (click)="triggerFileInput()">
+              <span class="material-symbols-outlined">cloud_upload</span>
+              <span>{{ selectedFile ? selectedFile.name : 'Seleccionar archivo desde el equipo' }}</span>
+            </button>
+            
+            <p class="nota-text">
+              <span class="material-symbols-outlined">warning</span>
+              <span><b>Importante:</b> Revisa que la compilación y nomenclatura del archivo sea la correcta antes de confirmar.</span>
             </p>
           </div>
         </div>
 
-        <!-- Comentarios -->
+        <!-- Comentarios Adicionales Comunes -->
         <div class="delivery-section">
-          <label>Comentario (Opcional)</label>
+          <label for="student-comment">Observaciones para el docente (Opcional)</label>
           <div class="comment-container">
-            <textarea placeholder="¿Alguna observación para el docente?..." rows="4"></textarea>
+            <quill-editor
+              class="content-editor"
+              id="student-response"
+              theme="snow"
+              [modules]="editorModules"
+              placeholder="¿Algún comentario que desees brindarle al docente?"
+              style="width: 100%;"
+            ></quill-editor>
           </div>
         </div>
 
-        <!-- Botón de Acción -->
+        <!-- Botón de Acción Principal -->
         <div class="submit-container">
-          <button class="submit-btn">Realizar Entrega</button>
+          <button class="submit-btn" (click)="enviarEntrega(activity)">
+            Realizar Entrega
+          </button>
         </div>
       </div>
-    </main>
-  </div>
+
+      <!-- NUEVO: Contenido aparte que indica los metadatos finales del envío del alumno -->
+      <div class="submission-summary-box" *ngIf="hasSubmitted">
+        <header class="summary-header">
+          <h4>Estado de tu Entrega</h4>
+          
+          <!-- Badge Dinámico: A término vs Fuera de término -->
+          <span class="status-badge" [class.on-time]="submissionStatus === 'A término'" [class.late]="submissionStatus === 'Fuera de término'">
+            <span class="material-symbols-outlined">
+              {{ submissionStatus === 'A término' ? 'check_circle' : 'running_with_errors' }}
+            </span>
+            <span>Entregado {{ submissionStatus }}</span>
+          </span>
+        </header>
+
+        <div class="summary-details">
+          <p><strong>Fecha de registro:</strong> {{ formatDate(submissionDate) }}</p>
+          <p *ngIf="submissionComment"><strong>Tu comentario:</strong> <em>"{{ submissionComment }}"</em></p>
+          
+          <div class="receipt-checkmark">
+            <span class="material-symbols-outlined">verified</span>
+            <p>El material fue guardado en el servidor bajo el identificador de alumno.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
 </div>

@@ -1,9 +1,9 @@
 <main *ngIf="authService.userRole$ | async as rol">
   <div class="entregas-container" *ngIf="rol === 'DOCENTE'">
     <!-- Botón Volver -->
-    <a class="btn-back" routerLink="/professor-panel">
+    <a class="btn-back" (click)="goBack()">
       <span class="material-symbols-outlined">arrow_back</span>
-      Volver a Trabajos Prácticos
+      Regresar atrás
     </a>
 
     <header class="entregas-header">

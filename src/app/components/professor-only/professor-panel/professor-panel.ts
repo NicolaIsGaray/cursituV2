@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from "@angular/router";
 import { AuthService } from '../../../services/auth.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Subject } from '../../../models/subject.model';
 import { SubjectService } from '../../../services/subject.service';
 import { Observable } from 'rxjs';
@@ -19,7 +19,8 @@ export class ProfessorPanel implements OnInit{
   constructor(
     private route: Router,
     public authService: AuthService,
-    private subjectService: SubjectService
+    private subjectService: SubjectService,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -36,5 +37,9 @@ export class ProfessorPanel implements OnInit{
 
   navigateToClassroom(path: string, classroomId: string) {
     this.route.navigate([path, classroomId])
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

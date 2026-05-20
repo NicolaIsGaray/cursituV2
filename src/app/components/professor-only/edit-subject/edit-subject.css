@@ -89,18 +89,20 @@
 
 .input-field:focus {
   outline: none;
-  border-color: #ff912c;
+  border-color: var(--subject-color)
 }
 
 .btn-guardar {
-  background: #ff912c;
+  background: var(--primary-purple);
   color: white;
   text-decoration: none;
   padding: 18px 40px;
   border-radius: 15px;
+  border: 0;
   font-weight: 800;
   font-size: 1.1rem;
   display: inline-block;
+  cursor: pointer;
   text-align: center;
   transition: all 0.3s ease;
   box-shadow: 0px 8px 20px rgba(255, 145, 44, 0.3);

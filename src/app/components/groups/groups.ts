@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { RouterModule } from '@angular/router';
@@ -21,6 +21,14 @@ export class Groups implements OnInit {
   groupList?: Group[];
   members?: User[];
   selectedSubject?: Subject;
+  
+  constructor(
+    public authService: AuthService,
+    private subjectService: SubjectService,
+    private groupService: GroupService,
+    private userService: UserService,
+    private location: Location
+  ) {}
 
   ngOnInit(): void {
     this.loadGroupSubjects()
@@ -36,7 +44,7 @@ export class Groups implements OnInit {
       this.getAllGroups();
     }
   }
-
+  
   loadGroupMembers() {
   const ids = this.groupList?.flatMap(g => g.members_id) || [];
   const uniqueIds = [...new Set(ids)];
@@ -72,10 +80,7 @@ export class Groups implements OnInit {
     })
   }
 
-  constructor(
-    public authService: AuthService,
-    private subjectService: SubjectService,
-    private groupService: GroupService,
-    private userService: UserService
-  ) {}
+  goBack() {
+    this.location.back();
+  }
 }

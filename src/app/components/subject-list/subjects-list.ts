@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Subject } from '../../models/subject.model';
@@ -26,16 +26,18 @@ export class SubjectsList implements OnInit {
     public authService: AuthService,
     private subjectService: SubjectService,
     private userService: UserService,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
     this.subjectService.setItemInStorage(null);
 
-    if (
-      (this.authService.currentUser$ && this.authService.currentUserValue?.role === 'ALUMNO') ||
-      'DOCENTE'
-    ) {
+    const userRole = this.authService.currentUserValue?.role;
+
+    // Corrección de la condicional evaluando correctamente ambas partes
+    if (userRole === 'ALUMNO') {
       this.loadUserSubjects();
+    } else if (userRole === 'DOCENTE') {
       this.obtainProfessorInSubjects();
     }
   }
@@ -43,6 +45,7 @@ export class SubjectsList implements OnInit {
   loadUserSubjects() {
     const ids = this.authService.currentUserValue?.subjects_id;
 
+    // Si el alumno tiene materias asignadas, resolvemos solo esas
     if (ids && ids.length > 0) {
       const requests = ids.map((id) =>
         this.subjectService.getSubjectById(id).pipe(
@@ -58,7 +61,10 @@ export class SubjectsList implements OnInit {
       );
       this.subjectsWithProfessor$ = forkJoin(requests);
     } else {
-      this.obtainProfessorInSubjects();
+      // CORRECCIÓN: Si el alumno no está asignado a nada, le pasamos un array vacío
+      // Evitamos por completo llamar a obtainProfessorInSubjects()
+      console.warn('El alumno actual no tiene materias asignadas en su perfil.');
+      this.subjectsWithProfessor$ = of([]);
     }
   }
 
@@ -94,5 +100,9 @@ export class SubjectsList implements OnInit {
     this.subjectService.setItemInStorage(subjectId);
 
     this.router.navigate([path]);
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

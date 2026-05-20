@@ -9,6 +9,155 @@
   position: relative;
 }
 
+/* Contenedor principal de recursos */
+.topic-resources-container {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 1px solid #e2e8f0;
+}
+
+@media (max-width: 768px) {
+  .topic-resources-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- COLUMNA DE ARCHIVOS --- */
+.resources-files-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.resources-files-box h4 {
+  margin: 0 0 12px 0;
+  font-size: 0.95rem;
+  color: #475569;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.resources-file-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.resources-file-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #ffffff;
+  border: 1px solid #edf2f7;
+  border-radius: 6px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.resources-file-list li:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.resources-file-list .material-symbols-outlined {
+  font-size: 24px;
+}
+
+/* Identificadores cromáticos por tipo de archivo */
+.icon-pdf { color: #e53e3e; }
+.icon-zip { color: #dd6b20; }
+.icon-link { color: #3182ce; }
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-name {
+  font-size: 0.9rem;
+  color: #2d3748;
+  font-weight: 500;
+}
+
+.file-size {
+  font-size: 0.75rem;
+  color: #718096;
+}
+
+/* --- COLUMNA DE ACTIVIDAD --- */
+.resources-activity-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #f0fdf4; /* Tonalidad verde suave de contexto académico */
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 16px;
+  gap: 16px;
+}
+
+.activity-status-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.activity-icon {
+  font-size: 32px;
+  color: #16a34a;
+  background: #dcfce7;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.activity-meta h5 {
+  margin: 0;
+  font-size: 1rem;
+  color: #14532d;
+  font-weight: 600;
+}
+
+.activity-meta p {
+  margin: 2px 0 0 0;
+  font-size: 0.8rem;
+  color: #166534;
+}
+
+/* Botón de acción con la variable de color dinámica del curso */
+.btn-go-activity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  background-color: var(--subject-color, #1a73e8);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.1s;
+}
+
+.btn-go-activity:hover {
+  filter: brightness(0.9);
+}
+
+.btn-go-activity:active {
+  transform: scale(0.98);
+}
+
 /* CONTENEDOR PRINCIPAL DEL ESTADO VACÍO */
 .empty-course-state {
   display: flex;

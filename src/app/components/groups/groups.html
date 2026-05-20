@@ -1,8 +1,8 @@
 <main *ngIf="authService.userRole$ | async as rol">
   <nav class="top-nav">
-    <button class="btn-back" routerLink="/home">
+    <button class="btn-back" (click)="goBack()">
       <span class="material-symbols-outlined">arrow_back</span>
-      Regresar al menú
+      Regresar atrás
     </button>
   </nav>
   <h3>Materia Correspondiente</h3>

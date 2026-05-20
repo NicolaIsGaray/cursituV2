@@ -16,6 +16,8 @@ import { SubjectService } from '../../../services/subject.service';
 import { UserService } from '../../../services/user.service';
 import { Classroom } from '../../../models/classroom.model';
 import { ClassroomService } from '../../../services/classroom.service';
+import { AssignmentService } from '../../../services/assignment.service';
+import { TopicService } from '../../../services/topic.service';
 
 @Component({
   selector: 'app-subject-management',
@@ -46,6 +48,8 @@ export class SubjectManagement implements OnInit {
     private subjectService: SubjectService,
     private userService: UserService,
     private classroomService: ClassroomService,
+    private assignmentService: AssignmentService,
+    private topicService: TopicService,
   ) {}
 
   ngOnInit(): void {
@@ -275,25 +279,68 @@ export class SubjectManagement implements OnInit {
     if (!this.subjectToDeleteSel) return;
 
     const confirmation = confirm(
-      `¿Estás seguro de que deseas eliminar permanentemente la materia ${this.subjectToDeleteSel.subject_name} y desvincularla de todos los usuarios?`,
+      `¿Estás seguro de que deseas eliminar permanentemente la materia ${this.subjectToDeleteSel.subject_name} junto con su Aula, Temas, Actividades y desvincularla de todos los usuarios?`,
     );
 
     if (!confirmation) return;
 
     const subjectId = this.subjectToDeleteSel.id!;
+    const classroomId = this.subjectToDeleteSel.classroom_id;
 
-    this.userService
-      .allUsers()
-      .pipe(
+    let deleteCascade$: Observable<any> = of(null);
+
+    if (classroomId) {
+      deleteCascade$ = this.classroomService.getClassroomById(classroomId).pipe(
         take(1),
+        switchMap((classroom: any) => {
+          // Obtenemos la lista de IDs de los temas del aula
+          const topicsIds: string[] = classroom.topics_id || [];
+
+          if (topicsIds.length === 0) {
+            return this.classroomService.deleteClassroom(classroomId);
+          }
+
+          // PASO 1: Traemos la información de cada Topic para conocer sus correspondientes 'assignment_id'
+          const fetchTopicsRequests = topicsIds.map((id) =>
+            this.topicService.getTopicById(id).pipe(take(1)),
+          );
+
+          return forkJoin(fetchTopicsRequests).pipe(
+            switchMap((topicsData: any[]) => {
+              // PASO 2: Recolectamos las peticiones de borrado para las Actividades (Assignments) usando sus IDs
+              const deleteAssignmentsRequests = topicsData
+                .filter((topic: any) => topic && topic.assignment_id)
+                .map((topic: any) => this.assignmentService.deleteAssignment(topic.assignment_id));
+
+              // PASO 3: Recolectamos las peticiones de borrado para los Temas (Topics)
+              const deleteTopicsRequests = topicsIds.map((id) => this.topicService.deleteTopic(id));
+
+              // Ejecutamos primero el borrado de actividades si existen
+              const assignmentsStep$ =
+                deleteAssignmentsRequests.length > 0 ? forkJoin(deleteAssignmentsRequests) : of([]);
+
+              return assignmentsStep$.pipe(
+                // PASO 4: Una vez limpias las actividades, borramos los temas
+                switchMap(() => forkJoin(deleteTopicsRequests)),
+                // PASO 5: Una vez limpios los temas, eliminamos el contenedor Classroom
+                switchMap(() => this.classroomService.deleteClassroom(classroomId)),
+              );
+            }),
+          );
+        }),
+      );
+    }
+
+    // PASO 6 y 7: Desvincular usuarios y eliminar la materia de la base de datos
+    deleteCascade$
+      .pipe(
+        switchMap(() => this.userService.allUsers().pipe(take(1))),
         switchMap((users) => {
           const usersToUpdate = users.filter(
             (user) => user.subjects_id && user.subjects_id.includes(subjectId),
           );
 
-          if (usersToUpdate.length === 0) {
-            return of([]);
-          }
+          if (usersToUpdate.length === 0) return of([]);
 
           const updateRequests = usersToUpdate.map((user) => {
             const updatedUser = {
@@ -309,12 +356,12 @@ export class SubjectManagement implements OnInit {
       )
       .subscribe({
         next: () => {
-          alert('Materia eliminada y desvinculada de todos los usuarios exitosamente.');
+          alert('Materia, aula virtual, temas y actividades asociados eliminados correctamente.');
           window.location.reload();
         },
         error: (err) => {
-          console.error('Hubo un error en el proceso de eliminación o desvinculación: ', err);
-          alert('Ocurrió un error al procesar la solicitud.');
+          console.error('Hubo un error en el proceso de eliminación en cascada: ', err);
+          alert('Ocurrió un error al intentar eliminar la materia y sus dependencias.');
         },
       });
   }

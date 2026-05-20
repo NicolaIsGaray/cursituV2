@@ -175,7 +175,7 @@ h2 {
 
 .btn-sortear {
   width: 100%;
-  background: var(--accent-orange);
+  background: var(--primary-purple);
   color: white;
   border: none;
   padding: 12px;
@@ -191,7 +191,7 @@ h2 {
 }
 
 .btn-sortear:hover {
-  background: #e67e22;
+  background: var(--light-purple)
 }
 
 .result-cell {

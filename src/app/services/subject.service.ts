@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Subject } from '../models/subject.model';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SubjectService {
   private http = inject(HttpClient);
-  private apiUrl = "http://localhost:8080/api/subjects"
+  private apiUrl = `${environment.api}/subjects`
 
   private readonly SUBJECT_KEY = "cursitu_selected_subject"
 

@@ -2,19 +2,11 @@
   <div class="notas-container" *ngIf="rol === 'DOCENTE'">
     <main class="planilla-content">
       <nav class="top-nav">
-        <button class="btn-back" routerLink="/professor-panel">
+        <button class="btn-back" (click)="goBack()">
           <span class="material-symbols-outlined">arrow_back</span>
-          Regresar
+          Regresar atrás
         </button>
       </nav>
-
-      <div class="planilla-header">
-        <h2>Calificaciones</h2>
-        <button class="btn-nueva-nota">
-          <span class="material-symbols-outlined">add_circle</span>
-          <span class="btn-text">Nueva Nota</span>
-        </button>
-      </div>
 
       <!-- FILTRO ESTILIZADO (Segmented Control) -->
       <div class="filter-wrapper">
