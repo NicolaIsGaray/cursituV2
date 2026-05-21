@@ -1,6 +1,5 @@
 <main *ngIf="authService.userRole$ | async as rol">
   <div class="admin-container" *ngIf="rol === 'ADMIN'">
-    <!-- Lado Izquierdo: Menú de Acciones -->
     <div class="selection-panel">
       <h3>Gestión de Usuarios</h3>
       <p class="section-description">Selecciona una operación para administrar la base de datos.</p>
@@ -11,8 +10,7 @@
           [class.active]="mode === 'crear'"
           (click)="changeMode('crear')"
         >
-          <span class="material-symbols-outlined">person_add</span>
-          Crear Usuario
+          <span class="material-symbols-outlined">person_add</span> Crear Usuario
         </button>
 
         <button
@@ -20,8 +18,7 @@
           [class.active]="mode === 'editar'"
           (click)="changeMode('editar')"
         >
-          <span class="material-symbols-outlined">edit_square</span>
-          Editar Usuario
+          <span class="material-symbols-outlined">edit_square</span> Editar Usuario
         </button>
 
         <button
@@ -29,15 +26,12 @@
           [class.active]="mode === 'eliminar'"
           (click)="changeMode('eliminar')"
         >
-          <span class="material-symbols-outlined">person_remove</span>
-          Eliminar Usuario
+          <span class="material-symbols-outlined">person_remove</span> Eliminar Usuario
         </button>
       </div>
     </div>
 
-    <!-- Lado Derecho: Formulario Dinámico -->
     <div class="action-panel">
-      <!-- FORMULARIO CREAR / EDITAR -->
       <div class="form-card" *ngIf="mode === 'crear' || mode === 'editar'">
         <header
           class="form-header"
@@ -53,23 +47,16 @@
             type="text"
             placeholder="Sin puntos"
             id="dni-input"
-            [formControl]="dniControl"
+            [formControl]="dniEditControl"
           />
 
           <ul class="user-list">
             <li *ngFor="let user of usersFound$ | async" [id]="user.id" class="user-item">
               <button type="button" class="user-card" (click)="userToEdit(user)">
-                <!-- Avatar con iniciales o placeholder -->
-                <div class="user-avatar">
-                  {{ user.name.charAt(0).toUpperCase() }}
-                </div>
-
-                <!-- Información del usuario -->
+                <div class="user-avatar">{{ user.name.charAt(0).toUpperCase() }}</div>
                 <div class="user-info">
                   <span class="user-name">{{ user.name }}</span>
-                  <span class="user-role" [ngClass]="user.role.toLowerCase()">
-                    {{ user.role }}
-                  </span>
+                  <span class="user-role" [ngClass]="user.role.toLowerCase()">{{ user.role }}</span>
                 </div>
               </button>
             </li>
@@ -95,7 +82,7 @@
                 "
                 style="color: var(--error-red)"
               >
-                Porfavor, ingresa un nombre.
+                Por favor, ingresa un nombre.
               </span>
             </div>
             <div class="form-group">
@@ -114,10 +101,14 @@
                 "
                 style="color: var(--error-red)"
               >
-                Porfavor, ingrese un correo válido.
+                Por favor, ingrese un correo válido.
               </span>
               <span
-                *ngIf="userForm.get('email')?.touched && userForm.get('email')?.errors?.['email'] || userForm.get('email')?.errors?.['pattern']"
+                *ngIf="
+                  userForm.get('email')?.touched &&
+                  (userForm.get('email')?.errors?.['email'] ||
+                    userForm.get('email')?.errors?.['pattern'])
+                "
                 style="color: var(--error-red)"
               >
                 El correo ingresado es inválido.
@@ -141,10 +132,10 @@
                 *ngIf="userForm.get('dni')?.touched && userForm.get('dni')?.errors?.['required']"
                 style="color: var(--error-red)"
               >
-                Porfavor, ingrese un DNI.
+                Por favor, ingrese un DNI.
               </span>
               <span
-                *ngIf="userForm.get('dni')?.touched && userForm.get('dni')?.errors?.['minLength']"
+                *ngIf="userForm.get('dni')?.touched && userForm.get('dni')?.errors?.['minlength']"
                 style="color: var(--error-red)"
               >
                 El DNI debe contener al menos 8 caracteres.
@@ -153,21 +144,14 @@
                 *ngIf="userForm.get('dni')?.touched && userForm.get('dni')?.errors?.['pattern']"
                 style="color: var(--error-red)"
               >
-                Formato de DNI inválido.
+                Formato de DNI inválido. Solo números.
               </span>
             </div>
             <div class="form-group">
               <label>Rol del Usuario *</label>
-              <select
-                class="admin-input"
-                id="role"
-                formControlName="role"
-                (change)="switchSubjectCheckboxes($event)"
-              >
+              <select class="admin-input" id="role" formControlName="role">
                 <option value="" selected disabled>-- Selecciona un rol --</option>
-                <option *ngFor="let role of roleList" [value]="role.name">
-                  {{ role.name }}
-                </option>
+                <option *ngFor="let role of roleList" [value]="role.name">{{ role.name }}</option>
               </select>
               <span
                 *ngIf="userForm.get('role')?.touched && userForm.get('role')?.errors?.['required']"
@@ -179,7 +163,6 @@
           </div>
 
           <div class="form-row">
-            <!-- Checkboxes de Comisiones -->
             <div class="form-group">
               <label>Comisiones Asignadas *</label>
               <div class="checkbox-group-container" formArrayName="comissions">
@@ -191,7 +174,8 @@
                 }
               </div>
             </div>
-            <div class="form-group" *ngIf="roleSwitch">
+
+            <div class="form-group" *ngIf="userForm.get('role')?.value === 'ALUMNO'">
               <label>N° de Curso</label>
               <input
                 type="number"
@@ -203,8 +187,10 @@
             </div>
           </div>
 
-          <!-- Checkboxes de Materias Asignadas -->
-          <div class="form-group full-width" [style.display]="roleSwitch ? 'block' : 'none'">
+          <div
+            class="form-group full-width"
+            *ngIf="userForm.get('role')?.value === 'ALUMNO' && subjectList.length > 0"
+          >
             <label>Materias Asignadas</label>
             <div class="checkbox-group-container horizontal" formArrayName="assigned_subjects">
               <div
@@ -212,7 +198,7 @@
                 *ngFor="let control of subjectFormArray.controls; let i = index"
               >
                 <input type="checkbox" [formControlName]="i" [id]="'subject-' + i" />
-                <label [for]="'subject-' + i">{{ subjectList[i].subject_name }}</label>
+                <label [for]="'subject-' + i">{{ subjectList[i]?.subject_name }}</label>
               </div>
             </div>
           </div>
@@ -227,30 +213,22 @@
         </form>
       </div>
 
-      <!-- FORMULARIO ELIMINAR -->
       <div class="form-card delete-card" *ngIf="mode === 'eliminar'">
         <header class="form-header delete-header">
           <h4>Eliminar Usuario</h4>
         </header>
-
         <div class="delete-content">
           <p>Ingresa el DNI del usuario que deseas dar de baja permanentemente.</p>
-
-          <!-- Contenedor del buscador (Mantiene la referencia relativa para el desplegable) -->
           <div class="form-group search-container" style="position: relative">
-            <label for="dni">DNI del Usuario</label>
-
-            <!-- Input vinculado al FormControl Reactivo -->
+            <label for="dni-delete">DNI del Usuario</label>
             <input
-              id="dni"
+              id="dni-delete"
               type="text"
-              [formControl]="dniControl"
+              [formControl]="dniDeleteControl"
               placeholder="Ej: 42333444"
               class="admin-input error-focus"
               autocomplete="off"
             />
-
-            <!-- Desplegable flotante de resultados estilo Card -->
             <ul
               class="autocomplete-results"
               *ngIf="usersFound$"
@@ -265,14 +243,8 @@
               "
             >
               <li *ngFor="let user of usersFound$ | async" class="user-item" style="width: 100%">
-                <button
-                  type="button"
-                  class="user-card"
-                  (click)="selectUserToDelete(user)"
-                >
-                  <div class="user-avatar">
-                    {{ user.name.charAt(0).toUpperCase() }}
-                  </div>
+                <button type="button" class="user-card" (click)="selectUserToDelete(user)">
+                  <div class="user-avatar">{{ user.name.charAt(0).toUpperCase() }}</div>
                   <div class="user-info">
                     <span class="user-name">{{ user.name }}</span>
                     <span class="user-dni">DNI: {{ user.dni }}</span>
@@ -281,16 +253,12 @@
               </li>
             </ul>
           </div>
-
-          <!-- Sección intermedia que confirma al usuario seleccionado -->
           <div class="selected-user-preview" *ngIf="userToDeleteSel">
             <p>
               Vas a eliminar a: <strong>{{ userToDeleteSel.name }}</strong> (DNI:
               {{ userToDeleteSel.dni }})
             </p>
           </div>
-
-          <!-- El botón se habilita únicamente si hay un usuario seleccionado previamente -->
           <button
             class="btn-submit btn-delete"
             (click)="deleteUser()"
@@ -301,7 +269,6 @@
         </div>
       </div>
 
-      <!-- VISTA VACÍA -->
       <div class="empty-state" *ngIf="!mode">
         <span class="material-symbols-outlined">manage_accounts</span>
         <p>Selecciona una acción para comenzar</p>

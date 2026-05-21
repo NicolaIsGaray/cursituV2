@@ -3,6 +3,7 @@ package pepedevelopers.cursitu.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import pepedevelopers.cursitu.model.user_data.StudentDTO;
 import pepedevelopers.cursitu.repository.IUser;
 import pepedevelopers.cursitu.model.UserEntity;
@@ -25,6 +26,20 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserEntity> addUser(@RequestBody UserEntity user) {
+      List<UserEntity> checkList = userRepo.findAll();
+
+      checkList.forEach(u -> {
+        if (user.getDni().equals(u.getDni())) {
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ya hay un alumno registrado con ese DNI.");
+        }
+      });
+
+      if ("ALUMNO".equals(user.getRole()) && user.getComission().length > 1) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Un alumno no puede tener múltiples comisiones.");
+      }
+
+      user.setPassword(user.getDni());
+
        return new ResponseEntity<>(userRepo.save(user), HttpStatus.CREATED);
     }
 
@@ -49,6 +64,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
         }
 
+        if ("ALUMNO".equals(userToUpdate.getRole()) && userToUpdate.getComission().length > 1) {
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Un alumno solo puede tener una comisión.");
+        }
+
         updatedUser.setName(userToUpdate.getName() == null ? updatedUser.getName() : userToUpdate.getName());
         updatedUser.setEmail(userToUpdate.getEmail() == null ? updatedUser.getEmail() : userToUpdate.getEmail());
         updatedUser.setPassword(userToUpdate.getPassword() == null ? updatedUser.getPassword() : userToUpdate.getPassword());
@@ -67,16 +86,11 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable String id) {
-      UserEntity deletedUser = userRepo.findById(id).orElse(null);
-
-      if (deletedUser == null) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
-      }
-
-      userRepo.delete(deletedUser);
-
-      return ResponseEntity.ok("Usuario eliminado");
+    public ResponseEntity<Map<String, String>> deleteUser(@PathVariable String id) {
+      userRepo.deleteById(id);
+      Map<String, String> response = new HashMap<>();
+      response.put("message", "Usuario eliminado con éxito.");
+      return ResponseEntity.ok(response);
     }
 
     @GetMapping("/students")
