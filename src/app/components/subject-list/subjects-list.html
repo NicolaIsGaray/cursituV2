@@ -2,7 +2,7 @@
   <nav class="top-nav">
     <button class="btn-back" (click)="goBack()">
       <span class="material-symbols-outlined">arrow_back</span>
-      Regresar atrás
+      Regresar
     </button>
   </nav>
   <div class="materias-container">
@@ -10,54 +10,62 @@
 
     <!-- VISTA DOCENTE -->
     <div class="materias-wrapper" *ngIf="rol === 'DOCENTE'">
-      <div class="materia-row" *ngFor="let subjectProf of subjectsWithProfessor$ | async">
-        <!-- El contenedor ahora es el link principal -->
-        <div class="materia-card main-clickable" (click)="navigateToPanel('/professor-panel', subjectProf.id)" [style.background-color]="subjectProf.color">
-          <div class="materia-info">
-            <h3>{{subjectProf.subject_name | uppercase}}</h3>
-            <p>Docente: <span>{{subjectProf.professorData.name}}</span></p>
+      @for (subjectP of professorSubjects$ | async; track subjectP.id) {
+        <div class="materia-row">
+          <!-- El contenedor ahora es el link principal -->
+          <div
+            class="materia-card main-clickable"
+            (click)="navigateToPanel('/professor-panel', subjectP.id!)"
+            [style.background-color]="subjectP.color"
+          >
+            <div class="materia-info">
+              <h3>{{ subjectP.subject_name | uppercase }}</h3>
+              <p>
+                Docente: <span>{{ userData.name }}</span>
+              </p>
+            </div>
           </div>
+          <!-- Botón de horarios estilizado -->
+          <button class="btn-horarios">
+            <span class="material-symbols-outlined">schedule</span>
+            <span>Horarios</span>
+          </button>
         </div>
-        <!-- Botón de horarios estilizado -->
-        <button class="btn-horarios">
-          <span class="material-symbols-outlined">schedule</span>
-          <span>Horarios</span>
-        </button>
-      </div>
+      }
     </div>
   </div>
 
   <!-- VISTA ALUMNO -->
-<div class="subjects-container" *ngIf="rol === 'ALUMNO'">
-  <h2>Materias En Curso</h2>
-
-  <div class="subjects-card" *ngIf="subjectsWithProfessor$ | async as materias">
-    
-    <!-- Mensaje amigable si el array de materias asignadas está vacío -->
-    <div class="empty-subjects-state" *ngIf="materias.length === 0">
-      <span class="material-symbols-outlined">auto_stories</span>
-      <p>No te encuentras matriculado en ninguna materia todavía.</p>
-    </div>
-
-    <!-- Lista de materias real -->
-    <div class="subject-row" *ngFor="let subject of materias">
-      <div
-        class="subject-main main-clickable"
-        [style.background-color]="subject.color"
-        (click)="navigateToClassroom('/current-classroom', subject.classroom_id!)"
-      >
-        <div class="subject-info">
-          <h3>{{ subject.subject_name | uppercase }}</h3>
-          <p>Docente: <span>{{ subject.professorName || "Sin asignar" }}</span></p>
-        </div>
+  <div class="subjects-container" *ngIf="rol === 'ALUMNO'">
+    <h2>Materias En Curso</h2>
+    <div class="subjects-card" *ngIf="subjectsWithProfessors$ | async as subjects">
+      <div class="empty-subjects-state" *ngIf="subjects.length === 0">
+        <span class="material-symbols-outlined">auto_stories</span>
+        <p>No te encuentras matriculado en ninguna materia todavía.</p>
       </div>
 
-      <button class="schedule-btn">
-        <span class="material-symbols-outlined">schedule</span>
-        <span>Horarios</span>
-      </button>
-    </div>
+      @for (subject of subjects; track subject.id) {
+        <div class="subject-row">
+          <div
+            class="subject-main main-clickable"
+            [style.background-color]="subject.color"
+            (click)="navigateToClassroom('/current-classroom', subject.classroom_id!)"
+          >
+            <div class="subject-info">
+              <h3>{{ subject.subject_name | uppercase }}</h3>
 
+              <p>
+                Docente: <span>{{ subject.professor_name }}</span>
+              </p>
+            </div>
+          </div>
+
+          <button class="schedule-btn">
+            <span class="material-symbols-outlined">schedule</span>
+            <span>Horarios</span>
+          </button>
+        </div>
+      }
+    </div>
   </div>
-</div>
 </main>

@@ -19,5 +19,5 @@ public class AssignmentEntity {
   private LocalDateTime date_limit;
   private String allowed_format;
   private String type;
-  private Boolean delivered;
+  private String[] sentBy;
 }

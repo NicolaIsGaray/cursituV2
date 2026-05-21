@@ -50,7 +50,7 @@ public class AssignmentController {
     existing.setDate_limit(modified.getDate_limit() == null ? existing.getDate_limit() : modified.getDate_limit());
     existing.setEnabled_to_deliver(modified.getEnabled_to_deliver() == null ? existing.getEnabled_to_deliver() : modified.getEnabled_to_deliver());
     existing.setType(modified.getType() == null ? existing.getType() : modified.getType());
-    existing.setDelivered(modified.getDelivered() == null ? existing.getDelivered() : modified.getDelivered());
+    existing.setSentBy(modified.getSentBy() == null ? existing.getSentBy() : modified.getSentBy());
 
     Map<String, String> response = new HashMap<>();
     response.put("message", "Tarea o Parcial modificado con éxito.");

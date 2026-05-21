@@ -6,10 +6,10 @@ import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-manage-tasks',
   imports: [RouterModule, CommonModule],
-  templateUrl: './manage-tasks.html',
-  styleUrl: './manage-tasks.css',
+  templateUrl: './manage-assignments.html',
+  styleUrl: './manage-assignments.css',
 })
-export class ManageTasks {
+export class ManageAssignments {
   constructor(public authService: AuthService, private location: Location) {}
 
   goBack() {

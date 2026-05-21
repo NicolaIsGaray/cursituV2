@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Aviso } from '../../../notices/temp.model.notices';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -12,7 +12,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 export class NoticeDetails implements OnInit{
   avisoActual!: Aviso;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private location: Location) {}
 
   ngOnInit() {
     // 1. Obtener el ID de la ruta
@@ -33,5 +33,9 @@ export class NoticeDetails implements OnInit{
         ]
       }
     };
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

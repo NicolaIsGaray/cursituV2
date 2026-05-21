@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { SubjectService } from '../../../services/subject.service';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -57,6 +57,7 @@ export class AddClass implements OnInit {
     private classroomService: ClassroomService,
     private fb: FormBuilder,
     private router: Router,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -221,5 +222,9 @@ export class AddClass implements OnInit {
     else if (this.assignmentEnabled === 'deshabilitado') {
       this.enableToDeliver = false;
     }
+  }
+  
+  goBack() {
+    this.location.back();
   }
 }

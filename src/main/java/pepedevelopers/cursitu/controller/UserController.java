@@ -3,6 +3,7 @@ package pepedevelopers.cursitu.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pepedevelopers.cursitu.model.user_data.StudentDTO;
 import pepedevelopers.cursitu.repository.IUser;
 import pepedevelopers.cursitu.model.UserEntity;
 
@@ -76,5 +77,22 @@ public class UserController {
       userRepo.delete(deletedUser);
 
       return ResponseEntity.ok("Usuario eliminado");
+    }
+
+    @GetMapping("/students")
+    public List<StudentDTO> getOnlyStudents() {
+      return userRepo.findByRole("ALUMNO")
+        .stream()
+        .map(user -> new StudentDTO(
+          user.getName(),
+          user.getEmail(),
+          user.getPassword(),
+          user.getDni(),
+          user.getRole(),
+          user.getComission(),
+          user.getClassroom_number(),
+          user.getSubjects_id()
+        ))
+        .toList();
     }
 }

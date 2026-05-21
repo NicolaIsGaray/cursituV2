@@ -4,9 +4,9 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Subject } from '../../models/subject.model';
 import { SubjectService } from '../../services/subject.service';
-import { Observable, combineLatest, filter, forkJoin, map, of, switchMap } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { User } from '../../models/user.model';
-import { UserService } from '../../services/user.service';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-subjects',
@@ -15,77 +15,60 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./subjects-list.css'],
 })
 export class SubjectsList implements OnInit {
-  subjectList$!: Observable<Subject[]>;
-  professorList$!: Observable<User[]>;
-  subjectsWithProfessor$!: Observable<any[]>;
-
+  professorSubjects$?: Observable<Subject[]>;
   studentSubjectList$?: Observable<Subject[]>;
+
+  userData!: User;
+
+  professorList$!: Observable<User[]>;
+
+  subjectsWithProfessors$!: Observable<any[]>;
 
   constructor(
     private router: Router,
     public authService: AuthService,
     private subjectService: SubjectService,
-    private userService: UserService,
-    private location: Location
+    private location: Location,
   ) {}
 
   ngOnInit(): void {
     this.subjectService.setItemInStorage(null);
 
-    const userRole = this.authService.currentUserValue?.role;
+    this.userData = this.authService.currentUserValue!;
 
-    // Corrección de la condicional evaluando correctamente ambas partes
-    if (userRole === 'ALUMNO') {
-      this.loadUserSubjects();
-    } else if (userRole === 'DOCENTE') {
-      this.obtainProfessorInSubjects();
+    if (this.userData === null) {
+      console.error('Usuario no encontrado.');
+    }
+
+    if (this.userData.role === 'ALUMNO') {
+      this.studentSubjectList$ = this.subjectService.getStudentSubjects(this.userData.id!);
+      this.professorList$ = this.subjectService.getProfessorsInSubjects(this.userData.subjects_id!);
+
+      this.combineSubjectsWithProfessors();
+    } else if (this.userData.role === 'DOCENTE') {
+      this.professorSubjects$ = this.subjectService.getProfessorSubjects(this.userData.id!);
     }
   }
 
-  loadUserSubjects() {
-    const ids = this.authService.currentUserValue?.subjects_id;
-
-    // Si el alumno tiene materias asignadas, resolvemos solo esas
-    if (ids && ids.length > 0) {
-      const requests = ids.map((id) =>
-        this.subjectService.getSubjectById(id).pipe(
-          switchMap((subject) =>
-            this.userService.getUserById(subject.professor_id).pipe(
-              map((prof) => ({
-                ...subject,
-                professorName: prof ? prof.name : 'Sin asignar',
-              })),
-            ),
-          ),
-        ),
-      );
-      this.subjectsWithProfessor$ = forkJoin(requests);
-    } else {
-      // CORRECCIÓN: Si el alumno no está asignado a nada, le pasamos un array vacío
-      // Evitamos por completo llamar a obtainProfessorInSubjects()
-      console.warn('El alumno actual no tiene materias asignadas en su perfil.');
-      this.subjectsWithProfessor$ = of([]);
+  combineSubjectsWithProfessors() {
+    if (!this.studentSubjectList$ || !this.professorList$) {
+      console.warn('Los flujos de datos aún no se han inicializado.');
+      return;
     }
-  }
 
-  obtainProfessorInSubjects() {
-    const role = 'DOCENTE';
+    this.subjectsWithProfessors$ = combineLatest({
+      subjects: this.studentSubjectList$,
+      professors: this.professorList$,
+    }).pipe(
+      map(({ subjects, professors }: { subjects: any[]; professors: any[] }) => {
+        if (!subjects || !professors) return [];
 
-    this.professorList$ = this.userService
-      .allUsers()
-      .pipe(map((users) => users.filter((u) => u.role === role)));
-
-    this.subjectList$ = this.subjectService.getAllSubjects();
-
-    this.subjectsWithProfessor$ = combineLatest([this.subjectList$, this.professorList$]).pipe(
-      map(([subjects, professors]) => {
-        return subjects.map((subject) => {
-          const assignedProfessor = professors.find((p) => p.id === subject.professor_id);
+        return subjects.map((subject: any) => {
+          const matchingProfessor = professors.find((p: any) => p.id === subject.professor_id);
 
           return {
             ...subject,
-            professorData: assignedProfessor ? assignedProfessor : null,
-            professorName: assignedProfessor ? assignedProfessor.name : 'Sin asignar',
+            professor_name: matchingProfessor ? `${matchingProfessor.name}` : 'Sin asignar',
           };
         });
       }),

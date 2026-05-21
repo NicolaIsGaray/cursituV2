@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { Aviso } from '../../../notices/temp.model.notices';
 import { Router, RouterModule } from '@angular/router';
@@ -23,10 +23,14 @@ export class NoticesList {
     // ... repetir para más avisos
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private location: Location) {}
 
   verDetalle(id: number) {
     // Navega a la ruta del aviso seleccionado
     this.router.navigate(['/notices', id]);
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

@@ -9,4 +9,5 @@ export class Subject {
     year_level!: number;
     academic_period!: number[];
     important_dates?: DateEvent[];
+    isSuspended!: boolean;
 }

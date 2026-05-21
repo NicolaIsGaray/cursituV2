@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -25,14 +25,19 @@ import { TopicService } from '../../../services/topic.service';
   templateUrl: './subject-management.html',
   styleUrl: './subject-management.css',
 })
+
 export class SubjectManagement implements OnInit {
-  modo: 'crear' | 'editar' | 'eliminar' | null = null;
+  modo: 'crear' | 'editar' | 'suspender' | null = null;
 
   subjectForm!: FormGroup;
   newSubject: Subject = new Subject();
   subjectToUpdateId: string | null = null;
-  subjectToDeleteSel!: Subject;
+  
+  subjectToDeleteSel!: Subject; 
+  subjectToSuspendSel: Subject | null = null;
+
   subjectList$!: Observable<Subject[]>;
+  suspendedSubjectList$!: Observable<Subject[]>;
 
   professorList$!: Observable<User[]>;
   professorAsigned!: User;
@@ -50,6 +55,7 @@ export class SubjectManagement implements OnInit {
     private classroomService: ClassroomService,
     private assignmentService: AssignmentService,
     private topicService: TopicService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -76,7 +82,6 @@ export class SubjectManagement implements OnInit {
 
   private addPeriodCheckboxes(userCommissions: number[] = []): void {
     this.periodFromArray.clear();
-
     this.periodList.forEach((period) => {
       const isMarked = userCommissions.includes(period);
       this.periodFromArray.push(new FormControl(isMarked));
@@ -90,7 +95,15 @@ export class SubjectManagement implements OnInit {
   }
 
   getAllSubjects() {
-    this.subjectList$ = this.subjectService.getAllSubjects();
+    const allSubjects$ = this.subjectService.getAllSubjects();
+
+    this.subjectList$ = allSubjects$.pipe(
+      map((subjects) => subjects.filter((s) => !s.isSuspended)),
+    );
+
+    this.suspendedSubjectList$ = allSubjects$.pipe(
+      map((subjects) => subjects.filter((s) => s.isSuspended)),
+    );
   }
 
   getAllProfessors() {
@@ -127,7 +140,6 @@ export class SubjectManagement implements OnInit {
 
     const { name, color, professor, year } = this.subjectForm.value;
     const periods = this.getSelectedValues(this.periodFromArray, this.periodList);
-
     const newProfessorId = professor.includes(': ') ? professor.split(': ')[1] : professor.trim();
 
     this.newSubject = {
@@ -137,13 +149,13 @@ export class SubjectManagement implements OnInit {
       professor_id: newProfessorId,
       year_level: year,
       academic_period: periods,
+      isSuspended: false,
     };
 
     this.userService.getUserById(newProfessorId).subscribe({
       next: (profData) => {
         this.professorAsigned = profData;
         console.log('Nuevo profesor listo para asignar: ', this.professorAsigned.name);
-
         this.submitSubject(this.subjectToUpdateId || '');
       },
       error: (err) => console.error('Error al obtener el nuevo profesor asignado: ', err),
@@ -198,7 +210,6 @@ export class SubjectManagement implements OnInit {
 
   updateProfessorsRelation() {
     const subjectId = this.newSubject.id!;
-
     const isProfessorSwitch =
       this.modo === 'editar' &&
       this.professorToRevoke &&
@@ -263,16 +274,53 @@ export class SubjectManagement implements OnInit {
     });
   }
 
-  selectSubjectToDelete(e: Event): void {
+  // Modificado: Almacena la selección en 'subjectToSuspendSel' para el HTML
+  selectSubjectToSuspend(e: Event): void {
     const element = e.target as HTMLSelectElement;
     const subjectId = element.value;
 
+    if (!subjectId) {
+      this.subjectToSuspendSel = null;
+      return;
+    }
+
     this.subjectService.getSubjectById(subjectId).subscribe({
       next: (data) => {
-        this.subjectToDeleteSel = data;
+        this.subjectToSuspendSel = data;
+        this.cdr.detectChanges();
+        
       },
       error: (err) => console.error('Error al seleccionar la materia: ', err),
     });
+  }
+
+  // Modificado: Ahora opera sobre el estado síncrono 'subjectToSuspendSel' sin argumentos del template
+  suspendSubject(): void {
+    if (!this.subjectToSuspendSel) return;
+
+    const confirmation = confirm(
+      `¿Deseas suspender la materia ${this.subjectToSuspendSel.subject_name}?`,
+    );
+    if (!confirmation) return;
+
+    const updatedSubject = {
+      ...this.subjectToSuspendSel,
+      isSuspended: true,
+    };
+
+    this.subjectService.modifySubject(this.subjectToSuspendSel.id!, updatedSubject).subscribe({
+      next: () => {
+        alert('Materia Suspendida Correctamente.');
+        this.subjectToSuspendSel = null;
+        window.location.reload();
+      },
+      error: (err) => console.error('Error al suspender la materia:', err),
+    });
+  }
+
+  deleteSelectedSuspendedSubject(subject: Subject): void {
+    this.subjectToDeleteSel = subject;
+    this.deleteSubject();
   }
 
   deleteSubject(): void {
@@ -293,36 +341,28 @@ export class SubjectManagement implements OnInit {
       deleteCascade$ = this.classroomService.getClassroomById(classroomId).pipe(
         take(1),
         switchMap((classroom: any) => {
-          // Obtenemos la lista de IDs de los temas del aula
           const topicsIds: string[] = classroom.topics_id || [];
 
           if (topicsIds.length === 0) {
             return this.classroomService.deleteClassroom(classroomId);
           }
 
-          // PASO 1: Traemos la información de cada Topic para conocer sus correspondientes 'assignment_id'
           const fetchTopicsRequests = topicsIds.map((id) =>
             this.topicService.getTopicById(id).pipe(take(1)),
           );
 
           return forkJoin(fetchTopicsRequests).pipe(
             switchMap((topicsData: any[]) => {
-              // PASO 2: Recolectamos las peticiones de borrado para las Actividades (Assignments) usando sus IDs
               const deleteAssignmentsRequests = topicsData
                 .filter((topic: any) => topic && topic.assignment_id)
                 .map((topic: any) => this.assignmentService.deleteAssignment(topic.assignment_id));
 
-              // PASO 3: Recolectamos las peticiones de borrado para los Temas (Topics)
               const deleteTopicsRequests = topicsIds.map((id) => this.topicService.deleteTopic(id));
-
-              // Ejecutamos primero el borrado de actividades si existen
               const assignmentsStep$ =
                 deleteAssignmentsRequests.length > 0 ? forkJoin(deleteAssignmentsRequests) : of([]);
 
               return assignmentsStep$.pipe(
-                // PASO 4: Una vez limpias las actividades, borramos los temas
                 switchMap(() => forkJoin(deleteTopicsRequests)),
-                // PASO 5: Una vez limpios los temas, eliminamos el contenedor Classroom
                 switchMap(() => this.classroomService.deleteClassroom(classroomId)),
               );
             }),
@@ -331,7 +371,6 @@ export class SubjectManagement implements OnInit {
       );
     }
 
-    // PASO 6 y 7: Desvincular usuarios y eliminar la materia de la base de datos
     deleteCascade$
       .pipe(
         switchMap(() => this.userService.allUsers().pipe(take(1))),
@@ -366,7 +405,27 @@ export class SubjectManagement implements OnInit {
       });
   }
 
-  cambiarModo(nuevoModo: 'crear' | 'editar' | 'eliminar') {
+  reactivateSubject(subject: Subject): void {
+    const confirmation = confirm(
+      `¿Deseas habilitar nuevamente la materia ${subject.subject_name}?`,
+    );
+    if (!confirmation) return;
+
+    const updatedSubject = {
+      ...subject,
+      isSuspended: false,
+    };
+
+    this.subjectService.modifySubject(subject.id!, updatedSubject).subscribe({
+      next: () => {
+        alert('Materia habilitada correctamente.');
+        window.location.reload();
+      },
+      error: (err) => console.error('Error al habilitar la materia:', err),
+    });
+  }
+
+  cambiarModo(nuevoModo: 'crear' | 'editar' | 'suspender') {
     this.modo = nuevoModo;
   }
 }

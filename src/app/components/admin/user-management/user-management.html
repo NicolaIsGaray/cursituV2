@@ -8,8 +8,8 @@
       <div class="admin-actions-list">
         <button
           class="admin-btn create"
-          [class.active]="modo === 'crear'"
-          (click)="cambiarModo('crear')"
+          [class.active]="mode === 'crear'"
+          (click)="changeMode('crear')"
         >
           <span class="material-symbols-outlined">person_add</span>
           Crear Usuario
@@ -17,8 +17,8 @@
 
         <button
           class="admin-btn edit"
-          [class.active]="modo === 'editar'"
-          (click)="cambiarModo('editar')"
+          [class.active]="mode === 'editar'"
+          (click)="changeMode('editar')"
         >
           <span class="material-symbols-outlined">edit_square</span>
           Editar Usuario
@@ -26,8 +26,8 @@
 
         <button
           class="admin-btn delete"
-          [class.active]="modo === 'eliminar'"
-          (click)="cambiarModo('eliminar')"
+          [class.active]="mode === 'eliminar'"
+          (click)="changeMode('eliminar')"
         >
           <span class="material-symbols-outlined">person_remove</span>
           Eliminar Usuario
@@ -38,17 +38,23 @@
     <!-- Lado Derecho: Formulario Dinámico -->
     <div class="action-panel">
       <!-- FORMULARIO CREAR / EDITAR -->
-      <div class="form-card" *ngIf="modo === 'crear' || modo === 'editar'">
+      <div class="form-card" *ngIf="mode === 'crear' || mode === 'editar'">
         <header
           class="form-header"
-          [style.background-color]="modo === 'crear' ? '#3f3689' : '#2ecc71'"
+          [style.background-color]="mode === 'crear' ? '#3f3689' : '#2ecc71'"
         >
-          <h4>{{ modo === 'crear' ? 'Nuevo Usuario' : 'Modificar Usuario' }}</h4>
+          <h4>{{ mode === 'crear' ? 'Nuevo Usuario' : 'Modificar Usuario' }}</h4>
         </header>
 
-        <div class="admin-form" *ngIf="modo === 'editar'">
+        <div class="admin-form" *ngIf="mode === 'editar'">
           <label for="dni-input">Buscar por DNI:</label>
-          <input class="admin-input" type="text" placeholder="Sin puntos" id="dni-input" [formControl]="dniControl" />
+          <input
+            class="admin-input"
+            type="text"
+            placeholder="Sin puntos"
+            id="dni-input"
+            [formControl]="dniControl"
+          />
 
           <ul class="user-list">
             <li *ngFor="let user of usersFound$ | async" [id]="user.id" class="user-item">
@@ -108,13 +114,13 @@
                 "
                 style="color: var(--error-red)"
               >
-                Porfavor, ingrese un correo.
+                Porfavor, ingrese un correo válido.
               </span>
               <span
-                *ngIf="userForm.get('email')?.touched && userForm.get('email')?.errors?.['email']"
+                *ngIf="userForm.get('email')?.touched && userForm.get('email')?.errors?.['email'] || userForm.get('email')?.errors?.['pattern']"
                 style="color: var(--error-red)"
               >
-                Correo inválido.
+                El correo ingresado es inválido.
               </span>
             </div>
           </div>
@@ -152,7 +158,12 @@
             </div>
             <div class="form-group">
               <label>Rol del Usuario *</label>
-              <select class="admin-input" id="role" formControlName="role" (change)="switchSubjectCheckboxes($event)">
+              <select
+                class="admin-input"
+                id="role"
+                formControlName="role"
+                (change)="switchSubjectCheckboxes($event)"
+              >
                 <option value="" selected disabled>-- Selecciona un rol --</option>
                 <option *ngFor="let role of roleList" [value]="role.name">
                   {{ role.name }}
@@ -172,13 +183,12 @@
             <div class="form-group">
               <label>Comisiones Asignadas *</label>
               <div class="checkbox-group-container" formArrayName="comissions">
-                <div
-                  class="checkbox-item"
-                  *ngFor="let control of comissionFromArray.controls; let i = index"
-                >
-                  <input type="checkbox" [formControlName]="i" [id]="'comission-' + i" />
-                  <label [for]="'comission-' + i">Comisión {{ comissionList[i] }}</label>
-                </div>
+                @for (comission of comissionList; track comission; let i = $index) {
+                  <div class="checkbox-item">
+                    <input type="checkbox" [formControlName]="i" [id]="'comission-' + i" />
+                    <label [for]="'comission-' + i">Comisión {{ comission }}</label>
+                  </div>
+                }
               </div>
             </div>
             <div class="form-group" *ngIf="roleSwitch">
@@ -209,16 +219,16 @@
 
           <button
             class="btn-submit"
-            [style.background-color]="modo === 'crear' ? '#3f3689' : '#2ecc71'"
+            [style.background-color]="mode === 'crear' ? '#3f3689' : '#2ecc71'"
             [disabled]="userForm.invalid"
           >
-            {{ modo === 'crear' ? 'Registrar Usuario' : 'Guardar Cambios' }}
+            {{ mode === 'crear' ? 'Registrar Usuario' : 'Guardar Cambios' }}
           </button>
         </form>
       </div>
 
       <!-- FORMULARIO ELIMINAR -->
-      <div class="form-card delete-card" *ngIf="modo === 'eliminar'">
+      <div class="form-card delete-card" *ngIf="mode === 'eliminar'">
         <header class="form-header delete-header">
           <h4>Eliminar Usuario</h4>
         </header>
@@ -258,7 +268,7 @@
                 <button
                   type="button"
                   class="user-card"
-                  (click)="seleccionarUsuarioParaEliminar(user)"
+                  (click)="selectUserToDelete(user)"
                 >
                   <div class="user-avatar">
                     {{ user.name.charAt(0).toUpperCase() }}
@@ -292,7 +302,7 @@
       </div>
 
       <!-- VISTA VACÍA -->
-      <div class="empty-state" *ngIf="!modo">
+      <div class="empty-state" *ngIf="!mode">
         <span class="material-symbols-outlined">manage_accounts</span>
         <p>Selecciona una acción para comenzar</p>
       </div>

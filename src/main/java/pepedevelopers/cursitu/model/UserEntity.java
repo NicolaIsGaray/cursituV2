@@ -2,6 +2,7 @@ package pepedevelopers.cursitu.model;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -16,7 +17,10 @@ public class UserEntity {
     private String email;
     private String password;
     private String dni;
+
+    @Indexed
     private String role;
+
     private String[] comission;
     private Integer classroom_number;
     private String[] subjects_id;

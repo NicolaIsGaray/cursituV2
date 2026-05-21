@@ -20,5 +20,7 @@ public class SubjectEntity {
     private Integer year_level;
     private Integer[] academic_period;
 
+    private Boolean isSuspended;
+
     private List<DateEntity> important_dates;
 }

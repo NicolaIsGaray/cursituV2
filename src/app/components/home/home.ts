@@ -4,7 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
-import { map, Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 
 interface HomeOption {
   title: string;
@@ -40,15 +40,12 @@ export class Home implements OnInit{
   ngOnInit(): void {
     this.authService.getAuthStatus();
 
-    this.getAllStudents();
-  }
-
-  getAllStudents() {
-    if (this.authService.currentRole === 'DOCENTE') {
-      this.studentList$ = this.userService.allUsers().pipe(
-        map((students) => students.filter((s) => s.role === 'ALUMNO'))
-      )
-    }
+    this.studentList$ = this.userService.getOnlyStudents().pipe(
+      catchError((err) => {
+        console.warn("No se pudieron cargar los estudiantes.", err);
+        return of([]);
+      })
+    )
   }
 
   navigateTo(path: string) {
