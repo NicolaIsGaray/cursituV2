@@ -9,33 +9,37 @@ import { environment } from '../../environments/environment.development';
 })
 export class UserService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.api}/users`
+  private apiUrl = `${environment.api}/users`;
 
-  allUsers() : Observable<User[]> {
+  allUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.apiUrl);
   }
 
-  getUserById(id: string) : Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/${id}`)
+  getUserById(id: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${id}`);
   }
 
   searchUserByDni(dni: String): Observable<User[]> {
-    return this.http.get<User[]>(`${this.apiUrl}/dni/${dni}`)
+    return this.http.get<User[]>(`${this.apiUrl}/dni/${dni}`);
   }
 
-  createUser(user: User) : Observable<Object> {
-    return this.http.post(this.apiUrl, user)
+  createUser(user: User): Observable<Object> {
+    return this.http.post(this.apiUrl, user);
   }
 
   modifyUser(id: string, user: User) {
-    return this.http.put(`${this.apiUrl}/${id}`, user)
+    return this.http.put(`${this.apiUrl}/${id}`, user);
   }
 
   deleteUser(id: string) {
-    return this.http.delete(`${this.apiUrl}/${id}`)
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
   getOnlyStudents(): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/students`);
+  }
+
+  getOnlyProfessors(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/professors`);
   }
 }

@@ -15,5 +15,4 @@ public class GradesEntity {
   private String student_id;
   private String task_id;
   private float qualification;
-  private LocalDateTime created_at;
 }

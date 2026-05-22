@@ -44,7 +44,7 @@ export const routes: Routes = [
     { path: 'add-class', component: AddClass },
     { path: 'edit-subject', component: EditSubject },
     { path: 'manage-dates', component: ManageDates },
-    { path: 'manage-assignments', component: ManageAssignments },
+    { path: 'manage-tasks', component: ManageAssignments },
     { path: 'see-deliveries', component: SeeDeliveries },
     { path: 'manage-finals', component: ManageFinals },
     { path: 'students', component: StudentsList },

@@ -2,7 +2,6 @@ package pepedevelopers.cursitu.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import pepedevelopers.cursitu.model.UserEntity;
-import pepedevelopers.cursitu.model.user_data.StudentDTO;
 
 import java.util.List;
 import java.util.Optional;

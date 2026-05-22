@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Document(collection = "assignments")
@@ -16,8 +17,9 @@ public class AssignmentEntity {
   private Boolean enabled_to_deliver;
   private String title;
   private String content;
+  private String subject_name;
   private LocalDateTime date_limit;
   private String allowed_format;
   private String type;
-  private String[] sentBy;
+  private List<String> sentBy;
 }

@@ -88,8 +88,6 @@ export class AnnouncementPanel implements OnInit{
     const element = e.target as HTMLSelectElement;
     const value = element.value;
 
-    alert("CALLING");
-
     this.noticeService.getNoticeById(value).subscribe({
       next: (data) => {
         this.noticeToDeleteSel = data;

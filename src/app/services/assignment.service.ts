@@ -1,8 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { map, Observable } from 'rxjs';
 import { Assignment } from '../models/assignment.model';
+import { Submission } from '../models/submission.model';
+import { AssignmentDTO } from '../models/dto/assignmentDTO';
 
 @Injectable({
   providedIn: 'root',
@@ -41,5 +43,31 @@ export class AssignmentService {
 
   deleteAssignment(id: string) {
     return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  getPendingAssignments(studentId: string): Observable<AssignmentDTO[]> {
+    return this.http.get<AssignmentDTO[]>(`${this.apiUrl}/student/${studentId}/pending`);
+  }
+
+  checkSubmissionStatus(studentId: string, activityId: string): Observable<{ status: string }> {
+    let params = new HttpParams();
+
+    params = params.append('studentId', studentId);
+    params = params.append('activityId', activityId);
+
+    return this.http.get<{ status: string }>(`${this.apiUrl}/check-status`, { params });
+  }
+
+  submitActivity(
+    activityId: string,
+    studentId: string,
+    submission: Submission,
+  ): Observable<Object> {
+    let params = new HttpParams();
+
+    params = params.append('activityId', activityId);
+    params = params.append('studentId', studentId);
+
+    return this.http.post(`${this.apiUrl}/submit-activity`, submission, { params });
   }
 }

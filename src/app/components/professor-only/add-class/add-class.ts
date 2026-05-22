@@ -115,16 +115,15 @@ export class AddClass implements OnInit {
 
     const { title, content } = this.topicForm.value;
 
-    // Estructura base del Topic
     this.newTopic = {
       title: title.trim(),
       content: content,
       classroom_id: this.classroomId!,
-      assignment_id: null!, // Se inicializa nulo o vacío
+      assignment_id: null!,
     };
 
     if (this.mode === 'entregable') {
-      if (this.assignmentForm.invalid) return; // Validación preventiva del segundo formulario
+      if (this.assignmentForm.invalid) return;
 
       const { assignmentTitle, assignmentContent, assignmentLimit } = this.assignmentForm.value;
 

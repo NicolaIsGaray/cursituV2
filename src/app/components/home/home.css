@@ -54,6 +54,56 @@ h2 {
   color: #1a1a1a;
 }
 
+.pending-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.pending-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--border-color, #eaeaea);
+}
+
+.pending-item:last-child {
+  border-bottom: none;
+}
+
+.pending-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.subject-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.due-date {
+  font-size: 0.85rem;
+  color: #e74c3c; /* Tono rojo/alerta para indicar vencimiento */
+}
+
+.btn-goto {
+  background: none;
+  border: none;
+  color: #3f3689;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.btn-goto:hover {
+  transform: translateX(4px);
+}
+
 /* El recuadro gris interno de cada sección */
 
 .card-content.empty {

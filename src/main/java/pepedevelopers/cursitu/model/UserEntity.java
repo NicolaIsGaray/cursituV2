@@ -21,7 +21,7 @@ public class UserEntity {
     @Indexed
     private String role;
 
-    private String[] comission;
+    private List<String> comission;
     private Integer classroom_number;
-    private String[] subjects_id;
+    private List<String> subjects_id;
 }

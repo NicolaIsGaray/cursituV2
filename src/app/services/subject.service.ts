@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Subject } from '../models/subject.model';
 import { environment } from '../../environments/environment.development';
 import { User } from '../models/user.model';
@@ -37,6 +37,10 @@ export class SubjectService {
 
   modifySubject(id: string, subject: Subject) {
     return this.http.put(`${this.apiUrl}/${id}`, subject);
+  }
+
+  toggleSuspension(id: string, status: boolean) {
+    return this.http.put(`${this.apiUrl}/suspend/${id}`, status);
   }
 
   deleteSubject(id: string) {
