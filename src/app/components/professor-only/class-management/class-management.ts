@@ -94,7 +94,7 @@ export class ClassManagement implements OnInit {
       if (this.topicToEditId) {
         this.topicService.getTopicById(this.topicToEditId).subscribe({
           next: (topic) => {
-            if (!topic.assignment_id) {
+            if (!topic.assignmentId) {
               this.topicToEdit(topic, null);
             } else {
               this.assignmentService.getAssignmentInTopic(topic).subscribe({

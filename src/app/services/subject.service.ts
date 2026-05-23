@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Subject } from '../models/subject.model';
 import { environment } from '../../environments/environment.development';
 import { User } from '../models/user.model';
+import { Classroom } from '../models/classroom.model';
 
 @Injectable({
   providedIn: 'root',
@@ -45,6 +46,10 @@ export class SubjectService {
 
   deleteSubject(id: string) {
     return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  getClassroomInSubject(id: string): Observable<Classroom> {
+    return this.http.get<Classroom>(`${this.apiUrl}/subject/${id}/classroom`)
   }
 
   getStudentSubjects(id: string): Observable<Subject[]> {

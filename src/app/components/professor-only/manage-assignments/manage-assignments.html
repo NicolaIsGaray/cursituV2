@@ -16,37 +16,42 @@
           <article class="tp-card" [style.border-left-color]="currentSubject.color">
             <div class="tp-header">
               <div class="tp-title-area">
-                <h3>{{task.title}}</h3>
+                <h3>{{ task.title }}</h3>
                 <div class="deadline-badge">
                   <span class="material-symbols-outlined">schedule</span>
-                  <span>Límite: {{formatDate(task.date_limit)}}</span>
+                  <span>Límite: {{ formatDate(task.date_limit) }}</span>
                 </div>
               </div>
               <div class="tp-actions">
-                <button class="btn-icon edit" title="Editar"><span class="material-symbols-outlined">edit</span></button>
-                <button class="btn-icon delete" title="Eliminar"><span class="material-symbols-outlined">delete</span></button>
+                <button class="btn-icon delete" title="Eliminar" (click)="deleteTask(task.id!)">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
               </div>
             </div>
-  
-            <div class="tp-stats-grid">
-              <div class="stat-item">
-                <span class="count">28/32</span>
-                <span class="label">ENTREGADOS</span>
+
+            @if (taskStats$ | async; as task) {
+              <div class="tp-stats-grid">
+                <div class="stat-item">
+                  <span class="count">{{ task.provided }}/{{ task.totalStudents }}</span>
+                  <span class="label">TOTAL ENTREGADOS</span>
+                </div>
+                <div class="stat-item">
+                  <span class="count success">{{ task.corrected }}</span>
+                  <span class="label">CORREGIDOS</span>
+                </div>
+                <div class="stat-item">
+                  <span class="count warning">{{ task.not_provided }}</span>
+                  <span class="label">NO ENTREGADOS</span>
+                </div>
               </div>
-              <div class="stat-item">
-                <span class="count success">12</span>
-                <span class="label">CORREGIDOS</span>
-              </div>
-              <div class="stat-item">
-                <span class="count warning">4</span>
-                <span class="label">NO ENTREGADOS</span>
-              </div>
-            </div>
-  
+            }
+
             <div class="tp-footer">
               <div class="attachment-box">
                 <span class="material-symbols-outlined">description</span>
-                <span class="filename">Leer Consigna</span>
+                <button class="filename" [routerLink]="['/see-assignment', task.id]">
+                  Leer Consigna
+                </button>
               </div>
               <a class="btn-ver-entregas" routerLink="/see-deliveries">
                 Ver Entregas

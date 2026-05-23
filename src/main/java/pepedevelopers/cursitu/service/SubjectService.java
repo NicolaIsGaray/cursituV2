@@ -85,8 +85,8 @@ public class SubjectService {
         if (topicsId != null && !topicsId.isEmpty()) {
           for (String id : topicsId) {
             topicsRepo.findById(id).ifPresent(topic -> {
-              if (topic.getAssignment_id() != null) {
-                assignmentRepo.deleteById(topic.getAssignment_id());
+              if (topic.getAssignmentId() != null) {
+                assignmentRepo.deleteById(topic.getAssignmentId());
               }
             });
             topicsRepo.deleteById(id);
@@ -101,6 +101,13 @@ public class SubjectService {
     });
 
     subjectRepo.deleteById(subjectId);
+  }
+
+  @Transactional
+  public ClassroomEntity getSubjectClassroom(String subjectId) {
+    SubjectEntity subject = subjectRepo.findById(subjectId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Materia no encontrada."));
+
+    return classroomRepo.findById(subject.getClassroom_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Curso no encontrado."));
   }
 
   private void assignSubjectToUser(String userId, String subjectId) {

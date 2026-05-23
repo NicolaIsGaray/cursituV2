@@ -14,4 +14,5 @@ public class ClassroomEntity {
 
     private String subject_id;
     private List<String> topics_id;
+    private List<String> students_id;
 }

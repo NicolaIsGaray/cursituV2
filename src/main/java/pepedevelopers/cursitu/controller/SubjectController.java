@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pepedevelopers.cursitu.model.ClassroomEntity;
 import pepedevelopers.cursitu.model.SubjectEntity;
 import pepedevelopers.cursitu.model.UserEntity;
 import pepedevelopers.cursitu.repository.ISubject;
@@ -79,11 +80,12 @@ public class SubjectController {
   @DeleteMapping("/{id}")
   public ResponseEntity<?> deleteSubject(@PathVariable String id) {
       subjectService.deleteInCascade(id);
+      return ResponseEntity.ok(Map.of("message", "Materia eliminada con éxito."));
+  }
 
-      Map<String, String> response = new HashMap<>();
-      response.put("message", "Materia eliminada con éxito.");
-
-      return ResponseEntity.ok(response);
+  @GetMapping("/subject/{id}/classroom")
+  public ResponseEntity<ClassroomEntity> getClassroomInSubject(@PathVariable String id) {
+    return ResponseEntity.ok(subjectService.getSubjectClassroom(id));
   }
 
   @GetMapping("/student/{id}")

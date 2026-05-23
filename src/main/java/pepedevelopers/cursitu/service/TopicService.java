@@ -11,10 +11,7 @@ import pepedevelopers.cursitu.model.ClassroomEntity;
 import pepedevelopers.cursitu.model.subject_submodel.AssignmentEntity;
 import pepedevelopers.cursitu.model.subject_submodel.SubmissionEntity;
 import pepedevelopers.cursitu.model.subject_submodel.TopicEntity;
-import pepedevelopers.cursitu.repository.IAssignment;
-import pepedevelopers.cursitu.repository.IClassroom;
-import pepedevelopers.cursitu.repository.ISubmission;
-import pepedevelopers.cursitu.repository.ITopics;
+import pepedevelopers.cursitu.repository.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,25 +24,27 @@ public class TopicService {
   private final IClassroom classroomRepo;
   private final IAssignment assignmentRepo;
   private final ISubmission submissionRepo;
+  private final IGrades gradeRepo;
 
   @Autowired
   private ClassroomService classroomService;
 
-  public TopicService(ITopics topicRepo, IClassroom classroomRepo, IAssignment assignmentRepo, ISubmission submissionRepo) {
+  public TopicService(ITopics topicRepo, IClassroom classroomRepo, IAssignment assignmentRepo, ISubmission submissionRepo, IGrades gradeRepo) {
     this.topicRepo = topicRepo;
     this.classroomRepo = classroomRepo;
     this.assignmentRepo = assignmentRepo;
     this.submissionRepo = submissionRepo;
+    this.gradeRepo = gradeRepo;
   }
 
   @Transactional
   public TopicEntity submitTopic(String mode, TopicEntity newTopic, AssignmentEntity newAssignment, String classroomId) {
     if ("entregable".equals(mode) && newAssignment != null) {
       AssignmentEntity savedAssignment = assignmentRepo.save(newAssignment);
-      newTopic.setAssignment_id(savedAssignment.getId());
+      newTopic.setAssignmentId(savedAssignment.getId());
     }
     else {
-      newTopic.setAssignment_id(null);
+      newTopic.setAssignmentId(null);
     }
 
     TopicEntity createdTopic = topicRepo.save(newTopic);
@@ -72,11 +71,11 @@ public class TopicService {
     if (modified == null) throw  new ResponseStatusException(HttpStatus.NOT_FOUND, "Clase no encontrada.");
 
     if ("teorico".equals(mode) && assignment == null) {
-      assignmentRepo.findById(modified.getAssignment_id()).ifPresent(assignmentRepo::delete);
-      modified.setAssignment_id(null);
+      assignmentRepo.findById(modified.getAssignmentId()).ifPresent(assignmentRepo::delete);
+      modified.setAssignmentId(null);
     } else if ("entregable".equals(mode) && assignment != null) {
       AssignmentEntity newAssignment = assignmentRepo.save(assignment);
-      modified.setAssignment_id(newAssignment.getId());
+      modified.setAssignmentId(newAssignment.getId());
     }
 
     modified.setTitle(updates.getTitle() == null ? modified.getTitle() : updates.getTitle());
@@ -91,8 +90,8 @@ public class TopicService {
 
     if (topic == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Clase no encontrada.");
 
-    if (topic.getAssignment_id() != null) {
-      AssignmentEntity assignmentToErase = assignmentRepo.findById(topic.getAssignment_id()).orElse(null);
+    if (topic.getAssignmentId() != null) {
+      AssignmentEntity assignmentToErase = assignmentRepo.findById(topic.getAssignmentId()).orElse(null);
 
       if (assignmentToErase != null) {
         submissionRepo.findByActivityId(assignmentToErase.getId()).ifPresent(submissionRepo::delete);

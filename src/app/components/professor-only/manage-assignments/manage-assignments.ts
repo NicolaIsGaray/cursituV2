@@ -4,10 +4,12 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { SubjectService } from '../../../services/subject.service';
 import { Subject } from '../../../models/subject.model';
-import { Observable } from 'rxjs';
+import { Observable, take, tap } from 'rxjs';
 import { Assignment } from '../../../models/assignment.model';
 import { AssignmentService } from '../../../services/assignment.service';
 import { ClassroomService } from '../../../services/classroom.service';
+import { User } from '../../../models/user.model';
+import { TaskStatsDTO } from '../../../models/dto/task-statsDTO';
 
 @Component({
   selector: 'app-manage-tasks',
@@ -19,7 +21,11 @@ export class ManageAssignments implements OnInit {
   subjectId: string | null = null;
   currentSubject!: Subject;
 
-  taskList$!: Observable<Assignment[]>;
+  taskList$!: Observable<Assignment[] | null>;
+  taskStats$!: Observable<TaskStatsDTO>;
+
+  sentQuantity: User[] = [];
+  pendingQuantity!: User[];
 
   constructor(
     public authService: AuthService,
@@ -47,11 +53,34 @@ export class ManageAssignments implements OnInit {
   }
 
   loadAllAssignments() {
-    this.taskList$ = this.classroomService.obtainClassroomTasks(
-      this.currentSubject.classroom_id!,
-    );
+    this.taskList$ = this.classroomService
+      .obtainClassroomTasks(this.currentSubject.classroom_id!)
+      .pipe(
+        take(1),
+        tap((assignments: Assignment[]) => {
+          assignments.forEach((task) => {
+            this.taskStats$ = this.assignmentService.getTaskStats(
+              this.currentSubject.classroom_id!,
+              task.id!,
+            );
+          });
+        }),
+      );
 
     this.cdr.detectChanges();
+  }
+
+  deleteTask(activityId: string) {
+    const confirmar = confirm(`Estas a punto de eliminar una actividad. ¿Confirmar?`);
+
+    if (confirmar) {
+      this.assignmentService.deleteAssignment(activityId).subscribe({
+        next: () => {
+          alert("Actividad Eliminada Con Éxito.");
+        },
+        error: (err) => console.error("Hubo un problema al eliminar la actividad: ", err)
+      })
+    }
   }
 
   formatDate(original: Date | string): string {

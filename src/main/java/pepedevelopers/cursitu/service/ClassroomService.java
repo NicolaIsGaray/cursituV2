@@ -33,13 +33,14 @@ public class ClassroomService {
   }
 
   @Transactional
-  public ClassroomEntity modifyClassroom(String id, ClassroomEntity classroom) {
+  public void modifyClassroom(String id, ClassroomEntity classroom) {
     ClassroomEntity modified = classroomRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Curso no encontrado."));
 
     modified.setSubject_id(classroom.getSubject_id() == null ? modified.getSubject_id() : classroom.getSubject_id());
     modified.setTopics_id(classroom.getTopics_id() == null ? modified.getTopics_id() : classroom.getTopics_id());
+    modified.setStudents_id(classroom.getStudents_id() == null ? modified.getStudents_id() : classroom.getStudents_id());
 
-    return modified;
+    classroomRepo.save(modified);
   }
 
   @Transactional(readOnly = true)
@@ -78,8 +79,8 @@ public class ClassroomService {
     if (topicIds != null && !topicIds.isEmpty()) {
       for (String id : topicIds) {
         topicsRepo.findById(id).ifPresent(topic -> {
-          if (topic.getAssignment_id() != null) {
-            assignmentRepo.findById(topic.getAssignment_id()).ifPresent(task -> {
+          if (topic.getAssignmentId() != null) {
+            assignmentRepo.findById(topic.getAssignmentId()).ifPresent(task -> {
               if (Objects.equals(task.getType(), "tarea")) {
                 tasks.add(task);
               }
@@ -104,8 +105,8 @@ public class ClassroomService {
     if (topicIds != null && !topicIds.isEmpty()) {
       for (String id : topicIds) {
         topicsRepo.findById(id).ifPresent(topic -> {
-          if (topic.getAssignment_id() != null) {
-            assignmentRepo.findById(topic.getAssignment_id()).ifPresent(exam -> {
+          if (topic.getAssignmentId() != null) {
+            assignmentRepo.findById(topic.getAssignmentId()).ifPresent(exam -> {
               if (Objects.equals(exam.getType(), "parcial")) {
                 exams.add(exam);
               }

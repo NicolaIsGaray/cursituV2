@@ -12,7 +12,7 @@ public class GradesEntity {
   @Id
   private String id;
 
-  private String student_id;
-  private String task_id;
-  private float qualification;
+  private String studentId;
+  private String activityId;
+  private Float qualification;
 }

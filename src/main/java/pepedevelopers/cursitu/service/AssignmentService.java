@@ -4,15 +4,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import pepedevelopers.cursitu.model.ClassroomEntity;
+import pepedevelopers.cursitu.model.SubjectEntity;
+import pepedevelopers.cursitu.model.UserEntity;
 import pepedevelopers.cursitu.model.dto.AssignmentDTO;
+import pepedevelopers.cursitu.model.dto.TaskStatsDTO;
+import pepedevelopers.cursitu.model.dto.TeacherSubmissionDTO;
 import pepedevelopers.cursitu.model.subject_submodel.AssignmentEntity;
+import pepedevelopers.cursitu.model.subject_submodel.GradesEntity;
 import pepedevelopers.cursitu.model.subject_submodel.SubmissionEntity;
 import pepedevelopers.cursitu.model.subject_submodel.TopicEntity;
-import pepedevelopers.cursitu.repository.IAssignment;
-import pepedevelopers.cursitu.repository.ISubmission;
-import pepedevelopers.cursitu.repository.ITopics;
+import pepedevelopers.cursitu.repository.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -20,11 +26,17 @@ import java.util.stream.Collectors;
 public class AssignmentService {
   private final IAssignment assignmentRepo;
   private final ISubmission submissionRepo;
+  private final IClassroom classroomRepo;
+  private final IGrades gradesRepo;
+  private final IUser userRepo;
   private final ITopics topicRepo;
 
-  public AssignmentService(IAssignment assignmentRepo, ISubmission submissionRepo, ITopics topicRepo) {
+  public AssignmentService(IAssignment assignmentRepo, ISubmission submissionRepo, IClassroom classroomRepo, IGrades gradesRepo, IUser userRepo, ITopics topicRepo) {
     this.assignmentRepo = assignmentRepo;
     this.submissionRepo = submissionRepo;
+    this.classroomRepo = classroomRepo;
+    this.gradesRepo = gradesRepo;
+    this.userRepo = userRepo;
     this.topicRepo = topicRepo;
   }
 
@@ -44,6 +56,20 @@ public class AssignmentService {
     assignment.setSentBy(update.getSentBy() == null ? assignment.getSentBy() : update.getSentBy());
 
     return assignmentRepo.save(assignment);
+  }
+
+  @Transactional
+  public void deleteAssignment(String id) {
+    AssignmentEntity assignmentToErase = assignmentRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Actividad no encontrada."));
+
+    submissionRepo.findByActivityId(assignmentToErase.getId()).ifPresent(submissionRepo::delete);
+
+    TopicEntity topicAssigned = topicRepo.findByAssignmentId(assignmentToErase.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Clase no encontrada."));
+
+    topicAssigned.setAssignmentId(null);
+    topicRepo.save(topicAssigned);
+
+    assignmentRepo.delete(assignmentToErase);
   }
 
   public AssignmentEntity getAssignmentInTopic(String assingmentId) {
@@ -99,16 +125,133 @@ public class AssignmentService {
     );
 
     SubmissionEntity newSubmission = new SubmissionEntity();
-
     newSubmission.setActivityId(assignment.getId());
     newSubmission.setStudentId(studentId);
     newSubmission.setFile_url(submission.getFile_url());
     newSubmission.setComment(submission.getComment());
     newSubmission.setSubmission_date(submission.getSubmission_date());
-
     newSubmission.setStatus("ENTREGADO");
 
-    return submissionRepo.save(newSubmission);
+    SubmissionEntity savedSubmission = submissionRepo.save(newSubmission);
+
+    List<String> sentByList = assignment.getSentBy();
+
+    if (sentByList == null) {
+      sentByList = new ArrayList<>();
+    } else {
+      sentByList = new ArrayList<>(sentByList);
+    }
+
+    if (!sentByList.contains(studentId)) {
+      sentByList.add(studentId);
+      assignment.setSentBy(sentByList);
+
+      assignmentRepo.save(assignment);
+    }
+
+    return savedSubmission;
+  }
+
+  @Transactional(readOnly = true)
+  public List<TeacherSubmissionDTO> getAssignmentsTableForTeacher(String classroomId, String activityId) {
+    ClassroomEntity classroom = classroomRepo.findById(classroomId)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Curso no encontrado."));
+
+    AssignmentEntity activity = assignmentRepo.findById(activityId)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Actividad no encontrada."));
+
+    List<String> studentIds = classroom.getStudents_id();
+    if (studentIds == null || studentIds.isEmpty()) {
+      return new ArrayList<>();
+    }
+
+    List<UserEntity> students = userRepo.findAllById(studentIds);
+
+    List<SubmissionEntity> submissions = submissionRepo.findByActivityIdAndStudentIdIn(activityId, studentIds);
+    List<GradesEntity> grades = gradesRepo.findByActivityIdAndStudentIdIn(activityId, studentIds);
+
+    return students.stream().map(student -> {
+      SubmissionEntity submission = submissions.stream()
+        .filter(s -> s.getStudentId().equals(student.getId()))
+        .findFirst()
+        .orElse(null);
+
+      GradesEntity grade = grades.stream()
+        .filter(g -> g.getStudentId().equals(student.getId()))
+        .findFirst()
+        .orElse(null);
+
+      boolean isLate = false;
+      if (submission != null && submission.getSubmission_date() != null && activity.getDate_limit() != null) {
+        isLate = submission.getSubmission_date().isAfter(activity.getDate_limit());
+      }
+
+      String submissionId = (submission != null) ? submission.getId() : null;
+      String fileUrl = (submission != null) ? submission.getFile_url() : null;
+      String subDate = (submission != null) ? submission.getSubmission_date().toString() : null;
+      Float qualification = (grade != null) ? grade.getQualification() : 0.0f;
+
+      String status = "SIN_ENTREGAR";
+      if (submission != null) {
+        status = (grade != null) ? "CORREGIDO" : "PENDIENTE";
+      }
+
+      return new TeacherSubmissionDTO(
+        student.getId(),
+        student.getName(),
+        submissionId,
+        fileUrl,
+        subDate,
+        isLate,
+        qualification,
+        status
+      );
+    }).toList();
+  }
+
+  @Transactional
+  public void saveOrUpdateGrade(String studentId, String activityId, Float note) {
+    Optional<GradesEntity> existingGrade = gradesRepo.findByActivityIdAndStudentId(activityId, studentId);
+
+    if (existingGrade.isPresent()) {
+      GradesEntity grade = existingGrade.get();
+      grade.setQualification(note);
+      gradesRepo.save(grade);
+    } else {
+      GradesEntity newGrade = new GradesEntity();
+      newGrade.setActivityId(activityId);
+      newGrade.setStudentId(studentId);
+      newGrade.setQualification(note);
+      gradesRepo.save(newGrade);
+    }
+
+    submissionRepo.findByActivityIdAndStudentId(activityId, studentId).ifPresent(submission -> {
+      submission.setStatus("CORREGIDO");
+      submissionRepo.save(submission);
+    });
+  }
+
+  @Transactional(readOnly = true)
+  public TaskStatsDTO getTaskStatistics(String classroomId, String taskId) {
+    ClassroomEntity classroom = classroomRepo.findById(classroomId)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Curso no encontrado"));
+
+    List<String> enrolledStudents = classroom.getStudents_id();
+    if (enrolledStudents == null) {
+      enrolledStudents = new ArrayList<>();
+    }
+    int totalStudents = enrolledStudents.size();
+
+    long provided = submissionRepo.countDistinctSentByActivityId(taskId);
+
+    long not_provided = totalStudents - provided;
+
+    long corrected = 0;
+    if (!enrolledStudents.isEmpty()) {
+      corrected = gradesRepo.countByActivityIdAndStudentIdIn(taskId, enrolledStudents);
+    }
+
+    return new TaskStatsDTO(totalStudents, provided, not_provided, corrected);
   }
 
   @Transactional
@@ -119,5 +262,15 @@ public class AssignmentService {
   @Transactional
   public void deleteSubmited(String id) {
     submissionRepo.deleteById(id);
+  }
+
+  @Transactional
+  public List<GradesEntity> getGrades() {
+    return gradesRepo.findAll();
+  }
+
+  @Transactional
+  public void deleteGrade(String id) {
+    gradesRepo.deleteById(id);
   }
 }

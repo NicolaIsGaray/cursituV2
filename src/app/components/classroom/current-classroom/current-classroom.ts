@@ -79,12 +79,12 @@ export class CurrentClassroom implements OnInit {
 
     this.assignedActivity$ = this.selectedTopic$.pipe(
       switchMap((topic) => {
-        if (!topic || !topic.assignment_id) {
+        if (!topic || !topic.assignmentId) {
           return of(null);
         }
-        return this.assignmentService.getAssignmentById(topic.assignment_id).pipe(
+        return this.assignmentService.getAssignmentById(topic.assignmentId).pipe(
           catchError((err) => {
-            console.error(`Error 404 o red al buscar la asignación ${topic.assignment_id}:`, err);
+            console.error(`Error 404 o red al buscar la asignación ${topic.assignmentId}:`, err);
             return of(null);
           }),
         );

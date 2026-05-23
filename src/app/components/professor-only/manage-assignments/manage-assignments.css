@@ -183,6 +183,13 @@
 .filename {
   color: #555;
   text-decoration: underline;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.filename:hover {
+  color: var(--primary-purple);
 }
 
 .btn-ver-entregas {

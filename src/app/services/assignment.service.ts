@@ -6,6 +6,8 @@ import { Assignment } from '../models/assignment.model';
 import { Submission } from '../models/submission.model';
 import { AssignmentDTO } from '../models/dto/assignmentDTO';
 import { Topic } from '../models/topic.model';
+import { TaskStatsDTO } from '../models/dto/task-statsDTO';
+import { TeacherSubmissionDTO } from '../models/dto/teacher-submissionDTO';
 
 @Injectable({
   providedIn: 'root',
@@ -47,11 +49,19 @@ export class AssignmentService {
   }
 
   getAssignmentInTopic(topic: Topic): Observable<Assignment> {
-    return this.http.get<Assignment>(`${this.apiUrl}/in-topic/${topic.assignment_id}`);
+    return this.http.get<Assignment>(`${this.apiUrl}/in-topic/${topic.assignmentId}`);
   }
 
   getPendingAssignments(studentId: string): Observable<AssignmentDTO[]> {
     return this.http.get<AssignmentDTO[]>(`${this.apiUrl}/student/${studentId}/pending`);
+  }
+
+  getTaskStats(classroomId: string, taskId: string): Observable<TaskStatsDTO> {
+    return this.http.get<TaskStatsDTO>(`${this.apiUrl}/${classroomId}/tasks/${taskId}/stats`);
+  }
+
+  getStudentSubmissions(classroomId: string, activityId: string): Observable<TeacherSubmissionDTO[]> {
+    return this.http.get<TeacherSubmissionDTO[]>(`${this.apiUrl}/professor-table/classroom/${classroomId}/assignment/${activityId}`);
   }
 
   checkSubmissionStatus(studentId: string, activityId: string): Observable<{ status: string }> {
@@ -74,5 +84,9 @@ export class AssignmentService {
     params = params.append('studentId', studentId);
 
     return this.http.post(`${this.apiUrl}/submit-activity`, submission, { params });
+  }
+
+  saveOrUpdateGrade(studentId: string, activityId: string, note: number) {
+    return this.http.post(`${this.apiUrl}/professor-correction/student/${studentId}/assignment/${activityId}`, note);
   }
 }

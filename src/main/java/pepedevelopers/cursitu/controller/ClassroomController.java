@@ -44,18 +44,8 @@ public class ClassroomController {
 
   @PutMapping("/{id}")
   public ResponseEntity<?> modifyClassroom(@PathVariable String id, @RequestBody ClassroomEntity updatedData) {
-      ClassroomEntity existingClassroom = classRepo.findById(id).orElse(null);
-
-      if (existingClassroom == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso no encontrado.");
-
-      existingClassroom.setSubject_id(updatedData.getSubject_id() == null ? existingClassroom.getSubject_id() : updatedData.getSubject_id());
-      existingClassroom.setTopics_id(updatedData.getTopics_id() == null ? existingClassroom.getTopics_id() : updatedData.getTopics_id());
-      classRepo.save(existingClassroom);
-
-    Map<String, String> response = new HashMap<>();
-    response.put("message", "Curso modificado con éxito.");
-
-    return ResponseEntity.ok(response);
+    classroomService.modifyClassroom(id, updatedData);
+    return ResponseEntity.ok(Map.of("message", "Curso modificado con éxito."));
   }
 
   @DeleteMapping("/{id}")

@@ -25,6 +25,7 @@ import { UserManagement } from './components/admin/user-management/user-manageme
 import { SubjectManagement } from './components/admin/subject-management/subject-management';
 import { AnnouncementPanel } from './components/admin/announcement-panel/announcement-panel';
 import { ManageAssignments } from './components/professor-only/manage-assignments/manage-assignments';
+import { AssignmentPreview } from './components/professor-only/assignment-preview/assignment-preview';
 
 export const routes: Routes = [
     { path: '', component: Home, pathMatch: 'full' },
@@ -45,6 +46,7 @@ export const routes: Routes = [
     { path: 'edit-subject', component: EditSubject },
     { path: 'manage-dates', component: ManageDates },
     { path: 'manage-tasks', component: ManageAssignments },
+    { path: 'see-assignment/:id', component: AssignmentPreview },
     { path: 'see-deliveries', component: SeeDeliveries },
     { path: 'manage-finals', component: ManageFinals },
     { path: 'students', component: StudentsList },
