@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pepedevelopers.cursitu.model.ClassroomEntity;
+import pepedevelopers.cursitu.model.dto.ClassroomDTO;
 import pepedevelopers.cursitu.model.subject_submodel.AssignmentEntity;
 import pepedevelopers.cursitu.repository.IClassroom;
 import pepedevelopers.cursitu.model.UserEntity;
@@ -71,14 +72,8 @@ public class ClassroomController {
   }
 
   @GetMapping("/activities/{id}")
-  public ResponseEntity<List<AssignmentEntity>> obtainActivities(@PathVariable String id) {
-    List<AssignmentEntity> assignmentList = classroomService.getAllAssignmentsInClassroom(id);
-
-    if (assignmentList == null || assignmentList.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
-
-    return ResponseEntity.ok(assignmentList);
+  public ResponseEntity<ClassroomDTO> obtainActivities(@PathVariable String id) {
+    return ResponseEntity.ok(classroomService.getClassroomDetailsForView(id));
   }
 
   @GetMapping("/tasks/{id}")

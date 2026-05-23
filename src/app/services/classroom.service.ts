@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { Assignment } from '../models/assignment.model';
+import { ClassroomDTO } from '../models/dto/classroomDTO';
 
 @Injectable({
   providedIn: 'root',
@@ -28,8 +29,8 @@ export class ClassroomService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  obtainClassroomActivities(id: string): Observable<Assignment[]> {
-    return this.http.get<Assignment[]>(`${this.apiUrl}/assignments/${id}`);
+  obtainClassroomActivities(id: string): Observable<ClassroomDTO> {
+    return this.http.get<ClassroomDTO>(`${this.apiUrl}/activities/${id}`);
   }
 
   obtainClassroomTasks(id: string): Observable<Assignment[]> {

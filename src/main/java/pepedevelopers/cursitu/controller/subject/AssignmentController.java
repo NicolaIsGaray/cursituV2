@@ -4,9 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pepedevelopers.cursitu.model.subject_submodel.AssignmentDTO;
+import pepedevelopers.cursitu.model.dto.AssignmentDTO;
 import pepedevelopers.cursitu.model.subject_submodel.AssignmentEntity;
 import pepedevelopers.cursitu.model.subject_submodel.SubmissionEntity;
+import pepedevelopers.cursitu.model.subject_submodel.TopicEntity;
 import pepedevelopers.cursitu.repository.IAssignment;
 import pepedevelopers.cursitu.service.AssignmentService;
 
@@ -74,6 +75,11 @@ public class AssignmentController {
     return ResponseEntity.ok(response);
   }
 
+  @GetMapping("/in-topic/{id}")
+  public ResponseEntity<AssignmentEntity> getAssignmentInTopic(@PathVariable String id) {
+    return ResponseEntity.ok(assignmentService.getAssignmentInTopic(id));
+  }
+
   @GetMapping("/check-status")
   public ResponseEntity<Map<String, String>> checkAssignmentSubmissionStatus(@RequestParam String studentId, @RequestParam String activityId) {
     String status = assignmentService.checkSubmissionStatus(studentId, activityId);
@@ -117,5 +123,4 @@ public class AssignmentController {
     assignmentService.deleteSubmited(id);
     return ResponseEntity.ok(Map.of("message", "Entrega eliminada con éxito."));
   }
-
 }

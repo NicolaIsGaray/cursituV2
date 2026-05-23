@@ -13,7 +13,7 @@ import { TransmissionLobby } from './components/transmissions/transmission-lobby
 import { TransmissionLive } from './components/transmissions/transmission-live/transmission-live';
 import { ProfessorPanel } from './components/professor-only/professor-panel/professor-panel';
 import { ManageGrades } from './components/professor-only/manage-grades/manage-grades';
-import { AddClass } from './components/professor-only/add-class/add-class';
+import { ClassManagement } from './components/professor-only/class-management/class-management';
 import { EditSubject } from './components/professor-only/edit-subject/edit-subject';
 import { ManageDates } from './components/professor-only/manage-dates/manage-dates';
 import { SeeDeliveries } from './components/professor-only/see-deliveries/see-deliveries';
@@ -41,7 +41,7 @@ export const routes: Routes = [
 
     { path: 'professor-panel', component: ProfessorPanel },
     { path: 'manage-grades', component: ManageGrades },
-    { path: 'add-class', component: AddClass },
+    { path: 'class-management', component: ClassManagement },
     { path: 'edit-subject', component: EditSubject },
     { path: 'manage-dates', component: ManageDates },
     { path: 'manage-tasks', component: ManageAssignments },

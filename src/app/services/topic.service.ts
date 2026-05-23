@@ -3,13 +3,25 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Topic } from '../models/topic.model';
 import { environment } from '../../environments/environment.development';
+import { Assignment } from '../models/assignment.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TopicService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.api}/topics`
+  private apiUrl = `${environment.api}/topics`;
+
+  private readonly TOPIC_KEY = 'cursitu_selected_topic';
+
+  setTopicInStorage(value: any): void {
+    localStorage.setItem(this.TOPIC_KEY, JSON.stringify(value));
+  }
+
+  getTopicFromStorage<T>(): T | null {
+    const topic = localStorage.getItem(this.TOPIC_KEY);
+    return topic ? JSON.parse(topic) : null;
+  }
 
   getAllTopics(): Observable<Topic[]> {
     return this.http.get<Topic[]>(this.apiUrl);
@@ -19,12 +31,25 @@ export class TopicService {
     return this.http.get<Topic>(`${this.apiUrl}/${id}`);
   }
 
-  createTopic(topic: Topic): Observable<Object> {
-    return this.http.post(this.apiUrl, topic);
+  submitTopic(payload: {
+    mode: string;
+    topic: Topic;
+    assignment: Assignment | null;
+    classroom_id: string;
+  }): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}`, payload);
   }
 
-  modifyTopic(id: string, topic: Topic) {
-    return this.http.put(`${this.apiUrl}/${id}`, topic);
+  modifyTopic(
+    id: string,
+    payload: {
+      mode: string;
+      topic: Topic;
+      assignment: Assignment | null;
+      classroom_id: string;
+    },
+  ) {
+    return this.http.put(`${this.apiUrl}/${id}`, payload);
   }
 
   deleteTopic(id: string): Observable<any> {

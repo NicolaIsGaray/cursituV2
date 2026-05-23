@@ -5,6 +5,7 @@ import { map, Observable } from 'rxjs';
 import { Assignment } from '../models/assignment.model';
 import { Submission } from '../models/submission.model';
 import { AssignmentDTO } from '../models/dto/assignmentDTO';
+import { Topic } from '../models/topic.model';
 
 @Injectable({
   providedIn: 'root',
@@ -43,6 +44,10 @@ export class AssignmentService {
 
   deleteAssignment(id: string) {
     return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  getAssignmentInTopic(topic: Topic): Observable<Assignment> {
+    return this.http.get<Assignment>(`${this.apiUrl}/in-topic/${topic.assignment_id}`);
   }
 
   getPendingAssignments(studentId: string): Observable<AssignmentDTO[]> {

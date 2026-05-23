@@ -1,4 +1,4 @@
-package pepedevelopers.cursitu.model.subject_submodel;
+package pepedevelopers.cursitu.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

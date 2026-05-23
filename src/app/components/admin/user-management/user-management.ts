@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { User } from '../../../models/user.model';
-import { Subject } from '../../../models/subject.model';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
 import { SubjectService } from '../../../services/subject.service';
@@ -17,7 +15,6 @@ import {
   BehaviorSubject,
   debounceTime,
   distinctUntilChanged,
-  filter,
   merge,
   Observable,
   of,
@@ -41,7 +38,7 @@ export class UserManagement implements OnInit {
 
   comissionList = ['A', 'B'];
   roleList = [{ name: 'ALUMNO' }, { name: 'DOCENTE' }, { name: 'ADMIN' }];
-  subjectList: any[] = []; // Asegura usar tu interfaz Subject origen
+  subjectList: any[] = [];
 
   dniEditControl = new FormControl('');
   dniDeleteControl = new FormControl('');

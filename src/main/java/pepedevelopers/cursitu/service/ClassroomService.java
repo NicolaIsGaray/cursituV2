@@ -6,9 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import pepedevelopers.cursitu.model.ClassroomEntity;
 import pepedevelopers.cursitu.model.SubjectEntity;
+import pepedevelopers.cursitu.model.dto.ClassroomDTO;
 import pepedevelopers.cursitu.model.subject_submodel.AssignmentEntity;
+import pepedevelopers.cursitu.model.subject_submodel.TopicEntity;
 import pepedevelopers.cursitu.repository.IAssignment;
 import pepedevelopers.cursitu.repository.IClassroom;
+import pepedevelopers.cursitu.repository.ISubject;
 import pepedevelopers.cursitu.repository.ITopics;
 
 import java.util.ArrayList;
@@ -18,37 +21,49 @@ import java.util.Objects;
 @Service
 public class ClassroomService {
   private final IClassroom classroomRepo;
+  private final ISubject subjectRepo;
   private final ITopics topicsRepo;
   private final IAssignment assignmentRepo;
 
-  public ClassroomService(IClassroom classroomRepo, ITopics topicsRepo, IAssignment assignmentRepo) {
+  public ClassroomService(IClassroom classroomRepo, ISubject subjectRepo, ITopics topicsRepo, IAssignment assignmentRepo) {
     this.classroomRepo = classroomRepo;
+    this.subjectRepo = subjectRepo;
     this.topicsRepo = topicsRepo;
     this.assignmentRepo = assignmentRepo;
   }
 
   @Transactional
-  public List<AssignmentEntity> getAllAssignmentsInClassroom(String classroomId) {
-    ClassroomEntity classroom = classroomRepo.findById(classroomId).orElseThrow(
-      () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Curso no encontrado.")
-    );
+  public ClassroomEntity modifyClassroom(String id, ClassroomEntity classroom) {
+    ClassroomEntity modified = classroomRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Curso no encontrado."));
 
-    List<AssignmentEntity> assignments = new ArrayList<>();
+    modified.setSubject_id(classroom.getSubject_id() == null ? modified.getSubject_id() : classroom.getSubject_id());
+    modified.setTopics_id(classroom.getTopics_id() == null ? modified.getTopics_id() : classroom.getTopics_id());
 
-    List<String> topicIds = classroom.getTopics_id();
-    if (topicIds != null && !topicIds.isEmpty()) {
-      for (String id : topicIds) {
-        topicsRepo.findById(id).ifPresent(topic -> {
-          if (topic.getAssignment_id() != null) {
-            assignments.add(assignmentRepo.findById(topic.getAssignment_id()).orElseThrow(
-              () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tarea o parcial no encontrados.")
-            ));
-          }
-        });
-      }
+    return modified;
+  }
+
+  @Transactional(readOnly = true)
+  public ClassroomDTO getClassroomDetailsForView(String classroomId) {
+    ClassroomEntity classroom = classroomRepo.findById(classroomId)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Curso no encontrado."));
+
+    String subjectName = "Materia no asignada";
+    if (classroom.getSubject_id() != null) {
+      subjectName = subjectRepo.findById(classroom.getSubject_id())
+        .map(SubjectEntity::getSubject_name)
+        .orElse("Materia no encontrada");
     }
 
-    return assignments;
+    List<TopicEntity> topics = new ArrayList<>();
+    if (classroom.getTopics_id() != null && !classroom.getTopics_id().isEmpty()) {
+      topics = topicsRepo.findAllById(classroom.getTopics_id());
+    }
+
+    return new ClassroomDTO(
+      classroom.getId(),
+      subjectName,
+      topics
+    );
   }
 
   @Transactional

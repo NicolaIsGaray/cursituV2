@@ -6,5 +6,6 @@ import pepedevelopers.cursitu.model.subject_submodel.SubmissionEntity;
 import java.util.Optional;
 
 public interface ISubmission extends MongoRepository<SubmissionEntity, String> {
+  Optional<SubmissionEntity> findByActivityId(String activityId);
   Optional<SubmissionEntity> findByActivityIdAndStudentId(String activityId, String studentId);
 }

@@ -1,26 +1,13 @@
 import { CommonModule, Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { Classroom } from '../../../models/classroom.model';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ClassroomService } from '../../../services/classroom.service';
-import { SubjectService } from '../../../services/subject.service';
-import { Subject } from '../../../models/subject.model';
-import { Topic } from '../../../models/topic.model';
-import {
-  BehaviorSubject,
-  catchError,
-  forkJoin,
-  Observable,
-  of,
-  shareReplay,
-  switchMap,
-  take,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of, switchMap, take, tap } from 'rxjs';
 import { TopicService } from '../../../services/topic.service';
-import { Assignment } from '../../../models/assignment.model';
 import { AssignmentService } from '../../../services/assignment.service';
+import { ClassroomDTO } from '../../../models/dto/classroomDTO';
+import { SubjectService } from '../../../services/subject.service';
 
 @Component({
   selector: 'app-classroom',
@@ -30,101 +17,89 @@ import { AssignmentService } from '../../../services/assignment.service';
 })
 export class CurrentClassroom implements OnInit {
   classroomId: string | null = null;
-  subject?: Subject;
-  classroom?: Classroom;
+  subjectColor: string = '#4f46e5';
 
-  // Los Observables que consumirá el HTML directamente
-  topicsList$!: Observable<Topic[]>;
-  assignedActivity$: Observable<Assignment | null> = of(null);
+  classroomData$!: Observable<ClassroomDTO | null>;
+  assignedActivity$: Observable<any | null> = of(null);
 
-  private selectedTopicSubject = new BehaviorSubject<Topic | null>(null);
+  private selectedTopicSubject = new BehaviorSubject<any | null>(null);
   selectedTopic$ = this.selectedTopicSubject.asObservable();
+
+  private readonly TOPIC_KEY = 'cursitu_selected_topic';
+  private readonly SUBJECT_KEY = 'cursitu_selected_subject';
 
   constructor(
     public authService: AuthService,
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private classroomService: ClassroomService,
-    private subjectService: SubjectService,
     private assignmentService: AssignmentService,
+    private subjectService: SubjectService,
     private topicService: TopicService,
     private cdr: ChangeDetectorRef,
-    private location: Location
+    private location: Location,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
-    this.classroomId = this.route.snapshot.paramMap.get('id');
+    this.classroomId = this.activatedRoute.snapshot.paramMap.get('id');
 
     if (!this.classroomId) {
       console.error('No se ha encontrado el ID del curso.');
+      this.router.navigate(['/dashboard']);
       return;
     }
 
-    // FLUJO UNIFICADO: Vinculamos la carga del Aula, Materia y Temas en una sola cadena reactiva
-    this.topicsList$ = this.classroomService.getClassroomById(this.classroomId).pipe(
-      take(1),
-      tap((classroomData) => {
-        this.classroom = classroomData;
-      }),
-      // Una vez obtenida el aula, buscamos la materia asociada
-      switchMap((classroomData) => {
-        if (!classroomData?.subject_id) return of(null);
-        return this.subjectService.getSubjectById(classroomData.subject_id).pipe(take(1));
-      }),
-      tap((subjectData) => {
-        if (subjectData) {
-          this.subject = subjectData;
-        }
-      }),
-      // Una vez que tenemos la materia y el aula en memoria, resolvemos sus temas individuales
-      switchMap(() => {
-        const ids = this.classroom?.topics_id || [];
-        if (ids.length === 0) {
-          console.warn('No hay temas cargados en este curso. Activando estado de bienvenida.');
-          this.selectedTopicSubject.next(null);
-          return of([]);
-        }
+    this.loadClassroomData();
+  }
 
-        const requests = ids.map((id) => this.topicService.getTopicById(id).pipe(take(1)));
-        return forkJoin(requests);
-      }),
-      // Cuando el forkJoin emita la lista de temas completa:
-      tap((topics) => {
-        if (topics.length > 0 && !this.selectedTopicSubject.value) {
-          this.seleccionarTema(topics[0]);
-        }
-        // Avisamos a Angular de manera explícita que los datos están listos para pintar
+  loadClassroomData() {
+    this.subjectService.getSubjectById(localStorage.getItem(this.SUBJECT_KEY)!.replace(/"/g, '')).subscribe({
+      next: (subject) => {
+        this.subjectColor = subject.color
         this.cdr.detectChanges();
+      },
+      error: (err) => console.error("Hubo un problema al obtener la materia: ", err)
+    })
+    this.classroomData$ = this.classroomService.obtainClassroomActivities(this.classroomId!).pipe(
+      take(1),
+      tap((data: ClassroomDTO) => {
+        if (data && data.topics.length > 0) {
+          const savedTopicId = localStorage.getItem(this.TOPIC_KEY)?.replace(/"/g, '');
+          const targetTopic = data.topics.find((t) => t.id === savedTopicId) || data.topics[0];
+          this.selectTopic(targetTopic);
+        } else {
+          localStorage.setItem(this.TOPIC_KEY, '');
+        }
       }),
       catchError((err) => {
-        console.error('Error crítico en la cadena de carga del Classroom: ', err);
-        return of([]);
+        console.error('Error crítico al recuperar los datos agregados del curso:', err);
+        return of(null);
       }),
-      // Compartimos el flujo para que el HTML no repita las peticiones HTTP internas
-      shareReplay(1),
     );
 
-    // Flujo de actividades dependiente del tema seleccionado (Se mantiene reactivo)
-    this.assignedActivity$ = this.selectedTopicSubject.asObservable().pipe(
-      switchMap((topic: Topic | null) => {
+    this.assignedActivity$ = this.selectedTopic$.pipe(
+      switchMap((topic) => {
         if (!topic || !topic.assignment_id) {
           return of(null);
         }
         return this.assignmentService.getAssignmentById(topic.assignment_id).pipe(
           catchError((err) => {
-            console.error('Hubo un error al obtener la actividad asignada: ', err);
+            console.error(`Error 404 o red al buscar la asignación ${topic.assignment_id}:`, err);
             return of(null);
           }),
         );
       }),
-      tap(() => this.cdr.detectChanges()), // Fuerza actualización al cambiar de actividad
+      tap(() => this.cdr.detectChanges()),
     );
   }
 
-  seleccionarTema(topic: Topic) {
+  selectTopic(topic: any) {
     this.selectedTopicSubject.next(topic);
+    localStorage.setItem(this.TOPIC_KEY, topic.id);
   }
 
   formatDate(original: Date | string): string {
+    if (!original) return 'SIN FECHA';
     const date = new Date(original);
     const formatter = new Intl.DateTimeFormat('es-AR', {
       weekday: 'long',
@@ -139,6 +114,32 @@ export class CurrentClassroom implements OnInit {
     formattedDate = formattedDate.replace(/,/g, '');
     formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
     return formattedDate.replace(/\./g, '').toUpperCase();
+  }
+
+  deleteCurrentTopic(classId: string) {
+    const currentTopic = this.selectedTopicSubject.value;
+    if (!currentTopic) return;
+
+    const confirmation = confirm(
+      `Vas a eliminar esta clase permanentemente, incluyendo actividad y materiales subidos. ¿Proceder?`,
+    );
+
+    if (confirmation) {
+      this.topicService.deleteTopic(currentTopic.id).subscribe({
+        next: () => {
+          alert('Clase Eliminada Exitosamente.');
+          localStorage.setItem(this.TOPIC_KEY, '');
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+            this.router.navigate(['/current-classroom', classId]);
+          });
+        },
+        error: (err) => console.error('Hubo un problema al intentar eliminar la clase: ', err),
+      });
+    }
+  }
+
+  managementMode(mode: 'crear' | 'editar') {
+    localStorage.setItem('class_mode', mode);
   }
 
   goBack() {

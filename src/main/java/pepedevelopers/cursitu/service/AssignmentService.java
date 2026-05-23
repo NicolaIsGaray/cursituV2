@@ -4,11 +4,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import pepedevelopers.cursitu.model.subject_submodel.AssignmentDTO;
+import pepedevelopers.cursitu.model.dto.AssignmentDTO;
 import pepedevelopers.cursitu.model.subject_submodel.AssignmentEntity;
 import pepedevelopers.cursitu.model.subject_submodel.SubmissionEntity;
+import pepedevelopers.cursitu.model.subject_submodel.TopicEntity;
 import pepedevelopers.cursitu.repository.IAssignment;
 import pepedevelopers.cursitu.repository.ISubmission;
+import pepedevelopers.cursitu.repository.ITopics;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,10 +20,12 @@ import java.util.stream.Collectors;
 public class AssignmentService {
   private final IAssignment assignmentRepo;
   private final ISubmission submissionRepo;
+  private final ITopics topicRepo;
 
-  public AssignmentService(IAssignment assignmentRepo, ISubmission submissionRepo) {
+  public AssignmentService(IAssignment assignmentRepo, ISubmission submissionRepo, ITopics topicRepo) {
     this.assignmentRepo = assignmentRepo;
     this.submissionRepo = submissionRepo;
+    this.topicRepo = topicRepo;
   }
 
   @Transactional
@@ -40,6 +44,16 @@ public class AssignmentService {
     assignment.setSentBy(update.getSentBy() == null ? assignment.getSentBy() : update.getSentBy());
 
     return assignmentRepo.save(assignment);
+  }
+
+  public AssignmentEntity getAssignmentInTopic(String assingmentId) {
+    AssignmentEntity assignment = assignmentRepo.findById(assingmentId).orElse(null);
+
+    if (assignment == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ninguna actividad en la clase.");
+    }
+
+    return assignment;
   }
 
   public List<AssignmentDTO> getPendingAssignmentsForStudent(String studentId) {

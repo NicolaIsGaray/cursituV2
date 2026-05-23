@@ -5,23 +5,20 @@
   </button>
 </nav>
 
-<div class="course-header">
-  <h2>{{ subject?.subject_name }}</h2>
-</div>
-
-<div class="classroom-container">
-  <aside class="sections-sidebar" [style.background-color]="subject?.color">
+<div class="classroom-container" *ngIf="classroomData$ | async as classroom">
+  
+  <aside class="sections-sidebar" [style.background-color]="subjectColor">
     <div class="sidebar-header">
-      <h3>Secciones</h3>
+      <h3>{{ classroom.subjectName }}</h3>
       <div class="divider"></div>
     </div>
 
-    <ul class="sections-list" *ngIf="topicsList$ | async as topics">
+    <ul class="sections-list">
       <li
-        *ngFor="let topic of topics"
+        *ngFor="let topic of classroom.topics"
         class="section-item"
         [class.active]="(selectedTopic$ | async)?.id === topic.id"
-        (click)="seleccionarTema(topic)"
+        (click)="selectTopic(topic)"
       >
         <div class="indicator"></div>
         <p>{{ topic.title }}</p>
@@ -29,26 +26,22 @@
     </ul>
   </aside>
 
-  <!-- Área de Contenido -->
   <div class="content-area">
-    <div
-      class="admin-top-actions"
-      *ngIf="(authService.userRole$ | async) === 'DOCENTE' && !selectedTopic$"
-    >
-      <button class="btn-manage edit">
-        <span class="material-symbols-outlined">edit</span>
-        Editar
-      </button>
-      <button class="btn-manage delete">
-        <span class="material-symbols-outlined">delete</span>
-        Eliminar
-      </button>
-    </div>
-
     <div
       class="content-card"
       *ngIf="selectedTopic$ | async as activeTopic; else evaluateEmptyState"
     >
+      <div class="topic-actions" *ngIf="(authService.userRole$ | async) === 'DOCENTE'">
+        <button class="btn-topic-action edit" [routerLink]="'/class-management'" (click)="managementMode('editar')">
+          <span class="material-symbols-outlined">edit</span>
+          Editar
+        </button>
+        <button class="btn-topic-action delete" (click)="deleteCurrentTopic(classroom.id)">
+          <span class="material-symbols-outlined">delete</span>
+          Eliminar
+        </button>
+      </div>
+
       <div class="text-content">
         <h3>{{ activeTopic.title }}</h3>
         <div [innerHTML]="activeTopic.content"></div>
@@ -91,14 +84,19 @@
           </div>
           @if (authService.userRole$ | async; as role) {
             @if (activity.type === 'tarea') {
-              <button class="btn-go-activity" [routerLink]="role === 'DOCENTE' ? ['/manage-tasks'] : ['/send-task', activity.id]">
-                <span>{{role === 'DOCENTE' ? 'Gestionar' : 'Ir a la Actividad'}}</span>
+              <button
+                class="btn-go-activity"
+                [routerLink]="role === 'DOCENTE' ? ['/manage-tasks'] : ['/send-task', activity.id]"
+              >
+                <span>{{ role === 'DOCENTE' ? 'Gestionar' : 'Ir a la Actividad' }}</span>
                 <span class="material-symbols-outlined">arrow_forward</span>
               </button>
-            }
-            @else if (activity.type === 'parcial') {
-              <button class="btn-go-activity" [routerLink]="role === 'DOCENTE' ? ['/manage-finals'] : ['/send-task', activity.id]">
-                <span>{{role === 'DOCENTE' ? 'Gestionar' : 'Ir al Parcial'}}</span>
+            } @else if (activity.type === 'parcial') {
+              <button
+                class="btn-go-activity"
+                [routerLink]="role === 'DOCENTE' ? ['/manage-finals'] : ['/send-task', activity.id]"
+              >
+                <span>{{ role === 'DOCENTE' ? 'Gestionar' : 'Ir al Parcial' }}</span>
                 <span class="material-symbols-outlined">arrow_forward</span>
               </button>
             }
@@ -108,24 +106,21 @@
     </div>
 
     <ng-template #evaluateEmptyState>
-      <ng-container *ngIf="topicsList$ | async as topics; else loadingData">
-        <div class="empty-course-state" *ngIf="topics.length === 0">
+      <ng-container>
+        <div class="empty-course-state" *ngIf="classroom.topics.length === 0">
           <div class="message-wrapper">
             <span class="material-symbols-outlined central-icon">school</span>
             <h3>¡Bienvenido a tu nuevo curso!</h3>
             <p>Aún no hay material de estudio registrado en esta materia.</p>
 
             <div class="teacher-hint" *ngIf="(authService.userRole$ | async) === 'DOCENTE'">
-              <p>
-                Para comenzar a cargar contenido, haz clic en el botón flotante situado abajo a la
-                derecha.
-              </p>
+              <p>Para comenzar a cargar contenido, haz clic en el botón flotante situado abajo a la derecha.</p>
               <span class="material-symbols-outlined hint-arrow">south_east</span>
             </div>
           </div>
         </div>
 
-        <div class="empty-course-state" *ngIf="topics.length > 0">
+        <div class="empty-course-state" *ngIf="classroom.topics.length > 0">
           <div class="message-wrapper">
             <span class="material-symbols-outlined central-icon">arrow_back</span>
             <h3>Selecciona una sección</h3>
@@ -133,21 +128,21 @@
           </div>
         </div>
       </ng-container>
-
-      <ng-template #loadingData>
-        <div class="loading-state">
-          <p>Cargando contenidos del curso...</p>
-        </div>
-      </ng-template>
     </ng-template>
   </div>
 </div>
 
-<!-- Botón Flotante "+" (FAB) - Visible siempre para el docente -->
+<ng-template #loadingData>
+  <div class="loading-state">
+    <p>Cargando contenidos del curso...</p>
+  </div>
+</ng-template>
+
 <button
   class="fab-add"
+  (click)="managementMode('crear')"
   *ngIf="(authService.userRole$ | async) === 'DOCENTE'"
-  routerLink="/add-class"
+  routerLink="/class-management"
 >
   <span class="material-symbols-outlined">add</span>
 </button>

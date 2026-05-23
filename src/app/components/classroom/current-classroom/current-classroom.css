@@ -4,7 +4,7 @@
   background: white;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0px 10px 30px rgba(0,0,0,0.05);
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.05);
   min-height: 70vh;
   position: relative;
 }
@@ -59,7 +59,9 @@
   background: #ffffff;
   border: 1px solid #edf2f7;
   border-radius: 6px;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   cursor: pointer;
 }
 
@@ -73,9 +75,15 @@
 }
 
 /* Identificadores cromáticos por tipo de archivo */
-.icon-pdf { color: #e53e3e; }
-.icon-zip { color: #dd6b20; }
-.icon-link { color: #3182ce; }
+.icon-pdf {
+  color: #e53e3e;
+}
+.icon-zip {
+  color: #dd6b20;
+}
+.icon-link {
+  color: #3182ce;
+}
 
 .file-info {
   display: flex;
@@ -147,7 +155,9 @@
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
-  transition: filter 0.2s, transform 0.1s;
+  transition:
+    filter 0.2s,
+    transform 0.1s;
 }
 
 .btn-go-activity:hover {
@@ -232,7 +242,8 @@
 
 /* ANIMACIÓN DE MOVIMIENTO DE LA FLECHA */
 @keyframes bounceArrow {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0);
   }
   50% {
@@ -278,9 +289,9 @@
 /* Controla el flujo del texto inyectado */
 .text-content {
   width: 100%;
-  word-wrap: break-word;      /* Fuerza el salto de línea en palabras largas */
-  overflow-wrap: break-word;  /* Estándar moderno para romper líneas */
-  word-break: break-word;     /* Compatibilidad con navegadores antiguos */
+  word-wrap: break-word; /* Fuerza el salto de línea en palabras largas */
+  overflow-wrap: break-word; /* Estándar moderno para romper líneas */
+  word-break: break-word; /* Compatibilidad con navegadores antiguos */
 }
 
 /* Especificidad para el contenido renderizado por Quill */
@@ -290,13 +301,13 @@
 }
 
 /* Corrección crítica para bloques de código o texto preformateado de Quill */
-.text-content pre, 
+.text-content pre,
 .text-content code {
-  white-space: pre-wrap;       /* Respeta espacios pero aplica salto de línea */
-  word-wrap: break-word;       /* Evita el scroll horizontal en código largo */
-  max-width: 100%;             /* No permite que exceda el ancho del padre */
+  white-space: pre-wrap; /* Respeta espacios pero aplica salto de línea */
+  word-wrap: break-word; /* Evita el scroll horizontal en código largo */
+  max-width: 100%; /* No permite que exceda el ancho del padre */
   display: block;
-  overflow-x: auto;            /* Si es código muy estricto, añade scroll interno en vez de romper la tarjeta */
+  overflow-x: auto; /* Si es código muy estricto, añade scroll interno en vez de romper la tarjeta */
 }
 
 /* Corrección para imágenes que el docente pueda pegar en el editor */
@@ -346,8 +357,14 @@
   transition: all 0.2s;
 }
 
-.btn-manage.edit { background: #f0f0f0; color: #1a1a1a; }
-.btn-manage.delete { background: #ffe5e5; color: #e74c3c; }
+.btn-manage.edit {
+  background: #f0f0f0;
+  color: #1a1a1a;
+}
+.btn-manage.delete {
+  background: #ffe5e5;
+  color: #e74c3c;
+}
 
 .btn-manage:hover {
   filter: brightness(0.95);
@@ -421,11 +438,72 @@
   transform: scale(1.1) rotate(90deg);
 }
 
-.fab-add .material-symbols-outlined { font-size: 32px; }
+.fab-add .material-symbols-outlined {
+  font-size: 32px;
+}
+
+/* === ACCIONES DEL TEMA (DOCENTE) === */
+.topic-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.btn-topic-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-topic-action.edit {
+  background: #f0f0f0;
+  color: #1a1a1a;
+}
+
+.btn-topic-action.delete {
+  background: #ffe5e5;
+  color: #e74c3c;
+}
+
+.btn-topic-action:hover {
+  filter: brightness(0.93);
+  transform: translateY(-1px);
+}
+
+.btn-topic-action:active {
+  transform: scale(0.97);
+}
+
+.btn-topic-action .material-symbols-outlined {
+  font-size: 18px;
+}
+
+@media (max-width: 480px) {
+  .topic-actions {
+    justify-content: stretch;
+  }
+
+  .btn-topic-action {
+    flex: 1;
+    justify-content: center;
+  }
+}
 
 /* === ADAPTACIÓN RESPONSIVE === */
 @media (max-width: 850px) {
-  .classroom-container { flex-direction: column; }
+  .classroom-container {
+    flex-direction: column;
+  }
 
   .sections-sidebar {
     width: 100%;
@@ -436,7 +514,9 @@
     height: 60px;
   }
 
-  .sidebar-header { display: none; }
+  .sidebar-header {
+    display: none;
+  }
 
   .sections-list {
     display: flex;
@@ -447,7 +527,9 @@
     scrollbar-width: none; /* Firefox */
   }
 
-  .sections-list::-webkit-scrollbar { display: none; }
+  .sections-list::-webkit-scrollbar {
+    display: none;
+  }
 
   .section-item {
     flex-shrink: 0;
@@ -461,11 +543,18 @@
     border-bottom: 3px solid white;
   }
 
-  .section-item.active .indicator { display: none; }
+  .section-item.active .indicator {
+    display: none;
+  }
 
-  .content-area { padding: 20px 15px; }
+  .content-area {
+    padding: 20px 15px;
+    width: 94%;
+  }
 
-  .admin-top-actions { justify-content: space-between; }
+  .admin-top-actions {
+    justify-content: space-between;
+  }
 
   .btn-manage {
     flex: 1;
@@ -480,8 +569,14 @@
     width: 55px;
     height: 55px;
   }
+
+  .hint-arrow {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
-  .btn-manage span { font-size: 1.2rem; }
+  .btn-manage span {
+    font-size: 1.2rem;
+  }
 }
