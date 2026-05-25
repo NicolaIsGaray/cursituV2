@@ -1,6 +1,8 @@
 export class DateEvent {
     id?: string;
+    title!: string;
     event!: string;
     important!: boolean;
-    date!: string;
+    date!: Date;
+    subjectId!: string;
 }

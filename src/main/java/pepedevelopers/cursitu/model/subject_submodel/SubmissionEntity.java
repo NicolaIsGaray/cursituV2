@@ -22,4 +22,6 @@ public class SubmissionEntity {
   private LocalDateTime submission_date;
 
   private String status;
+  private Boolean isLate;
+
 }

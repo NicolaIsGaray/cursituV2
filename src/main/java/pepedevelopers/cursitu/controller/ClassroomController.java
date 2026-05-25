@@ -6,9 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pepedevelopers.cursitu.model.ClassroomEntity;
 import pepedevelopers.cursitu.model.dto.ClassroomDTO;
+import pepedevelopers.cursitu.model.dto.ExamDTO;
 import pepedevelopers.cursitu.model.subject_submodel.AssignmentEntity;
 import pepedevelopers.cursitu.repository.IClassroom;
 import pepedevelopers.cursitu.model.UserEntity;
+import pepedevelopers.cursitu.service.AssignmentService;
 import pepedevelopers.cursitu.service.ClassroomService;
 
 import java.util.*;
@@ -19,6 +21,9 @@ import java.util.*;
 public class ClassroomController {
   @Autowired
   private ClassroomService classroomService;
+
+  @Autowired
+  private AssignmentService assignmentService;
 
   private final IClassroom classRepo;
 
@@ -79,12 +84,27 @@ public class ClassroomController {
 
   @GetMapping("/exams/{id}")
   public ResponseEntity<List<AssignmentEntity>> obtainOnlyExams(@PathVariable String id) {
-    List<AssignmentEntity> examList = classroomService.getOnlyExamsInClassroom(id);
+    List<AssignmentEntity> taskList = classroomService.getOnlyExamsInClassroom(id);
 
-    if (examList == null || examList.isEmpty()) {
+    if (taskList == null || taskList.isEmpty()) {
       return ResponseEntity.notFound().build();
     }
 
-    return ResponseEntity.ok(examList);
+    return ResponseEntity.ok(taskList);
+  }
+
+  @GetMapping("/{classroomId}/exams/{examId}")
+  public ResponseEntity<ExamDTO> getExamDetails(
+    @PathVariable String classroomId,
+    @PathVariable String examId,
+    @RequestParam(name = "examType") String examType) {
+
+    ExamDTO examDetails = classroomService.getExamDetails(classroomId, examId, examType);
+
+    if (examDetails == null) {
+      return ResponseEntity.notFound().build();
+    }
+
+    return ResponseEntity.ok(examDetails);
   }
 }

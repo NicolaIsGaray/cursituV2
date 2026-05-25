@@ -1,10 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { Classroom } from '../models/classroom.model';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { Assignment } from '../models/assignment.model';
 import { ClassroomDTO } from '../models/dto/classroomDTO';
+import { ExamDTO } from '../models/dto/examDTO';
 
 @Injectable({
   providedIn: 'root',
@@ -39,5 +40,10 @@ export class ClassroomService {
 
   obtainClassroomExams(id: string): Observable<Assignment[]> {
     return this.http.get<Assignment[]>(`${this.apiUrl}/exams/${id}`);
+  }
+
+  getExamDetails(classroomId: string, activityId: string, examType: string): Observable<ExamDTO> {
+    const params = new HttpParams().set('examType', examType);
+    return this.http.get<ExamDTO>(`${this.apiUrl}/${classroomId}/exams/${activityId}`, { params });
   }
 }

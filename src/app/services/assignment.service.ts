@@ -17,14 +17,7 @@ export class AssignmentService {
   private apiUrl = `${environment.api}/assignment`;
 
   getAllAssignments(): Observable<Assignment[]> {
-    return this.http.get<Assignment[]>(this.apiUrl).pipe(
-      map((assignments: Assignment[]) =>
-        assignments.map((assignment) => ({
-          ...assignment,
-          date_limit: new Date(assignment.date_limit),
-        })),
-      ),
-    );
+    return this.http.get<Assignment[]>(this.apiUrl);
   }
 
   getAssignmentById(id: string): Observable<Assignment> {

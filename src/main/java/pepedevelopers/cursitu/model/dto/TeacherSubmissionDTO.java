@@ -8,5 +8,6 @@ public record TeacherSubmissionDTO(
   String submissionDate,
   Boolean isLate,
   float grade,
-  String status
+  String status,
+  String activityName
 ) {}

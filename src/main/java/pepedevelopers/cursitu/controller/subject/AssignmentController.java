@@ -4,14 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pepedevelopers.cursitu.model.UserEntity;
 import pepedevelopers.cursitu.model.dto.AssignmentDTO;
 import pepedevelopers.cursitu.model.dto.TaskStatsDTO;
 import pepedevelopers.cursitu.model.dto.TeacherSubmissionDTO;
 import pepedevelopers.cursitu.model.subject_submodel.AssignmentEntity;
 import pepedevelopers.cursitu.model.subject_submodel.GradesEntity;
 import pepedevelopers.cursitu.model.subject_submodel.SubmissionEntity;
-import pepedevelopers.cursitu.model.subject_submodel.TopicEntity;
 import pepedevelopers.cursitu.repository.IAssignment;
 import pepedevelopers.cursitu.service.AssignmentService;
 
@@ -46,7 +44,8 @@ public class AssignmentController {
 
   @GetMapping
   public ResponseEntity<List<AssignmentEntity>> getAllAssignments() {
-    return ResponseEntity.ok(assignRepo.findAll());
+    List<AssignmentEntity> list = assignRepo.findAll();
+    return ResponseEntity.ok(list);
   }
 
   @PutMapping("/{id}")
@@ -67,6 +66,12 @@ public class AssignmentController {
   public ResponseEntity<?> deleteAssignment(@PathVariable String id) {
     assignmentService.deleteAssignment(id);
     return ResponseEntity.ok(Map.of("message", "Actividad eliminada con éxito."));
+  }
+
+  @DeleteMapping("/single/{id}")
+  public ResponseEntity<?> singleAssignmentDelete(@PathVariable String id) {
+    assignRepo.deleteById(id);
+    return ResponseEntity.ok(Map.of("message", "Actividad individual eliminada con éxito."));
   }
 
   @GetMapping("/in-topic/{id}")

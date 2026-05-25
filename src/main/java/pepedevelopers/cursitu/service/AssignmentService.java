@@ -7,9 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 import pepedevelopers.cursitu.model.ClassroomEntity;
 import pepedevelopers.cursitu.model.SubjectEntity;
 import pepedevelopers.cursitu.model.UserEntity;
-import pepedevelopers.cursitu.model.dto.AssignmentDTO;
-import pepedevelopers.cursitu.model.dto.TaskStatsDTO;
-import pepedevelopers.cursitu.model.dto.TeacherSubmissionDTO;
+import pepedevelopers.cursitu.model.dto.*;
 import pepedevelopers.cursitu.model.subject_submodel.AssignmentEntity;
 import pepedevelopers.cursitu.model.subject_submodel.GradesEntity;
 import pepedevelopers.cursitu.model.subject_submodel.SubmissionEntity;
@@ -204,9 +202,106 @@ public class AssignmentService {
         subDate,
         isLate,
         qualification,
-        status
+        status,
+        activity.getTitle()
       );
     }).toList();
+  }
+
+  @Transactional(readOnly = true)
+  public ExamDTO getExamSubmissionDetails(String classroomId, String activityId, String examType) {
+    ClassroomEntity classroom = classroomRepo.findById(classroomId)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Curso no encontrado."));
+
+    AssignmentEntity activity = assignmentRepo.findById(activityId)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Parcial no encontrado."));
+
+    List<String> studentIds = classroom.getStudents_id();
+    if (studentIds == null || studentIds.isEmpty()) {
+      return new ExamDTO(
+        activity.getDate_limit() != null ? activity.getDate_limit().toLocalDate().toString() : null,
+        null, null, examType, 0, new ArrayList<>(), "Sin alumnos inscritos.", 0.0f
+      );
+    }
+
+    List<UserEntity> students = userRepo.findAllById(studentIds);
+    List<GradesEntity> grades = gradesRepo.findByActivityIdAndStudentIdIn(activityId, studentIds);
+
+    List<SubmissionEntity> submissions = "VIRTUAL".equalsIgnoreCase(examType)
+      ? submissionRepo.findByActivityIdAndStudentIdIn(activityId, studentIds)
+      : new ArrayList<>();
+
+    List<TeacherSubmissionDTO> processedStudentList = students.stream().map(student -> {
+      SubmissionEntity submission = submissions.stream()
+        .filter(s -> s.getStudentId().equals(student.getId()))
+        .findFirst()
+        .orElse(null);
+
+      GradesEntity grade = grades.stream()
+        .filter(g -> g.getStudentId().equals(student.getId()))
+        .findFirst()
+        .orElse(null);
+
+      boolean isLate = false;
+      if (submission != null && submission.getSubmission_date() != null && activity.getDate_limit() != null) {
+        isLate = submission.getSubmission_date().isAfter(activity.getDate_limit());
+      }
+
+      String submissionId = (submission != null) ? submission.getId() : null;
+      String fileUrl = (submission != null) ? submission.getFile_url() : null;
+      String subDate = (submission != null) ? submission.getSubmission_date().toString() : null;
+      Float qualification = (grade != null) ? grade.getQualification() : 0.0f;
+
+      String status = "SIN_ENTREGAR";
+      if ("PRESENCIAL".equalsIgnoreCase(examType)) {
+        status = (grade != null) ? "CORREGIDO" : "PENDIENTE";
+      } else if (submission != null) {
+        status = (grade != null) ? "CORREGIDO" : "PENDIENTE";
+      }
+
+      return new TeacherSubmissionDTO(
+        student.getId(),
+        student.getName(),
+        submissionId,
+        fileUrl,
+        subDate,
+        isLate,
+        qualification,
+        status,
+        activity.getTitle()
+      );
+    }).toList();
+
+    String examDate = null;
+    String startTime = null;
+    if (activity.getCreatedAt() != null) {
+      examDate = activity.getCreatedAt().toLocalDate().toString();
+      startTime = activity.getCreatedAt().toLocalTime().toString();
+    } else if (activity.getDate_limit() != null) {
+      examDate = activity.getDate_limit().toLocalDate().toString();
+    }
+    String endTime = activity.getDate_limit() != null ? activity.getDate_limit().toLocalTime().toString() : null;
+
+    float totalNotes = 0.0f;
+    int gradedCount = 0;
+    for (GradesEntity g : grades) {
+      if (g.getQualification() != null) {
+        totalNotes += g.getQualification();
+        gradedCount++;
+      }
+    }
+    float averageNote = (gradedCount > 0) ? (totalNotes / gradedCount) : 0.0f;
+
+    return new ExamDTO(
+      examDate,
+      startTime,
+      endTime,
+      examType.toUpperCase(),
+      processedStudentList.size(),
+      processedStudentList,
+      "Planilla de examen generada de forma correcta.",
+      averageNote
+    );
   }
 
   @Transactional

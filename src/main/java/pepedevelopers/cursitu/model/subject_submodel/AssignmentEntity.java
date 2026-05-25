@@ -1,5 +1,6 @@
 package pepedevelopers.cursitu.model.subject_submodel;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,4 +23,7 @@ public class AssignmentEntity {
   private String allowed_format;
   private String type;
   private List<String> sentBy;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+  private LocalDateTime createdAt;
 }

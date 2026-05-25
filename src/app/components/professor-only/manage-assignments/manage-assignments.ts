@@ -8,7 +8,6 @@ import { Observable, take, tap } from 'rxjs';
 import { Assignment } from '../../../models/assignment.model';
 import { AssignmentService } from '../../../services/assignment.service';
 import { ClassroomService } from '../../../services/classroom.service';
-import { User } from '../../../models/user.model';
 import { TaskStatsDTO } from '../../../models/dto/task-statsDTO';
 
 @Component({
@@ -23,9 +22,6 @@ export class ManageAssignments implements OnInit {
 
   taskList$!: Observable<Assignment[] | null>;
   taskStats$!: Observable<TaskStatsDTO>;
-
-  sentQuantity: User[] = [];
-  pendingQuantity!: User[];
 
   constructor(
     public authService: AuthService,

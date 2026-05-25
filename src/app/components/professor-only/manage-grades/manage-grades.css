@@ -99,9 +99,14 @@
 }
 
 .filter-chip.active {
-  background: var(--primary-purple);
+  background: var(--subject-color);
   color: white;
   box-shadow: 0 4px 10px rgba(63, 54, 137, 0.2);
+}
+
+.filter-chip:hover {
+  background-color: rgb(from var(--subject-color) r g b / 0.5);
+  color: #eee;
 }
 
 /* --- PLANILLA / TABLA --- */
