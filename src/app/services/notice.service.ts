@@ -23,7 +23,15 @@ export class NoticeService {
     return this.http.post(this.apiUrl, notice);
   }
 
+  modifyNotice(id: string, notice: Notice) {
+    return this.http.put(`${this.apiUrl}/${id}`, notice);
+  }
+
   deleteNotice(id: string) {
     return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  getSenderNotices(senderId: string): Observable<Notice[]> {
+    return this.http.get<Notice[]>(`${this.apiUrl}/sender/${senderId}`);
   }
 }

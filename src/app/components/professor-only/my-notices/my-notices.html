@@ -4,61 +4,89 @@
     Regresar
   </button>
 </nav>
-<main *ngIf="authService.userRole$ | async as rol">
-  <div class="avisos-container" *ngIf="rol === 'DOCENTE'">
-    <div class="main-stack">
-      
-      <!-- SECCIÓN SUPERIOR: Crear Nuevo Aviso -->
-      <section class="crear-aviso-card">
-        <div class="card-header-accent">
-          <h2>Crear Nuevo Aviso</h2>
-        </div>
-        
-        <div class="card-body">
-          <div class="form-group">
-            <label>Asunto</label>
-            <input type="text" class="input-field" placeholder="Escriba el título del aviso...">
+
+<main *ngIf="authService.userRole$ | async as rol" class="gestion-avisos-container">
+  <div class="avisos-layout-docente" *ngIf="rol === 'DOCENTE'">
+    <h2>Comunicados y Avisos del Docente</h2>
+
+    <div class="docente-grid-split">
+      <form class="form-card-section" [formGroup]="noticeForm" (ngSubmit)="onSubmit()">
+        <h3>Crear Nuevo Aviso</h3>
+
+        <div class="form-group">
+          <label class="form-label">Asunto / Título</label>
+          <div class="input-icon-wrapper">
+            <input
+              type="text"
+              class="input-field"
+              placeholder="Ej: Reprogramación de clases"
+              formControlName="title"
+            />
           </div>
-    
-          <div class="form-group">
-            <label>Mensaje</label>
-            <textarea class="textarea-field" placeholder="Escriba el contenido del mensaje..."></textarea>
-          </div>
-    
-          <button class="btn-enviar-aviso">
-            <span class="material-symbols-outlined">send</span>
-            Enviar Aviso
-          </button>
-        </div>
-      </section>
-  
-      <!-- SECCIÓN INFERIOR: Avisos Publicados -->
-      <section class="publicados-container">
-        <div class="list-header">
-          <h3>Avisos Publicados</h3>
         </div>
 
-        <div class="avisos-grid">
-          <!-- Card de Aviso -->
-          <article class="aviso-item" *ngFor="let i of [1,2,3,4,5]">
-            <div class="aviso-main">
-              <div class="aviso-content">
-                <span class="aviso-titulo">"Suspensión de clases"</span>
-                <span class="aviso-fecha">Publicado: Lunes 04 de Abril de 2026</span>
-              </div>
-              <div class="aviso-actions">
-                <button class="action-btn edit" title="Editar">
-                  <span class="material-symbols-outlined">edit</span>
-                </button>
-                <button class="action-btn delete" title="Eliminar">
-                  <span class="material-symbols-outlined">delete</span>
-                </button>
-              </div>
-            </div>
-          </article>
+        <div class="form-group">
+          <label class="form-label">Cuerpo del Mensaje</label>
+          <quill-editor
+            id="body-editor"
+            formControlName="content"
+            theme="snow"
+            [modules]="editorModules"
+            placeholder="Escribe el contenido del aviso aquí..."
+            style="width: 100%; height: 30vh"
+          ></quill-editor>
         </div>
-      </section>
-  
+
+        <button
+          class="btn-primary-action"
+          type="submit"
+          [style.background-color]="'var(--primary-purple)'"
+        >
+          <span class="material-symbols-outlined" style="font-size: 1.2rem">send</span>
+          {{mode === 'crear' ? 'Publicar Aviso' : 'Actualizar Aviso'}}
+        </button>
+      </form>
+
+      <div class="avisos-view-section">
+        <h3>Historial de Avisos Publicados</h3>
+
+        <div class="avisos-scroll-grid">
+          @for (notice of noticeList$ | async; track notice.id) {
+            <article class="aviso-card">
+              <header class="aviso-card-header">
+                <span class="title">"{{notice.title}}"</span>
+
+                <div class="aviso-actions">
+                  <button class="action-icon-btn edit" title="Editar Aviso" (click)="redirectToNotice(notice.id!)">
+                    <span class="material-symbols-outlined">visibility</span>
+                  </button>
+                  <button class="action-icon-btn edit" title="Editar Aviso" (click)="noticeToEdit(notice)">
+                    <span class="material-symbols-outlined">edit</span>
+                  </button>
+                  <button class="action-icon-btn delete" title="Eliminar Aviso" (click)="deleteNotice(notice.id!)">
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </div>
+              </header>
+
+              <div class="aviso-meta-content">
+                <p class="aviso-fecha">Publicado: {{formatDate(notice.created_at)}}</p>
+              </div>
+            </article>
+          } @empty {
+            <div class="empty-avisos-placeholder">
+              <div class="placeholder-icon-box">
+                <span class="material-symbols-outlined">campaign</span>
+              </div>
+              <h4>No hay avisos publicados</h4>
+              <p>
+                Aún no has emitido ningún comunicado en esta materia. Los alumnos recibirán una
+                notificación instantánea al publicar el primero.
+              </p>
+            </div>
+          }
+        </div>
+      </div>
     </div>
   </div>
 </main>

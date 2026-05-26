@@ -19,7 +19,7 @@ public class NoticeEntity {
   private String title;
   private String type;
   private String message;
-  private String emisor_id;
+  private String senderId;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private LocalDate created_at;

@@ -65,7 +65,7 @@ export class AnnouncementPanel implements OnInit{
       title: title.trim(),
       type: type,
       message: body,
-      emisor_id: this.emisorId!,
+      senderId: this.emisorId!,
       created_at: todayDate
     }
 

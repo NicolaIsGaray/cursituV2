@@ -2,6 +2,11 @@ import { CommonModule, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Aviso } from '../../../notices/temp.model.notices';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { NoticeService } from '../../../services/notice.service';
+import { Notice } from '../../../models/notice.model';
+import { User } from '../../../models/user.model';
+import { UserService } from '../../../services/user.service';
+import { Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'app-notice-details',
@@ -9,30 +14,57 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
   templateUrl: './notice-details.html',
   styleUrl: '../notices.css',
 })
-export class NoticeDetails implements OnInit{
-  avisoActual!: Aviso;
+export class NoticeDetails implements OnInit {
+  currentNotice$!: Observable<Notice>;
 
-  constructor(private route: ActivatedRoute, private location: Location) {}
+  autor$!: Observable<User>;
+
+  constructor(
+    private route: ActivatedRoute,
+    private location: Location,
+    private actRoute: ActivatedRoute,
+    private noticeService: NoticeService,
+    private userService: UserService
+  ) {}
 
   ngOnInit() {
-    // 1. Obtener el ID de la ruta
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.loadNotice();
+  }
 
-    // 2. Simulación de búsqueda (En un caso real, usarías un Service)
-    this.avisoActual = {
-      id: id,
-      autor: 'Ignacio Fontaine',
-      fotoAutor: 'assets/profesor-ignacio.jpg',
-      asunto: 'Suspensión de clases',
-      fecha: '12/06/2026',
-      mensaje: {
-        saludo: 'Buenos días chicos',
-        cuerpo: [
-          'Paso a informarles que el día de mañana no asistiré a clases debido a un asunto personal que me ha surgido.',
-          'Les dejo subida la actividad para que la realicen y la entreguen para la clase de la semana que viene.'
-        ]
-      }
-    };
+  loadNotice() {
+    const id = this.actRoute.snapshot.paramMap.get('id');
+
+    this.currentNotice$ = this.noticeService.getNoticeById(id!).pipe(
+      tap((notice: Notice) => {
+        this.loadAutorInfo(notice.senderId);
+      })
+    );
+  }
+
+  loadAutorInfo(id: string) {
+    this.autor$ = this.userService.getUserById(id);
+  }
+
+  formatDate(original: Date | string): string {
+    if (!original) return 'SIN FECHA';
+    const date = new Date(original);
+    const formatter = new Intl.DateTimeFormat('es-AR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+
+    let formattedDate = formatter.format(date);
+    formattedDate = formattedDate.replace(/,/g, '');
+    formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    formattedDate = formattedDate.replace(
+      /(\bde\s)(\w)/g,
+      (match, p1, p2) => p1 + p2.toUpperCase(),
+    );
+    return formattedDate.replace(/\./g, '');
   }
 
   goBack() {
