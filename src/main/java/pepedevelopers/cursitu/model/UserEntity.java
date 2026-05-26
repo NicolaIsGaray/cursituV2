@@ -24,4 +24,5 @@ public class UserEntity {
     private List<String> comission;
     private Integer classroom_number;
     private List<String> subjects_id;
+    private Boolean hasGroup;
 }

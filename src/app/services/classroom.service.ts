@@ -6,6 +6,7 @@ import { environment } from '../../environments/environment.development';
 import { Assignment } from '../models/assignment.model';
 import { ClassroomDTO } from '../models/dto/classroomDTO';
 import { ExamDTO } from '../models/dto/examDTO';
+import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +29,10 @@ export class ClassroomService {
 
   deleteClassroom(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  getStudentsInClassroom(id: string): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/students/${id}`);
   }
 
   obtainClassroomActivities(id: string): Observable<ClassroomDTO> {

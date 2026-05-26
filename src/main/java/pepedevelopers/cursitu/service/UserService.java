@@ -22,9 +22,9 @@ public class UserService {
   private final ISubject subjectRepo;
   private final IClassroom classroomRepo;
 
-  public UserService(IUser userRepo, ISubject subjectRepo, ISubject subjectRepo1, IClassroom classroomRepo) {
+  public UserService(IUser userRepo, ISubject subjectRepo, IClassroom classroomRepo) {
     this.userRepo = userRepo;
-    this.subjectRepo = subjectRepo1;
+    this.subjectRepo = subjectRepo;
     this.classroomRepo = classroomRepo;
   }
 
@@ -43,6 +43,7 @@ public class UserService {
     }
 
     user.setPassword(user.getDni());
+    user.setHasGroup(false);
 
     List<String> userSubjects = user.getSubjects_id();
 
@@ -98,6 +99,7 @@ public class UserService {
     updatedUser.setComission(update.getComission() == null ? updatedUser.getComission() : update.getComission());
     updatedUser.setClassroom_number(update.getClassroom_number() == null ? updatedUser.getClassroom_number() : update.getClassroom_number());
     updatedUser.setSubjects_id(update.getSubjects_id() == null ? updatedUser.getSubjects_id() : update.getSubjects_id());
+    updatedUser.setHasGroup(update.getHasGroup() == null ? updatedUser.getHasGroup() : update.getHasGroup());
 
     List<String> userSubjects = updatedUser.getSubjects_id();
 

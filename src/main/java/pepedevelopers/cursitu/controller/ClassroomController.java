@@ -107,4 +107,9 @@ public class ClassroomController {
 
     return ResponseEntity.ok(examDetails);
   }
+
+  @GetMapping("/students/{classroomId}")
+  public ResponseEntity<List<UserEntity>> getStudentsInClassroom(@PathVariable String classroomId) {
+    return ResponseEntity.ok(classroomService.obtainStudentsInClassroom(classroomId));
+  }
 }

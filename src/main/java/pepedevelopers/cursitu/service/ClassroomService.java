@@ -52,6 +52,25 @@ public class ClassroomService {
     classroomRepo.save(modified);
   }
 
+  @Transactional
+  public List<UserEntity> obtainStudentsInClassroom(String id) {
+    ClassroomEntity classroom = classroomRepo.findById(id).orElseThrow(
+      () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Curso no encontrado.")
+    );
+
+    List<UserEntity> students = new ArrayList<>();
+
+    if (classroom.getStudents_id() != null) {
+      for (String studentId : classroom.getStudents_id()) {
+        userRepo.findById(studentId).ifPresent(students::add);
+      }
+    } else {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No se han encontrado alumnos registrados en el curso.");
+    }
+
+    return students;
+  }
+
   @Transactional(readOnly = true)
   public ClassroomDTO getClassroomDetailsForView(String classroomId) {
     ClassroomEntity classroom = classroomRepo.findById(classroomId)
