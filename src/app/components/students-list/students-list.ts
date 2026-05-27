@@ -9,6 +9,7 @@ import { User } from '../../models/user.model';
 import { ClassroomService } from '../../services/classroom.service';
 import { Group } from '../../models/group.model';
 import { GroupService } from '../../services/group.service';
+import { DataService } from '../../services/data.service';
 
 @Component({
   selector: 'app-students-list',
@@ -27,6 +28,8 @@ export class StudentsList implements OnInit {
 
   groupList$!: Observable<Group[]>;
 
+  classroomId!: string;
+
   constructor(
     public authService: AuthService,
     private location: Location,
@@ -34,6 +37,7 @@ export class StudentsList implements OnInit {
     private subjectService: SubjectService,
     private classroomService: ClassroomService,
     private groupService: GroupService,
+    private dataService: DataService
   ) {}
 
   ngOnInit(): void {
@@ -51,11 +55,13 @@ export class StudentsList implements OnInit {
       next: (subject) => {
         this.selectedSubject = subject;
 
+        this.classroomId = subject.classroom_id!;
+
         document.documentElement.style.setProperty('--subject-color', subject.color);
 
         this.loadGroupStatus(subject.id!);
 
-        this.obtainStudentsInClassroom(subject.classroom_id!);
+        this.obtainStudentsInClassroom(this.classroomId);
       },
       error: (err) => console.error('Hubo un problema al intentar obtener la materia: ', err),
     });
@@ -104,6 +110,25 @@ export class StudentsList implements OnInit {
         return of([]);
       }),
     );
+  }
+
+  downloadStudentList(subjectName: string) {
+    this.dataService.downloadStudentList(this.classroomId).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `alumnos-${subjectName.replace(/ /g, "-")}.xlsx`;
+
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => console.error("Hubo un problema al intentar exportar la lista de alumnos: ", err)
+    })
   }
 
   goBack() {

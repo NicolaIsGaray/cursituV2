@@ -54,8 +54,9 @@ export class SeeDeliveries implements OnInit {
   }
 
   getTopic() {
+    const topicId = this.topicService.getTopicFromStorage();
     this.topicService
-      .getTopicById(localStorage.getItem(this.TOPIC_KEY)!.replace(/"/g, ''))
+      .getTopicById(topicId!)
       .subscribe({
         next: (topic) => {
           this.currentAssignment$ = this.assignmentService

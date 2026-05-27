@@ -8,6 +8,7 @@ import { TopicService } from '../../../services/topic.service';
 import { AssignmentService } from '../../../services/assignment.service';
 import { ClassroomDTO } from '../../../models/dto/classroomDTO';
 import { SubjectService } from '../../../services/subject.service';
+import { Topic } from '../../../models/topic.model';
 
 @Component({
   selector: 'app-classroom',
@@ -49,6 +50,17 @@ export class CurrentClassroom implements OnInit {
       return;
     }
 
+    const topicInit = this.topicService.getTopicFromStorage();
+
+    if (topicInit) {
+      this.topicService.getTopicById(topicInit).subscribe({
+        next: (topic: Topic) => {
+          this.selectTopic(topic);
+        },
+        error: () => console.warn("No hay topico seleccionado...")
+      })
+    }
+
     this.loadClassroomData();
   }
 
@@ -64,7 +76,7 @@ export class CurrentClassroom implements OnInit {
       take(1),
       tap((data: ClassroomDTO) => {
         if (data && data.topics.length > 0) {
-          const savedTopicId = localStorage.getItem(this.TOPIC_KEY)?.replace(/"/g, '');
+          const savedTopicId = this.topicService.getTopicFromStorage();
           const targetTopic = data.topics.find((t) => t.id === savedTopicId) || data.topics[0];
           this.selectTopic(targetTopic);
         } else {

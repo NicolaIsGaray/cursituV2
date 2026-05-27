@@ -28,7 +28,7 @@
         </div>
 
         <div class="header-tools">
-          <button class="btn-export-accent">
+          <button class="btn-export-accent" (click)="downloadStudentList(selectedSubject.subject_name.toLowerCase())">
             <span class="material-symbols-outlined">ios_share</span>
             <span>Exportar Lista</span>
           </button>
