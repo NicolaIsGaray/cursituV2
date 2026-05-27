@@ -1,56 +1,38 @@
 h2 {
   font-size: 1.4rem;
-
   font-weight: 700;
-
   margin-bottom: 20px;
-
   color: #1a1a1a;
 }
 
 :host {
   display: block;
-
   width: 100%;
 }
 
 .dashboard-grid {
   display: grid;
-
   /* Definimos 3 columnas de igual tamaño */
-
   grid-template-columns: repeat(3, 1fr);
-
   /* Altura base de las filas */
-
   grid-auto-rows: minmax(160px, auto);
-
   gap: 24px;
 }
 
 /* Estilo General de las Tarjetas */
-
 .card {
   background: #ffffff;
-
   border-radius: 16px;
-
   padding: 20px;
-
   display: flex;
-
   flex-direction: column;
-
   transition: transform 0.2s ease;
 }
 
 .card h3 {
   font-size: 1rem;
-
   font-weight: 700;
-
   margin: 0 0 12px 0;
-
   color: #1a1a1a;
 }
 
@@ -105,54 +87,38 @@ h2 {
 }
 
 /* El recuadro gris interno de cada sección */
-
 .card-content.empty {
   flex-grow: 1;
-
   display: flex;
-
   flex-direction: column;
-
   align-items: center;
-
   justify-content: center;
-
   text-align: center;
-
   padding: 20px;
-
   border: 1px solid #f0f0f0;
-
   border-radius: 12px;
-
   color: #8d8d8d;
 }
 
 .card-content.empty p {
   margin: 0;
-
   font-size: 0.9rem;
-
   line-height: 1.4;
 }
 
 .success-text {
   color: #1a1a1a;
-
   margin-top: 5px;
-
   font-size: 0.95rem;
 }
 
 /* --- Lógica de Posicionamiento (Grid) --- */
-
 .card.wide {
   grid-column: span 2; /* Ocupa las primeras dos columnas */
 }
 
 .card.tall {
   grid-row: span 2; /* Se estira hacia abajo ocupando 2 filas */
-
   grid-column: 3; /* Se queda fija en la columna de la derecha */
 }
 
@@ -161,7 +127,6 @@ h2 {
 }
 
 /* Ajuste de responsividad básico */
-
 @media (max-width: 1100px) {
   .dashboard-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -169,25 +134,20 @@ h2 {
 
   .card.tall {
     grid-column: span 2;
-
     grid-row: auto;
   }
 }
 
 /* === DOCENTE STYLES === */
-
 .dashboard-container {
   display: flex;
-
   flex-direction: column;
-
   gap: 2rem;
 }
 
 /* ==========================================================================
    SECCIÓN: CONTENEDOR GLOBAL DE LA GRILLA (CRÍTICO PARA EL SCROLL)
    ========================================================================== */
-
 .info-grid {
   display: grid;
   grid-template-columns: 2fr 1fr; /* Mantiene la proporción de tus columnas */
@@ -234,7 +194,7 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   flex-shrink: 0; /* Impide que el título se achique o desaparezca */
 }
 
@@ -251,6 +211,41 @@ h2 {
   font-weight: 700;
   padding: 4px 10px;
   border-radius: 20px;
+}
+
+/* COMPONENTE: DROPDOWN DE FILTRO POR MATERIAS */
+.subject-filter-container {
+  margin-bottom: 15px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.select-subject {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #475569;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  outline: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 14px;
+}
+
+.select-subject:focus {
+  border-color: var(--primary-purple, #3f3689);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(63, 54, 137, 0.1);
 }
 
 /* ÁREA DE SCROLL INTERNO (Previene el crecimiento infinito) */
@@ -360,7 +355,6 @@ h2 {
 /* ==========================================================================
    DISEÑO DE LA BARRA DE DESPLAZAMIENTO (SCROLLBAR)
    ========================================================================== */
-
 .students-scroll-area::-webkit-scrollbar {
   width: 6px;
 }
@@ -379,7 +373,6 @@ h2 {
 }
 
 /* --- BANNER PRINCIPAL --- */
-
 .action-banner {
   width: 100%;
   display: flex;
@@ -388,29 +381,17 @@ h2 {
 
 .btn-create-activity {
   width: 100%;
-
   background: var(--primary-purple); /* #3f3689 */
-
   color: white;
-
   border: none;
-
   border-radius: 20px;
-
   padding: 2.5rem;
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
-  gap: 1.5rem;
-
+  gap: 15px;
   cursor: pointer;
-
   box-shadow: 0px 8px 25px rgba(63, 54, 137, 0.3);
-
   transition: transform 0.2s;
 }
 
@@ -420,7 +401,6 @@ h2 {
 
 .btn-create-activity span {
   font-size: 2.2rem;
-
   font-weight: 700;
 }
 
@@ -429,39 +409,30 @@ h2 {
 }
 
 /* --- GRILLA DE TARJETAS --- */
-
 .info-grid {
   display: grid;
-
   grid-template-columns: 2fr 1fr; /* Proporción para la lista de alumnos */
-
   gap: 1.5rem;
 }
 
 .main-stats {
   display: grid;
-
   grid-template-columns: 1fr 1fr;
-
   grid-template-rows: auto auto;
-
   gap: 1.5rem;
 }
 
+/* === CARD ESTRUCTURAL DE ESTADÍSTICAS / ÚLTIMA ACTIVIDAD === */
 .stat-card {
-  background: var(--white);
-
+  background: var(--white, #ffffff);
   border-radius: 20px;
-
   padding: 1.5rem;
-
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05);
-
+  border: 1px solid #e2e8f0;
   display: flex;
-
   flex-direction: column;
-
   min-height: 220px;
+  box-sizing: border-box;
 }
 
 .wide-card {
@@ -473,35 +444,140 @@ h2 {
 }
 
 .stat-card h3 {
-  font-size: 1.1rem;
-
-  color: #000;
-
-  margin-bottom: 1rem;
-
-  font-weight: 700;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 16px 0;
 }
 
-/* --- ESTADO VACÍO --- */
-
-.empty-state {
-  flex-grow: 1;
-
+/* --- CONTENIDO INTERNO DE LA ÚLTIMA ACTIVIDAD VISITADA --- */
+.actividad-recent-content {
   display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  text-align: center;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
 }
 
-.empty-state p {
-  color: #999;
+.actividad-info-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
 
-  font-size: 0.95rem;
+.actividad-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
 
-  max-width: 200px;
+.actividad-titulo {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* NUEVO BOTÓN EXPLICITO */
+.btn-actividad-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--primary-purple, #3f3689);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+
+.btn-actividad-link:hover {
+  color: #2e266a;
+}
+
+.btn-actividad-link .material-symbols-outlined {
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.btn-actividad-link:hover .material-symbols-outlined {
+  transform: translateX(3px);
+}
+
+.actividad-meta-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px dashed #f1f5f9;
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.meta-item .material-symbols-outlined {
+  font-size: 1rem;
+  color: #94a3b8;
+}
+
+.meta-item-time {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+/* --- ESTADO VACÍO (FALLBACK UNIFICADO) --- */
+.stat-card .empty-state {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.empty-icon-wrapper {
+  background: #f8fafc;
+  color: #94a3b8;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-icon-wrapper .material-symbols-outlined {
+  font-size: 1.3rem;
+}
+
+.stat-card .empty-state p {
+  color: #94a3b8;
+  font-size: 0.88rem;
+  font-weight: 600;
+  max-width: 220px;
+  margin: 0;
 }
 
 /* =========================================
@@ -513,32 +589,32 @@ h2 {
   h2 {
     font-size: 1.2rem;
     margin-bottom: 16px;
-    text-align: center; /* Centrado opcional para mejor estética en móvil */
+    text-align: center;
   }
 
   /* VISTA ALUMNO */
   .dashboard-grid {
-    grid-template-columns: 1fr; /* Una sola columna */
-    grid-auto-rows: auto; /* Altura flexible según contenido */
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
     gap: 16px;
   }
 
   .card.wide,
   .card.tall,
   .card.small {
-    grid-column: span 1; /* Todas ocupan el ancho total */
+    grid-column: span 1;
     grid-row: auto;
     min-height: 140px;
   }
 
   /* VISTA DOCENTE */
   .info-grid {
-    grid-template-columns: 1fr; /* Apila el Aside (Alumnos) al final */
+    grid-template-columns: 1fr;
     gap: 16px;
   }
 
   .main-stats {
-    grid-template-columns: 1fr; /* Stats una debajo de otra */
+    grid-template-columns: 1fr;
     gap: 16px;
   }
 
@@ -573,7 +649,7 @@ h2 {
   }
 
   .card-content.empty p,
-  .empty-state p {
+  .stat-card .empty-state p {
     font-size: 0.85rem;
   }
 

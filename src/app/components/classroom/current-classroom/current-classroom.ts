@@ -17,7 +17,7 @@ import { SubjectService } from '../../../services/subject.service';
 })
 export class CurrentClassroom implements OnInit {
   classroomId: string | null = null;
-  subjectColor: string = '#4f46e5';
+  subjectColor: string = 'var(--primary-purple)';
 
   classroomData$!: Observable<ClassroomDTO | null>;
   assignedActivity$: Observable<any | null> = of(null);
@@ -68,7 +68,7 @@ export class CurrentClassroom implements OnInit {
           const targetTopic = data.topics.find((t) => t.id === savedTopicId) || data.topics[0];
           this.selectTopic(targetTopic);
         } else {
-          localStorage.setItem(this.TOPIC_KEY, '');
+          this.topicService.setTopicInStorage('');
         }
       }),
       catchError((err) => {
@@ -95,7 +95,7 @@ export class CurrentClassroom implements OnInit {
 
   selectTopic(topic: any) {
     this.selectedTopicSubject.next(topic);
-    localStorage.setItem(this.TOPIC_KEY, topic.id);
+    this.topicService.setTopicInStorage(topic.id);
   }
 
   formatDate(original: Date | string): string {
@@ -128,7 +128,7 @@ export class CurrentClassroom implements OnInit {
       this.topicService.deleteTopic(currentTopic.id).subscribe({
         next: () => {
           alert('Clase Eliminada Exitosamente.');
-          localStorage.setItem(this.TOPIC_KEY, '');
+          this.topicService.setTopicInStorage('');
           this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
             this.router.navigate(['/current-classroom', classId]);
           });

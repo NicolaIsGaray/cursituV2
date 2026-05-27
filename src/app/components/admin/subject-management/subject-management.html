@@ -47,14 +47,14 @@
 
         <div class="admin-form" *ngIf="mode === 'editar'">
           <div class="form-group">
-            <label>Seleccionar Materia a editar</label>
+            <label>Seleccionar Materia a editars</label>
             <ul class="subject-list">
               <li
                 *ngFor="let subject of subjectList$ | async"
                 [id]="subject.id"
                 class="subject-item"
               >
-                <button type="submit" class="subject-card">
+                <button type="button" class="subject-card" (click)="selectSubjectToEdit(subject)">
                   <div class="subject-color" [style.background-color]="subject.color">
                     {{ subject.subject_name.charAt(0).toUpperCase() }}
                   </div>
@@ -93,13 +93,7 @@
             <div class="form-group">
               <label>Identificador Visual (Color)</label>
               <div class="color-picker-wrapper">
-                <input
-                  type="color"
-                  class="color-input"
-                  value="#3f3689"
-                  id="color"
-                  formControlName="color"
-                />
+                <input type="color" class="color-input" id="color" formControlName="color" />
                 <span class="color-hint"
                   >Este color se verá principalmente en las interfaces de la materia. Evita colores
                   fuertes.</span
@@ -151,6 +145,66 @@
                   >{{ periodList[i] }}° Cuatrimestre</label
                 >
               </div>
+            </div>
+
+            <div class="form-group full-width schedule-section">
+              <label>Agenda / Horarios de Cursada *</label>
+              <span class="color-hint"
+                >Establezca los días y horas semanales de dictado obligatorios.</span
+              >
+
+              <div class="schedule-container">
+                <button type="button" class="btn-add-schedule" (click)="addScheduleSlot()">
+                  <span>Agregar Horario</span>
+                  <span class="material-symbols-outlined">add</span>
+                </button>
+
+                <div formArrayName="schedules" class="schedule-list-wrapper">
+                  <div
+                    *ngFor="let slot of schedulesFormArray.controls; let idx = index"
+                    [formGroupName]="idx"
+                    class="schedule-row-item"
+                  >
+                    <div class="schedule-controls-grid">
+                      <select formControlName="day" class="admin-input schedule-dropdown">
+                        <option value="" disabled selected>Seleccione un día...</option>
+                        <option *ngFor="let d of daysOfWeekList" [value]="d.value">
+                          {{ d.label }}
+                        </option>
+                      </select>
+
+                      <div class="time-input-group">
+                        <label>Desde:</label>
+                        <input
+                          type="time"
+                          formControlName="startTime"
+                          class="admin-input time-picker-input"
+                        />
+                      </div>
+
+                      <div class="time-input-group">
+                        <label>Hasta:</label>
+                        <input
+                          type="time"
+                          formControlName="endTime"
+                          class="admin-input time-picker-input"
+                        />
+                      </div>
+                    </div>
+
+                    <button type="button" class="btn-remove-slot" (click)="removeScheduleSlot(idx)">
+                      <span class="material-symbols-outlined">delete</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <span
+                *ngIf="subjectForm.get('schedules')?.touched && schedulesFormArray.length === 0"
+                style="color: var(--error-red); font-size: 0.85rem; font-weight: 600"
+              >
+                Por favor, defina al menos un horario de cursada obligatorio.
+              </span>
             </div>
           </div>
 

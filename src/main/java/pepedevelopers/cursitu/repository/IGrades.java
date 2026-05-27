@@ -10,5 +10,4 @@ public interface IGrades extends MongoRepository<GradesEntity, String> {
   long countByActivityIdAndStudentIdIn(String activityId, List<String> studentIds);
   List<GradesEntity> findByActivityIdAndStudentIdIn(String activityId, List<String> studentIds);
   Optional<GradesEntity> findByActivityIdAndStudentId(String activityId, String studentId);
-  Optional<GradesEntity> findByActivityId(String activityId);
 }

@@ -13,4 +13,5 @@ public class TopicEntity {
   private String title;
   private String content;
   private String assignmentId;
+  private String classroom_id;
 }

@@ -6,6 +6,7 @@ export interface TeacherSubmissionDTO {
   submissionDate?: string;
   isLate: boolean;
   grade?: number;
+  gradeId?: string;
   status: 'PENDIENTE' | 'CORREGIDO' | 'SIN_ENTREGAR';
   activityName: string;
 }

@@ -79,6 +79,11 @@ public class AssignmentController {
     return ResponseEntity.ok(assignmentService.getAssignmentInTopic(id));
   }
 
+  @GetMapping("/in-subject/{id}")
+  public ResponseEntity<List<AssignmentEntity>> getAssignmentsInSubject(@PathVariable String id) {
+    return ResponseEntity.ok(assignmentService.getAllAssignmentsInSubject(id));
+  }
+
   @GetMapping("/check-status")
   public ResponseEntity<Map<String, String>> checkAssignmentSubmissionStatus(@RequestParam String studentId, @RequestParam String activityId) {
     String status = assignmentService.checkSubmissionStatus(studentId, activityId);

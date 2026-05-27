@@ -5,6 +5,10 @@ import { Topic } from '../models/topic.model';
 import { environment } from '../../environments/environment.development';
 import { Assignment } from '../models/assignment.model';
 
+interface TopicData {
+  timeAgo: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -15,12 +19,62 @@ export class TopicService {
   private readonly TOPIC_KEY = 'cursitu_selected_topic';
 
   setTopicInStorage(value: any): void {
-    localStorage.setItem(this.TOPIC_KEY, JSON.stringify(value));
+    const now = new Date().getTime();
+
+    const item = {
+      value: value,
+      createdAt: now,
+      expiry: now + 28800000,
+    };
+
+    localStorage.setItem(this.TOPIC_KEY, JSON.stringify(item));
   }
 
-  getTopicFromStorage<T>(): T | null {
-    const topic = localStorage.getItem(this.TOPIC_KEY);
-    return topic ? JSON.parse(topic) : null;
+  getRelativeTime(createdAt: number): string {
+    const now = new Date().getTime();
+    const diffInSeconds = Math.floor((now - createdAt) / 1000);
+
+    if (diffInSeconds < 60) {
+      return 'Visto hace un momento';
+    }
+
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) {
+      return `Hace ${diffInMinutes} ${diffInMinutes === 1 ? 'minuto' : 'minutos'}`;
+    }
+
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    return `Hace ${diffInHours} ${diffInHours === 1 ? 'hora' : 'horas'}`;
+  }
+
+  getTopicFromStorage(): string | null {
+    const itemStr = localStorage.getItem(this.TOPIC_KEY);
+
+    if (!itemStr) {
+      return null;
+    }
+
+    const item = JSON.parse(itemStr);
+    const now = new Date();
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(this.TOPIC_KEY);
+      return null;
+    }
+
+    return item.value;
+  }
+
+  getTopicTimeFromStorage(): TopicData | null {
+    const itemStr = localStorage.getItem(this.TOPIC_KEY);
+
+    if (!itemStr) return null;
+
+    const item = JSON.parse(itemStr);
+
+    return {
+      timeAgo: this.getRelativeTime(item.createdAt),
+    };
   }
 
   getAllTopics(): Observable<Topic[]> {

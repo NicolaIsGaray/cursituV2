@@ -10,7 +10,6 @@ import { GroupService } from '../../services/group.service';
 import { User } from '../../models/user.model';
 import { ClassroomService } from '../../services/classroom.service';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-groups',

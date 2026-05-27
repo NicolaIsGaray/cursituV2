@@ -45,6 +45,10 @@ export class AssignmentService {
     return this.http.get<Assignment>(`${this.apiUrl}/in-topic/${topic.assignmentId}`);
   }
 
+  getAssignmentsInSubject(subjectId: string): Observable<Assignment[]> {
+    return this.http.get<Assignment[]>(`${this.apiUrl}/in-subject/${subjectId}`);
+  }
+
   getPendingAssignments(studentId: string): Observable<AssignmentDTO[]> {
     return this.http.get<AssignmentDTO[]>(`${this.apiUrl}/student/${studentId}/pending`);
   }
@@ -81,5 +85,9 @@ export class AssignmentService {
 
   saveOrUpdateGrade(studentId: string, activityId: string, note: number) {
     return this.http.post(`${this.apiUrl}/professor-correction/student/${studentId}/assignment/${activityId}`, note);
+  }
+
+  deleteGrade(studentIdInGrade: string) {
+    return this.http.delete(`${this.apiUrl}/grades/${studentIdInGrade}`);
   }
 }

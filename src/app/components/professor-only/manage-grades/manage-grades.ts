@@ -4,13 +4,13 @@ import { CommonModule, Location } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SubjectService } from '../../../services/subject.service';
 import { Subject } from '../../../models/subject.model';
-import { Observable, switchMap, take, tap } from 'rxjs';
+import { Observable, take, tap } from 'rxjs';
 import { Assignment } from '../../../models/assignment.model';
-import { Grades } from '../../../models/grades.model';
 import { AssignmentService } from '../../../services/assignment.service';
 import { Classroom } from '../../../models/classroom.model';
 import { TeacherSubmissionDTO } from '../../../models/dto/teacher-submissionDTO';
 import { FormsModule } from '@angular/forms';
+import { UserService } from '../../../services/user.service';
 
 interface FilterChip {
   label: string;
@@ -41,7 +41,7 @@ export class ManageGrades implements OnInit {
     private location: Location,
     private cdr: ChangeDetectorRef,
     private subjectService: SubjectService,
-    private assignmentService: AssignmentService,
+    private assignmentService: AssignmentService
   ) {}
 
   ngOnInit(): void {
@@ -73,12 +73,14 @@ export class ManageGrades implements OnInit {
 
   loadActivities(): void {
     this.assignmentService
-      .getAllAssignments()
+      .getAssignmentsInSubject(this.subjectId!)
       .pipe(
         take(1),
       )
       .subscribe({
         next: (assignments: Assignment[]) => {
+          console.log(assignments);
+          
           this.generateDynamicFilters(assignments);
         },
         error: (err) => console.error('Error crítico al solicitar actividades al servicio:', err),
@@ -91,6 +93,12 @@ export class ManageGrades implements OnInit {
     let examCounter = 1;
 
     assignments.forEach((activity) => {
+      if (activity.subject_id !== this.subjectId) {
+        console.log("[DEBUG] Actividad Materia ID: ", activity.subject_id);
+        console.log("[DEBUG] Materia Seleccionada ID: ", this.subjectId);
+        
+      }
+
       let labelName = '';
       this.activityId = activity.id!;
 
@@ -139,6 +147,7 @@ export class ManageGrades implements OnInit {
       error: (err) => console.error("Hubo un problema al cargar la nota: ", err)
     })
   }
+
 
   validateKeyboard(event: KeyboardEvent): void {
     if (['+', '-'].includes(event.key)) {

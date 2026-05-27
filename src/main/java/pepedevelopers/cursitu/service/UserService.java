@@ -91,6 +91,10 @@ public class UserService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Un alumno solo puede tener una comisión.");
     }
 
+    List<String> oldSubjectsIds = updatedUser.getSubjects_id() != null
+      ? new ArrayList<>(updatedUser.getSubjects_id())
+      : new ArrayList<>();
+
     updatedUser.setName(update.getName() == null ? updatedUser.getName() : update.getName());
     updatedUser.setEmail(update.getEmail() == null ? updatedUser.getEmail() : update.getEmail());
     updatedUser.setPassword(update.getPassword() == null ? updatedUser.getPassword() : update.getPassword());
@@ -101,35 +105,59 @@ public class UserService {
     updatedUser.setSubjects_id(update.getSubjects_id() == null ? updatedUser.getSubjects_id() : update.getSubjects_id());
     updatedUser.setHasGroup(update.getHasGroup() == null ? updatedUser.getHasGroup() : update.getHasGroup());
 
-    List<String> userSubjects = updatedUser.getSubjects_id();
+    if ("ALUMNO".equals(updatedUser.getRole())) {
+      List<String> newSubjectsIds = updatedUser.getSubjects_id() != null ? updatedUser.getSubjects_id() : new ArrayList<>();
 
-    if (userSubjects != null && !userSubjects.isEmpty()) {
-      List<SubjectEntity> subjects = subjectRepo.findAllById(userSubjects);
-
-      List<String> classroomIds = subjects.stream()
-        .map(SubjectEntity::getClassroom_id)
-        .filter(Objects::nonNull)
-        .distinct()
+      List<String> removedSubjectsIds = oldSubjectsIds.stream()
+        .filter(subId -> !newSubjectsIds.contains(subId))
         .toList();
 
-      List<ClassroomEntity> classrooms = classroomRepo.findAllById(classroomIds);
+      if (!removedSubjectsIds.isEmpty()) {
+        List<SubjectEntity> removedSubjects = subjectRepo.findAllById(removedSubjectsIds);
+        List<String> removedClassroomIds = removedSubjects.stream()
+          .map(SubjectEntity::getClassroom_id)
+          .filter(Objects::nonNull)
+          .distinct()
+          .toList();
 
-      classrooms.forEach(classroom -> {
-        List<String> students = classroom.getStudents_id();
-
-        if (students == null) {
-          students = new ArrayList<>();
-        } else {
-          students = new ArrayList<>(students);
+        if (!removedClassroomIds.isEmpty()) {
+          List<ClassroomEntity> classroomsToRemoveFrom = classroomRepo.findAllById(removedClassroomIds);
+          classroomsToRemoveFrom.forEach(classroom -> {
+            List<String> students = classroom.getStudents_id();
+            if (students != null && students.contains(updatedUser.getId())) {
+              List<String> updatedStudents = new ArrayList<>(students);
+              updatedStudents.remove(updatedUser.getId());
+              classroom.setStudents_id(updatedStudents);
+            }
+          });
+          classroomRepo.saveAll(classroomsToRemoveFrom);
         }
+      }
 
-        if (!students.contains(updatedUser.getId()) && "ALUMNO".equals(updatedUser.getRole())) {
-          students.add(updatedUser.getId());
-          classroom.setStudents_id(students);
-        }
-      });
+      if (!newSubjectsIds.isEmpty()) {
+        List<SubjectEntity> subjects = subjectRepo.findAllById(newSubjectsIds);
+        List<String> classroomIds = subjects.stream()
+          .map(SubjectEntity::getClassroom_id)
+          .filter(Objects::nonNull)
+          .distinct()
+          .toList();
 
-      classroomRepo.saveAll(classrooms);
+        List<ClassroomEntity> classrooms = classroomRepo.findAllById(classroomIds);
+        classrooms.forEach(classroom -> {
+          List<String> students = classroom.getStudents_id();
+          if (students == null) {
+            students = new ArrayList<>();
+          } else {
+            students = new ArrayList<>(students);
+          }
+
+          if (!students.contains(updatedUser.getId())) {
+            students.add(updatedUser.getId());
+            classroom.setStudents_id(students);
+          }
+        });
+        classroomRepo.saveAll(classrooms);
+      }
     }
 
     return userRepo.save(updatedUser);

@@ -24,14 +24,16 @@ import java.util.stream.Collectors;
 public class AssignmentService {
   private final IAssignment assignmentRepo;
   private final ISubmission submissionRepo;
+  private final ISubject subjectRepo;
   private final IClassroom classroomRepo;
   private final IGrades gradesRepo;
   private final IUser userRepo;
   private final ITopics topicRepo;
 
-  public AssignmentService(IAssignment assignmentRepo, ISubmission submissionRepo, IClassroom classroomRepo, IGrades gradesRepo, IUser userRepo, ITopics topicRepo) {
+  public AssignmentService(IAssignment assignmentRepo, ISubmission submissionRepo, ISubject subjectRepo, IClassroom classroomRepo, IGrades gradesRepo, IUser userRepo, ITopics topicRepo) {
     this.assignmentRepo = assignmentRepo;
     this.submissionRepo = submissionRepo;
+    this.subjectRepo = subjectRepo;
     this.classroomRepo = classroomRepo;
     this.gradesRepo = gradesRepo;
     this.userRepo = userRepo;
@@ -78,6 +80,25 @@ public class AssignmentService {
     }
 
     return assignment;
+  }
+
+  @Transactional
+  public List<AssignmentEntity> getAllAssignmentsInSubject(String subjectId) {
+    SubjectEntity subject = subjectRepo.findById(subjectId).orElseThrow(
+      () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Materia no encontrada.")
+    );
+
+    List<AssignmentEntity> allAssignments = assignmentRepo.findAll();
+
+    List<AssignmentEntity> assignmentToSend = new ArrayList<>();
+
+    allAssignments.forEach(assignment -> {
+      if (Objects.equals(subject.getId(), assignment.getSubject_id())) {
+        assignmentToSend.add(assignment);
+      }
+    });
+
+    return assignmentToSend;
   }
 
   public List<AssignmentDTO> getPendingAssignmentsForStudent(String studentId) {

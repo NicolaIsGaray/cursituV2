@@ -24,6 +24,8 @@ export class SubjectsList implements OnInit {
 
   subjectsWithProfessors$!: Observable<any[]>;
 
+  expandedSubjectId: string | null = null;
+
   constructor(
     private router: Router,
     public authService: AuthService,
@@ -73,6 +75,24 @@ export class SubjectsList implements OnInit {
         });
       }),
     );
+  }
+
+  translateDayToSpanish(day: string): string {
+    const translations: { [key: string]: string } = {
+      MONDAY: 'Lunes',
+      TUESDAY: 'Martes',
+      WEDNESDAY: 'Miércoles',
+      THURSDAY: 'Jueves',
+      FRIDAY: 'Viernes',
+      SATURDAY: 'Sábado',
+      SUNDAY: 'Domingo',
+    };
+    return translations[day.toUpperCase()] || day;
+  }
+
+  toggleSchedule(subjectId: string, event: Event): void {
+    event.stopPropagation();
+    this.expandedSubjectId = this.expandedSubjectId === subjectId ? null : subjectId;
   }
 
   navigateToClassroom(path: string, classroomId: string) {

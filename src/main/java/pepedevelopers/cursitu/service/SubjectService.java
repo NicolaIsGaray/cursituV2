@@ -63,6 +63,7 @@ public class SubjectService {
     current.setProfessor_id(update.getProfessor_id() == null ? current.getProfessor_id() : update.getProfessor_id());
     current.setAcademic_period(update.getAcademic_period() == null ? current.getAcademic_period() : update.getAcademic_period());
     current.setYear_level(update.getYear_level() == null ? current.getYear_level() : update.getYear_level());
+    current.setSchedule(update.getSchedule() == null ? current.getSchedule() : update.getSchedule());
 
     return subjectRepo.save(current);
   }

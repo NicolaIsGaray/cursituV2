@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pepedevelopers.cursitu.model.subject_submodel.DateEntity;
+import pepedevelopers.cursitu.model.subject_submodel.SubjectSchedule;
 
 import java.util.List;
 
@@ -23,4 +24,6 @@ public class SubjectEntity {
     private Boolean isSuspended;
 
     private List<DateEntity> important_dates;
+
+    private List<SubjectSchedule> schedule;
 }

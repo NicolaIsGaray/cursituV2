@@ -14,6 +14,7 @@ import { User } from '../../../models/user.model';
 import { AuthService } from '../../../services/auth.service';
 import { SubjectService } from '../../../services/subject.service';
 import { UserService } from '../../../services/user.service';
+import { SubjectSchedule } from '../../../models/subject-schedule.model';
 
 @Component({
   selector: 'app-subject-management',
@@ -34,6 +35,17 @@ export class SubjectManagement implements OnInit {
   periodList = [1, 2];
   yearList = [1, 2, 3];
 
+  // Listado en español para el Dropdown estructurado para Java
+  daysOfWeekList = [
+    { label: 'Lunes', value: 'MONDAY' },
+    { label: 'Martes', value: 'TUESDAY' },
+    { label: 'Miércoles', value: 'WEDNESDAY' },
+    { label: 'Jueves', value: 'THURSDAY' },
+    { label: 'Viernes', value: 'FRIDAY' },
+    { label: 'Sábado', value: 'SATURDAY' },
+    { label: 'Domingo', value: 'SUNDAY' },
+  ];
+
   private refreshSubjects$ = new BehaviorSubject<void>(undefined);
 
   constructor(
@@ -41,7 +53,7 @@ export class SubjectManagement implements OnInit {
     private fb: FormBuilder,
     private subjectService: SubjectService,
     private userService: UserService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -57,12 +69,17 @@ export class SubjectManagement implements OnInit {
       professor: ['', Validators.required],
       year: ['', Validators.required],
       periods: this.fb.array([]),
+      schedules: this.fb.array([], Validators.required),
     });
     this.addPeriodCheckboxes();
   }
 
   get periodFromArray() {
     return this.subjectForm.get('periods') as FormArray;
+  }
+
+  get schedulesFormArray() {
+    return this.subjectForm.get('schedules') as FormArray;
   }
 
   private addPeriodCheckboxes(selectedPeriods: number[] = []): void {
@@ -72,14 +89,30 @@ export class SubjectManagement implements OnInit {
     });
   }
 
+  addScheduleSlot(): void {
+    const slotGroup = this.fb.group({
+      day: ['', Validators.required],
+      startTime: ['', Validators.required],
+      endTime: ['', Validators.required],
+    });
+    this.schedulesFormArray.push(slotGroup);
+    this.schedulesFormArray.markAsTouched();
+  }
+
+  removeScheduleSlot(index: number): void {
+    this.schedulesFormArray.removeAt(index);
+  }
+
   private setupSubjectsPipeline(): void {
     const fetchSubjects$ = this.refreshSubjects$.pipe(
       switchMap(() => this.subjectService.getAllSubjects()),
     );
 
-    this.subjectList$ = fetchSubjects$.pipe(map((list) => list.filter((s) => !s.isSuspended)));
+    this.subjectList$ = fetchSubjects$.pipe(
+      map((list: Subject[]) => list.filter((s) => !s.isSuspended)),
+    );
     this.suspendedSubjectList$ = fetchSubjects$.pipe(
-      map((list) => list.filter((s) => s.isSuspended)),
+      map((list: Subject[]) => list.filter((s) => s.isSuspended)),
     );
   }
 
@@ -88,15 +121,27 @@ export class SubjectManagement implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.subjectForm.invalid) {
+    this.schedulesFormArray.markAllAsTouched();
+
+    if (this.subjectForm.invalid || this.schedulesFormArray.length === 0) {
       this.subjectForm.markAllAsTouched();
       return;
     }
 
-    const { name, color, professor, year } = this.subjectForm.value;
+    const { name, color, professor, year, schedules } = this.subjectForm.value;
+
     const periods = this.periodFromArray.value
       .map((checked: boolean, i: number) => (checked ? this.periodList[i] : null))
       .filter((v: any): v is number => v !== null);
+
+    // Mapeo directo de inputs limpios sin riesgos de TimeZones ni desfases
+    const formattedSchedules: SubjectSchedule[] = schedules.map((slot: any) => {
+      return {
+        day: slot.day,
+        startTime: slot.startTime, // Formato nativo "HH:mm"
+        endTime: slot.endTime, // Formato nativo "HH:mm"
+      };
+    });
 
     const payload: Subject = {
       subject_name: name.trim(),
@@ -104,6 +149,7 @@ export class SubjectManagement implements OnInit {
       professor_id: professor.trim(),
       year_level: year,
       academic_period: periods,
+      schedule: formattedSchedules,
     };
 
     if (this.mode === 'crear') {
@@ -112,7 +158,7 @@ export class SubjectManagement implements OnInit {
         .pipe(take(1))
         .subscribe({
           next: () => this.completeOperation('Materia creada con éxito y Curso asignado.'),
-          error: (err) => console.error(err),
+          error: (err: any) => console.error(err),
         });
     } else if (this.mode === 'editar' && this.subjectToUpdateId) {
       this.subjectService
@@ -120,8 +166,34 @@ export class SubjectManagement implements OnInit {
         .pipe(take(1))
         .subscribe({
           next: () => this.completeOperation('Materia modificada con éxito.'),
-          error: (err) => console.error(err),
+          error: (err: any) => console.error(err),
         });
+    }
+  }
+
+  selectSubjectToEdit(subject: Subject): void {
+    this.subjectToUpdateId = subject.id || null;
+
+    this.subjectForm.patchValue({
+      name: subject.subject_name,
+      color: subject.color,
+      professor: subject.professor_id,
+      year: subject.year_level,
+    });
+
+    this.addPeriodCheckboxes(subject.academic_period);
+
+    this.schedulesFormArray.clear();
+    if (subject.schedule && subject.schedule.length > 0) {
+      subject.schedule.forEach((slot) => {
+        this.schedulesFormArray.push(
+          this.fb.group({
+            day: [slot.day, Validators.required],
+            startTime: [slot.startTime, Validators.required],
+            endTime: [slot.endTime, Validators.required],
+          }),
+        );
+      });
     }
   }
 
@@ -130,11 +202,11 @@ export class SubjectManagement implements OnInit {
     const subjectId = element.value;
 
     this.subjectService.getSubjectById(subjectId).subscribe({
-      next: (data) => {
-        (this.subjectToSuspendSel = data)
+      next: (data: Subject) => {
+        this.subjectToSuspendSel = data;
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Hubo un error al obtener la materia a suspender: ', err),
+      error: (err: any) => console.error('Hubo un error al obtener la materia a suspender: ', err),
     });
   }
 
@@ -182,6 +254,7 @@ export class SubjectManagement implements OnInit {
   private completeOperation(message: string): void {
     alert(message);
     this.subjectForm.reset();
+    this.schedulesFormArray.clear();
     this.addPeriodCheckboxes();
     this.mode = null;
     this.subjectToUpdateId = null;
@@ -190,6 +263,13 @@ export class SubjectManagement implements OnInit {
   }
 
   changeMode(newMode: 'crear' | 'editar' | 'suspender') {
+    if (this.mode === newMode) return;
+
     this.mode = newMode;
+    this.subjectForm.reset();
+    this.schedulesFormArray.clear();
+    this.addPeriodCheckboxes();
+    this.subjectToUpdateId = null;
+    this.subjectToSuspendSel = null;
   }
 }
