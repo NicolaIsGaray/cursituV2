@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { User } from '../../../models/user.model';
 import { Subject } from '../../../models/subject.model';
@@ -14,6 +14,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter, isEmpty, Observable, switchMap } from 'rxjs';
+import { Route, Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-management',
@@ -45,6 +46,7 @@ export class UserManagement implements OnInit {
     private fb: FormBuilder,
     private userService: UserService,
     private subjectService: SubjectService,
+    private route: Router
   ) {}
 
   ngOnInit(): void {
@@ -119,6 +121,10 @@ export class UserManagement implements OnInit {
       return;
     }
 
+    if (this.modo === 'eliminar') {
+      this.deleteUser();
+    }
+
     const { fullname, dni, email, role, classroom_number } = this.userForm.value;
     const comission = this.getSelectedValuesToString(this.comissionFromArray, this.comissionList);
     const assigned_subjects = this.getSelectedValuesToString(
@@ -149,7 +155,6 @@ export class UserManagement implements OnInit {
         next: () => {
           alert('Usuario Registrado Exitosamente.');
           this.userForm.reset();
-          window.location.reload();
         },
         error: (err) => console.error('Hubo un error al registrar al usuario: ', err),
       });
@@ -163,7 +168,6 @@ export class UserManagement implements OnInit {
           alert('Usuario Modificado Exitosamente.');
           this.userToUpdateId = null;
           this.userForm.reset();
-          window.location.reload();
         },
         error: (err) => console.error('Hubo un error al modificar al usuario:', err),
       });
@@ -196,6 +200,7 @@ export class UserManagement implements OnInit {
   }
 
   seleccionarUsuarioParaEliminar(user: any): void {
+    if (user === null) return;
     this.userToDeleteSel = user;
 
     this.dniControl.setValue(user.dni, { emitEvent: false });
@@ -213,9 +218,8 @@ export class UserManagement implements OnInit {
       this.userService.deleteUser(this.userToDeleteSel.id).subscribe({
         next: () => {
           alert('Usuario eliminado con éxito.');
+          this.dniControl.reset();
           this.userToDeleteSel = null;
-          this.dniControl.setValue('');
-          window.location.reload();
         },
         error: (err) => console.error('Error al eliminar:', err),
       });
@@ -244,5 +248,9 @@ export class UserManagement implements OnInit {
 
   cambiarModo(nuevoModo: 'crear' | 'editar' | 'eliminar'): void {
     this.modo = nuevoModo;
+  }
+
+  refreshPage(path: string) {
+    this.route.navigate([path]);
   }
 }

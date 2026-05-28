@@ -227,7 +227,7 @@
           <p>Ingresa el DNI del usuario que deseas dar de baja permanentemente.</p>
 
           <!-- Contenedor del buscador (Mantiene la referencia relativa para el desplegable) -->
-          <div class="form-group search-container" style="position: relative">
+          <form class="form-group search-container" style="position: relative">
             <label for="dni">DNI del Usuario</label>
 
             <!-- Input vinculado al FormControl Reactivo -->
@@ -270,7 +270,7 @@
                 </button>
               </li>
             </ul>
-          </div>
+          </form>
 
           <!-- Sección intermedia que confirma al usuario seleccionado -->
           <div class="selected-user-preview" *ngIf="userToDeleteSel">
