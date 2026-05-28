@@ -10,17 +10,19 @@
 h2 {
   font-size: 1.8rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--text-primary);
   margin-top: 0;
   margin-bottom: 1.5rem;
+  transition: color 0.2s ease;
 }
 
 h3 {
   font-size: 1.2rem;
   font-weight: 800;
-  color: #334155;
+  color: var(--text-secondary);
   margin-top: 0;
   margin-bottom: 1.2rem;
+  transition: color 0.2s ease;
 }
 
 /* === BOTÓN REGRESAR === */
@@ -30,7 +32,7 @@ h3 {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -40,8 +42,8 @@ h3 {
 }
 
 .btn-back:hover {
-  background-color: #f1f5f9;
-  color: var(--subject-color, #3f66cc);
+  background-color: var(--bg-hover);
+  color: var(--subject-color, var(--primary-purple));
 }
 
 /* === ESTILOS VISTA ALUMNO === */
@@ -52,10 +54,14 @@ h3 {
 }
 
 .selection-panel {
-  background: white;
+  background: var(--bg-card);
   padding: 24px;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px var(--sidebar-shadow);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .subjects-list {
@@ -63,14 +69,14 @@ h3 {
   flex-direction: column;
   gap: 12px;
   max-height: 120px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .subject-chip-btn {
   border: none;
   padding: 18px;
   border-radius: 12px;
-  color: white;
+  color: white; /* Mantiene contraste estricto sobre fondo dinámico */
   font-weight: 700;
   font-size: 0.9rem;
   text-align: center;
@@ -85,19 +91,26 @@ h3 {
 }
 
 .subject-chip-btn.selected {
-  box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.35), 0 6px 15px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    inset 0 0 0 4px rgba(255, 255, 255, 0.35),
+    0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
 .group-detail-panel {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-  border: 1px solid #f1f5f9;
+  box-shadow: 0 10px 30px var(--sidebar-shadow);
+  border: 1px solid var(--border-color);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .group-header {
   padding: 20px 24px;
+  background: var(--subject-color, var(--primary-purple));
   color: white;
   display: flex;
   justify-content: space-between;
@@ -115,7 +128,7 @@ h3 {
   align-items: center;
   gap: 16px;
   padding: 16px 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .member-item:last-child {
@@ -123,29 +136,34 @@ h3 {
 }
 
 .member-avatar {
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
   width: 42px;
   height: 42px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 .member-name {
   margin: 0;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 0.95rem;
+  transition: color 0.2s ease;
 }
 
 .member-role {
   margin: 2px 0 0 0;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
+  transition: color 0.2s ease;
 }
 
 /* === ESTILOS VISTA DOCENTE === */
@@ -157,11 +175,14 @@ h3 {
 }
 
 .form-card-section {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 20px var(--sidebar-shadow);
+  border: 1px solid var(--border-color);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .form-group {
@@ -173,34 +194,39 @@ h3 {
   font-weight: 700;
   margin-bottom: 8px;
   font-size: 0.85rem;
-  color: #475569;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
 }
 
 .input-field {
   width: 100%;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--border-input, var(--border-color));
   border-radius: 8px;
   padding: 11px 14px;
   font-size: 0.9rem;
-  color: #1e293b;
-  background: #fff;
+  color: var(--text-primary);
+  background: var(--bg-input);
   outline: none;
-  transition: all 0.15s ease;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
 }
 
 .input-field:focus {
-  border-color: var(--subject-color, #3f66cc);
-  box-shadow: 0 0 0 3px rgba(63, 102, 204, 0.1);
+  border-color: var(--subject-color, var(--primary-purple));
+  box-shadow: 0 0 0 3px rgba(63, 102, 204, 0.15);
 }
 
-/* Caja select de diseño moderno */
 .custom-multiselect-box {
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
+  background: var(--bg-input);
+  border: 1px solid var(--border-input, var(--border-color));
   border-radius: 8px;
   max-height: 160px;
   overflow-y: auto;
   padding: 6px;
+  box-sizing: border-box;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .multiselect-option {
@@ -210,24 +236,27 @@ h3 {
   padding: 8px 10px;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--text-primary);
   cursor: pointer;
   border-radius: 6px;
-  transition: background-color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .multiselect-option:hover {
-  background-color: #f1f5f9;
+  background-color: var(--bg-hover);
 }
 
-.multiselect-option input[type="checkbox"] {
-  accent-color: var(--subject-color, #3f66cc);
+.multiselect-option input[type='checkbox'] {
+  accent-color: var(--subject-color, var(--primary-purple));
   width: 15px;
   height: 15px;
 }
 
 .btn-primary-action {
   width: 100%;
+  background: var(--subject-color, var(--primary-purple));
   color: white;
   border: none;
   padding: 14px;
@@ -236,11 +265,18 @@ h3 {
   font-size: 0.95rem;
   cursor: pointer;
   margin-top: 10px;
-  transition: filter 0.2s ease;
+  box-sizing: border-box;
+  transition:
+    filter 0.2s ease,
+    transform 0.1s ease;
 }
 
 .btn-primary-action:hover {
   filter: brightness(1.08);
+}
+
+.btn-primary-action:active {
+  transform: scale(0.99);
 }
 
 /* === PLACEHOLDER GRUPOS VACÍOS === */
@@ -251,17 +287,18 @@ h3 {
   justify-content: center;
   text-align: center;
   padding: 40px 20px;
-  background: white;
+  background: var(--bg-empty-box, var(--bg-input));
   border-radius: 12px;
-  border: 2px dashed #e2e8f0; /* Estilo clásico de zona vacía/configurable */
+  border: 2px dashed var(--border-color);
   margin-top: 10px;
   min-height: 320px;
   box-sizing: border-box;
+  transition: all 0.25s ease;
 }
 
 .placeholder-icon-box {
-  background: #f1f5f9;
-  color: var(--subject-color, #64748b);
+  background: var(--bg-hover);
+  color: var(--subject-color, var(--text-secondary));
   width: 64px;
   height: 64px;
   border-radius: 50%;
@@ -270,6 +307,9 @@ h3 {
   justify-content: center;
   margin-bottom: 16px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 .placeholder-icon-box .material-symbols-outlined {
@@ -279,25 +319,30 @@ h3 {
 .empty-groups-placeholder h4 {
   font-size: 1.1rem;
   font-weight: 800;
-  color: #334155;
+  color: var(--text-primary);
   margin: 0 0 8px 0;
+  transition: color 0.2s ease;
 }
 
 .empty-groups-placeholder p {
   font-size: 0.88rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-muted);
   max-width: 340px;
   margin: 0;
   line-height: 1.5;
+  transition: color 0.2s ease;
 }
 
 /* Panel visualización de comisiones */
 .grupos-view-section {
-  background: #f8fafc;
+  background: var(--bg-empty-box, var(--bg-input));
   border-radius: 16px;
   padding: 24px;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--border-color);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .grupos-scroll-grid {
@@ -310,17 +355,21 @@ h3 {
 }
 
 .grupo-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.03);
-  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 10px var(--sidebar-shadow);
+  border: 1px solid var(--border-color);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .grupo-card-header {
   padding: 14px;
-  background: var(--subject-color);
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--subject-color, var(--primary-purple));
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -329,7 +378,7 @@ h3 {
 .grupo-card-header .title {
   font-weight: 800;
   font-size: 0.85rem;
-  color: #ececec;
+  color: #ececec; /* Se mantiene claro para el contraste del header de color */
 }
 
 .grupo-actions {
@@ -352,11 +401,20 @@ h3 {
   font-size: 1.1rem;
 }
 
-.action-icon-btn.edit { color: #e4e4e4; }
-.action-icon-btn.edit:hover { background: #e2e8f0; color: #0f172a; }
+.action-icon-btn.edit {
+  color: #e4e4e4;
+}
+.action-icon-btn.edit:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
 
-.action-icon-btn.delete { color: #ef4444; }
-.action-icon-btn.delete:hover { background: #fee2e2; }
+.action-icon-btn.delete {
+  color: #ef4444;
+}
+.action-icon-btn.delete:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
 
 .integrantes-list {
   list-style: none;
@@ -366,34 +424,101 @@ h3 {
 
 .integrantes-list li {
   padding: 12px 14px;
-  border-bottom: 1px solid #f8fafc;
+  border-bottom: 1px solid var(--border-color);
   font-size: 0.8rem;
   font-weight: 700;
-  color: #475569;
+  color: var(--text-secondary);
+  transition:
+    color 0.2s ease,
+    border-color 0.25s ease;
 }
 
 .integrantes-list li:last-child {
   border-bottom: none;
 }
 
+/* Estilización scrollbars internas */
+.grupos-scroll-grid::-webkit-scrollbar,
+.custom-multiselect-box::-webkit-scrollbar,
+.subjects-list::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.grupos-scroll-grid::-webkit-scrollbar-track,
+.custom-multiselect-box::-webkit-scrollbar-track,
+.subjects-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.grupos-scroll-grid::-webkit-scrollbar-thumb,
+.custom-multiselect-box::-webkit-scrollbar-thumb,
+.subjects-list::-webkit-scrollbar-thumb {
+  background: var(--border-input, var(--border-color));
+  border-radius: 10px;
+}
+
 /* === ADAPTACIÓN RESPONSIVA === */
 @media (max-width: 960px) {
+  .gestion-grupos-container {
+    padding: 16px;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  /* VISTA ALUMNO MOBILE */
   .groups-layout-alumno {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .subjects-list {
     flex-direction: row;
     overflow-x: auto;
+    max-height: none;
     padding-bottom: 8px;
   }
 
   .subject-chip-btn {
     flex: 0 0 160px;
     padding: 14px;
+    font-size: 0.85rem;
   }
 
+  /* VISTA DOCENTE MOBILE */
   .docente-grid-split {
     grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .grupos-scroll-grid {
+    max-height: none;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 500px) {
+  .form-card-section,
+  .grupos-view-section,
+  .selection-panel {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .input-field,
+  .custom-multiselect-box,
+  .btn-primary-action {
+    width: 100% !important;
+  }
+
+  .grupos-scroll-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .empty-groups-placeholder {
+    min-height: 240px;
+    padding: 24px 16px;
   }
 }

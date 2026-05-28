@@ -1,4 +1,4 @@
-/* === TUS ESTILOS ORIGINALES (SIN CAMBIOS) === */
+/* === LAYOUT Y CONTENEDORES === */
 
 .tasks-container {
   display: grid;
@@ -11,13 +11,18 @@ h3 {
   font-size: 1.3rem;
   font-weight: 700;
   margin-bottom: 20px;
+  color: var(--text-primary);
 }
 
 .selection-panel {
-  background: white;
+  background: var(--bg-card);
   padding: 30px;
   border-radius: 20px;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--border-color);
+  box-shadow: 0px 4px 20px var(--sidebar-shadow);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .btn-back {
@@ -26,7 +31,7 @@ h3 {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #666;
+  color: var(--text-muted);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -36,17 +41,26 @@ h3 {
 }
 
 .btn-back:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: var(--bg-hover);
   color: var(--primary-purple);
 }
 
 .search-box input {
   width: 100%;
   padding: 12px 15px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-input, var(--border-color));
   border-radius: 8px;
   margin-bottom: 25px;
   font-size: 0.9rem;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.search-box input:focus {
+  border-color: var(--primary-purple);
+  background: var(--bg-card);
 }
 
 .subjects-list {
@@ -63,11 +77,16 @@ h3 {
   font-size: 0.9rem;
   text-align: center;
   cursor: pointer;
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
-.subject-card:hover { transform: translateY(-3px); }
+.subject-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+}
 
 .tasks-detail-panel {
   display: flex;
@@ -75,11 +94,15 @@ h3 {
 }
 
 .tasks-list-container {
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
+  border: 1px solid var(--border-color);
   overflow: hidden;
-  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.05);
+  box-shadow: 0px 10px 30px var(--sidebar-shadow);
   padding: 25px;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .current-subject-banner {
@@ -88,6 +111,7 @@ h3 {
   color: white;
   text-align: center;
   margin-bottom: 20px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .current-subject-banner h4 {
@@ -101,21 +125,30 @@ h3 {
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  border: 1px solid #eee;
+  border: 1px solid var(--border-color);
   border-radius: 12px;
+  background: var(--bg-input);
   margin-bottom: 15px;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.task-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-input, var(--border-color));
 }
 
 .task-title {
   margin: 0;
   font-weight: 700;
   font-size: 1.05rem;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .task-description {
   margin: 5px 0 0 0;
-  color: #707070;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
@@ -126,22 +159,27 @@ h3 {
 .task-date {
   margin: 0 0 8px 0;
   font-size: 0.85rem;
-  color: #707070;
+  color: var(--text-muted);
 }
 
 .view-link {
-  color: #555;
+  color: var(--text-secondary);
   font-size: 0.85rem;
   text-decoration: underline;
   cursor: pointer;
+  transition: color 0.2s ease;
 }
 
-/* =========================================
-   ADAPTACIÓN PARA RESOLUCIONES (NETBOOKS)
-   ========================================= */
+.view-link:hover {
+  color: var(--text-primary);
+}
 
+/* ==========================================================================
+   MEDIA QUERIES (RESPONSIVE ADAPTADO)
+   ========================================================================== */
+
+/* Ajuste de proporciones para Netbooks para evitar compresión de texto */
 @media (max-width: 1024px) {
-  /* Ajuste de proporciones para evitar compresión de texto */
   .tasks-container {
     grid-template-columns: 1fr 1.5fr;
     gap: 20px;
@@ -165,19 +203,23 @@ h3 {
   }
 }
 
+/* Cambio a una sola columna para resoluciones pequeñas o tablets */
 @media (max-width: 800px) {
-  /* Cambio a una sola columna para resoluciones pequeñas o tablets */
   .tasks-container {
     grid-template-columns: 1fr;
   }
 }
 
+/* Optimización de espacios verticales en pantallas bajas (Netbooks h<600) */
 @media (max-height: 600px) {
-  /* Optimización de espacios verticales en pantallas bajas */
-  h3 { margin-bottom: 10px; }
-  
-  .search-box input { margin-bottom: 15px; }
-  
+  h3 {
+    margin-bottom: 10px;
+  }
+
+  .search-box input {
+    margin-bottom: 15px;
+  }
+
   .current-subject-banner {
     padding: 12px;
     margin-bottom: 15px;

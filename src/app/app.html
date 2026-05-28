@@ -212,11 +212,13 @@
     </header>
 
     <div class="view-container">
+      <app-load-spinner></app-load-spinner>
       <router-outlet></router-outlet>
     </div>
   </main>
 </div>
 
 <div *ngIf="isLoginPage()" class="full-screen-login">
+  <app-load-spinner></app-load-spinner>
   <router-outlet></router-outlet>
 </div>

@@ -10,7 +10,6 @@
 
     <div class="card tall">
       <h3>Entregas Pendientes</h3>
-
       @if (pendingAssignments$ | async; as pendingList) {
         @if (pendingList.length > 0) {
           <div class="card-content">
@@ -18,14 +17,11 @@
               <li *ngFor="let item of pendingList" class="pending-item">
                 <div class="pending-info">
                   <span class="subject-name">{{ item.title }}</span>
-
                   <span class="subject-tag">Materia: {{ item.subjectNameResolved }}</span>
-
                   <span class="due-date">
                     Vence: {{ item.dateLimit | date: 'dd/MM/yyyy HH:mm' }}
                   </span>
                 </div>
-
                 <button class="btn-goto">
                   <span class="material-symbols-outlined">arrow_forward</span>
                 </button>
@@ -55,7 +51,6 @@
                 {{ subject.subject_name | uppercase }}
               </span>
               <h4 class="actividad-titulo">"{{ activity.title }}"</h4>
-
               <button
                 class="btn-actividad-link"
                 (click)="
@@ -110,11 +105,7 @@
 
   <div class="dashboard-container" *ngIf="rol === 'DOCENTE'">
     <section class="action-banner">
-      <a
-        class="btn-create-activity"
-        routerLink="/subjects"
-        style="text-decoration: none; width: 80%"
-      >
+      <a class="btn-create-activity" routerLink="/subjects" style="text-decoration: none">
         <span>Gestión de Materias</span>
       </a>
     </section>
@@ -123,7 +114,6 @@
       <div class="main-stats">
         <div class="stat-card">
           <h3>Última Actividad Visitada</h3>
-
           @if (lastActivity$ | async; as activity) {
             <div class="actividad-recent-content">
               <div class="actividad-info-main">
@@ -132,7 +122,6 @@
                     {{ subject.subject_name | uppercase }}
                   </span>
                   <h4 class="actividad-titulo">"{{ activity.title }}"</h4>
-
                   <button
                     class="btn-actividad-link"
                     (click)="
@@ -182,7 +171,6 @@
 
         <div class="stat-card">
           <h3>Horarios de Cursada</h3>
-
           @for (subject of professorSubjects$ | async; track subject.id) {
             <div
               class="subject-schedule-group"
@@ -195,7 +183,6 @@
               >
                 {{ subject.subject_name }}
               </h4>
-
               <div
                 class="schedule-slots-list"
                 style="display: flex; flex-direction: column; gap: 4px"

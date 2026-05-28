@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -15,7 +15,7 @@
 }
 
 .btn-back:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: var(--bg-hover);
   color: var(--primary-purple);
 }
 
@@ -23,21 +23,27 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 90vh;
+  min-height: 72vh;
   padding: 20px;
-  background-color: #f8f9fa;
+  background-color: var(--bg-main, var(--bg-gray));
+  transition: background-color 0.25s ease;
 }
 
 .edit-card {
   display: flex;
-  position: relative; /* Necesario para el posicionamiento del color */
+  position: relative;
   width: 100%;
   max-width: 900px;
   min-height: 500px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 30px;
   overflow: hidden;
-  box-shadow: 0px 20px 50px rgba(0,0,0,0.1);
+  border: 1px solid var(--border-color);
+  box-shadow: 0px 20px 50px var(--sidebar-shadow);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 /* === SECCIÓN FORMULARIO === */
@@ -53,14 +59,16 @@
 .form-header h3 {
   font-size: 2rem;
   font-weight: 800;
-  color: #1a1a1a;
+  color: var(--text-primary);
   margin: 0 0 10px 0;
+  transition: color 0.2s ease;
 }
 
 .form-header p {
-  color: #888;
+  color: var(--text-muted);
   font-size: 0.95rem;
   margin-bottom: 2rem;
+  transition: color 0.2s ease;
 }
 
 .input-group {
@@ -72,24 +80,30 @@
   font-weight: 700;
   margin-bottom: 12px;
   font-size: 1rem;
-  color: #444;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
 }
 
 .input-field {
   width: 100%;
   padding: 18px;
-  border: 2px solid #eee;
+  border: 2px solid var(--border-input, var(--border-color));
   border-radius: 15px;
-  background: #fdfdfd;
+  background: var(--bg-input);
   font-size: 1.1rem;
   font-weight: 600;
-  color: #333;
-  transition: border-color 0.3s;
+  color: var(--text-primary);
+  box-sizing: border-box;
+  transition:
+    border-color 0.3s base,
+    background-color 0.25s ease,
+    color 0.2s ease;
 }
 
 .input-field:focus {
   outline: none;
-  border-color: var(--subject-color)
+  border-color: var(--subject-color, var(--primary-purple));
+  background: var(--bg-card);
 }
 
 .btn-guardar {
@@ -105,12 +119,13 @@
   cursor: pointer;
   text-align: center;
   transition: all 0.3s ease;
-  box-shadow: 0px 8px 20px rgba(255, 145, 44, 0.3);
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .btn-guardar:hover {
   transform: translateY(-3px);
   filter: brightness(1.1);
+  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.4);
 }
 
 /* === SECCIÓN COLOR (DERECHA / SUPERIOR) === */
@@ -121,6 +136,7 @@
   justify-content: center;
   align-items: center;
   transition: background-color 0.4s ease;
+  background-color: var(--subject-color, var(--bg-hover)); /* Fallback si no hay color asignado */
 }
 
 /* BOTÓN FLOTANTE EN ESQUINA DERECHA */
@@ -137,16 +153,22 @@
   align-items: center;
   width: 60px;
   height: 60px;
-  background: white;
-  color: #333;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  transition: transform 0.2s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.2s,
+    background-color 0.25s ease,
+    color 0.2s ease;
 }
 
 .color-circle-btn:hover {
   transform: scale(1.1) rotate(15deg);
+  background: var(--bg-hover);
+  color: var(--primary-purple);
 }
 
 .color-circle-btn .material-symbols-outlined {
@@ -169,7 +191,8 @@
   color: white;
   font-weight: 700;
   gap: 10px;
-  opacity: 0.8;
+  opacity: 0.9;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); /* Asegura lectura si el color de la materia es muy claro */
 }
 
 .color-label-mobile .material-symbols-outlined {
@@ -181,14 +204,20 @@
    ========================================= */
 
 @media (max-width: 1024px) {
-  .edit-card { width: 95%; min-height: 450px; }
-  .form-section { padding: 40px; }
+  .edit-card {
+    width: 95%;
+    min-height: 450px;
+  }
+  .form-section {
+    padding: 40px;
+  }
 }
 
 @media (max-width: 768px) {
   .edit-card {
     flex-direction: column;
     min-height: auto;
+    border-radius: 20px;
   }
 
   .edit-materia-container {
@@ -196,7 +225,7 @@
   }
 
   .color-overlay-section {
-    order: -1; /* El color aparece arriba en móvil */
+    order: -1;
     height: 180px;
     flex: none;
   }
@@ -211,7 +240,9 @@
     text-align: center;
   }
 
-  .form-header h3 { font-size: 1.5rem; }
+  .form-header h3 {
+    font-size: 1.5rem;
+  }
 
   .btn-guardar {
     width: 100%;
@@ -223,15 +254,24 @@
   }
 
   .input-field {
-    width: 80%;
+    width: 100%; /* Corregido de 80% a 100% para consistencia en layouts móviles con box-sizing */
   }
 }
 
 @media (max-height: 650px) {
-  /* Netbooks de baja resolución */
-  .edit-card { min-height: 380px; }
-  .form-section { padding: 25px 40px; }
-  .form-header p { margin-bottom: 1rem; }
-  .input-field { padding: 12px; }
-  .btn-guardar { padding: 12px 30px; }
+  .edit-card {
+    min-height: 380px;
+  }
+  .form-section {
+    padding: 25px 40px;
+  }
+  .form-header p {
+    margin-bottom: 1rem;
+  }
+  .input-field {
+    padding: 12px;
+  }
+  .btn-guardar {
+    padding: 12px 30px;
+  }
 }

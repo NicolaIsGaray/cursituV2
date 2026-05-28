@@ -1,30 +1,59 @@
 @import 'quill/dist/quill.core.css';
 @import 'quill/dist/quill.snow.css';
 
+/* ==========================================================================
+   VARIABLES DE CONTROL DE TEMA (CLARO / OSCURO)
+   ========================================================================== */
 :root {
+  /* Modo Claro Base */
   --bg-main: #f4f7fe;
   --bg-card: #ffffff;
   --text-primary: #333333;
   --text-secondary: #666666;
-  --sidebar-shadow: rgba(0, 0, 0, 0.05);
+  --text-muted: #888888;
+  --text-label: #444444;
   --border-color: #f0f0f0;
+  --border-input: #dddddd;
+  --bg-input: #f9f9f9;
+  --sidebar-shadow: rgba(0, 0, 0, 0.05);
+
+  /* Identidad y Estados */
   --primary-purple: #3f3689;
   --light-purple: #665abb;
-  --error-red: #b61b1b;
-  --success-green: #37f050;
-  --waiting-gray: #c4c4c4;
+  --accent-blue: #3f66cc;
+  --accent-blue-hover: #3355aa;
+  --bg-icon-box: #eef2ff;
+  --success-green: #2ecc71;
+  --slider-bg-off: #ccc;
+  --error-red: #c91919;
 }
 
-/* Colores para Modo Oscuro */
-body.dark-theme {
-  --bg-main: #1a1a1a;
-  --bg-card: #2d2d2d;
-  --text-primary: #f0f0f0;
-  --text-secondary: #b0b0b0;
+[data-theme='dark'] {
+  /* Modo Oscuro Adaptado */
+  --bg-main: #0b0f19;
+  --bg-card: #151c2c;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-label: #cbd5e1;
+  --border-color: #222c3f;
+  --border-input: #2e3c54;
+  --bg-input: #1e293b;
   --sidebar-shadow: rgba(0, 0, 0, 0.3);
-  --border-color: #404040;
-}
 
+  /* Identidad y Estados en Oscuro */
+  --primary-purple: #5c4ebd;
+  --light-purple: #8174df;
+  --accent-blue: #5c85ee;
+  --accent-blue-hover: #4a6ec2;
+  --bg-icon-box: rgba(63, 102, 204, 0.15);
+  --success-green: #4ade80;
+  --slider-bg-off: #4b5563;
+
+  --bg-empty-box: rgba(30, 41, 59, 0.5);
+  --banner-shadow: rgba(0, 0, 0, 0.4);
+  --svg-arrow-color: %2394a3b8;
+}
 /* Aplicación en tus estilos */
 .config-card {
   background: var(--bg-card);
@@ -40,10 +69,10 @@ body.dark-theme {
 }
 
 body {
-    margin: 0;
-    height: 100%;
+  margin: 0;
+  height: 100%;
 }
 
 * {
-  font-family: "Lato", sans-serif;
+  font-family: 'Lato', sans-serif;
 }

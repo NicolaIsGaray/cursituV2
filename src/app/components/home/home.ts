@@ -52,10 +52,12 @@ export class Home implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.authService.getAuthStatus();
-
     const user = this.authService.currentUserValue!;
     this.currentUser$ = this.userService.getUserById(user.id!);
+
+    if (user.role === 'ADMIN') {
+      this.router.navigate(["/user-management"])
+    }
 
     this.activityTime = this.topicService.getTopicTimeFromStorage();
 

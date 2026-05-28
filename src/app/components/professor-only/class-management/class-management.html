@@ -6,7 +6,7 @@
 </nav>
 
 <div class="course-header" *ngIf="subject$ | async as subject">
-  <h2>{{ subject.subject_name }}</h2>
+  <h2 style="color: var(--text-primary);">{{ subject.subject_name }}</h2>
 </div>
 
 <main *ngIf="authService.userRole$ | async as rol" style="overflow: hidden">
@@ -35,6 +35,7 @@
               theme="snow"
               [modules]="editorModules"
               placeholder="Escribe el contenido didáctico del curso aquí..."
+              style="color: var(--text-primary);"
             ></quill-editor>
           </div>
         </section>
@@ -137,6 +138,7 @@
                     theme="snow"
                     [modules]="editorModules"
                     placeholder="Redacta los criterios de aceptación, pautas o consignas específicas para la entrega..."
+                    style="color: var(--text-primary);"
                   ></quill-editor>
                 </div>
               </div>

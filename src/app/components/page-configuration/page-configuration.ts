@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Renderer2, RendererFactory2 } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { ThemeService } from '../../services/theme-service';
 
 @Component({
   selector: 'app-page-configuration',
@@ -7,30 +8,13 @@ import { Component, OnInit, Renderer2, RendererFactory2 } from '@angular/core';
   templateUrl: './page-configuration.html',
   styleUrl: './page-configuration.css',
 })
-export class PageConfiguration {
-  private renderer: Renderer2;
+export class PageConfiguration implements OnInit {
+  public themeService = inject(ThemeService);
+
   public isDark = false;
+  public audioEnabled = true;
 
-  constructor(rendererFactory: RendererFactory2) {
-    this.renderer = rendererFactory.createRenderer(null, null);
-    // Cargar preferencia guardada
+  ngOnInit(): void {
     this.isDark = localStorage.getItem('theme') === 'dark';
-    this.applyTheme();
   }
-
-  toggleTheme() {
-    this.isDark = !this.isDark;
-    localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
-    this.applyTheme();
-  }
-
-  private applyTheme() {
-    if (this.isDark) {
-      this.renderer.addClass(document.body, 'dark-theme');
-    } else {
-      this.renderer.removeClass(document.body, 'dark-theme');
-    }
-  }
-
-  get currentTheme() { return this.isDark; }
 }

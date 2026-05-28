@@ -41,7 +41,7 @@
         </header>
 
         <div class="admin-form" *ngIf="mode === 'editar'">
-          <label for="dni-input">Buscar por DNI:</label>
+          <label for="dni-input" style="color: var(--text-primary);">Buscar por DNI:</label>
           <input
             class="admin-input"
             type="text"
@@ -150,7 +150,7 @@
             <div class="form-group">
               <label>Rol del Usuario *</label>
               <select class="admin-input" id="role" formControlName="role">
-                <option value="" selected disabled>-- Selecciona un rol --</option>
+                <option selected disabled>-- Selecciona un rol --</option>
                 <option *ngFor="let role of roleList" [value]="role.name">{{ role.name }}</option>
               </select>
               <span
@@ -163,7 +163,7 @@
           </div>
 
           <div class="form-row">
-            <div class="form-group">
+            <div class="form-group" *ngIf="userForm.get('role')?.value !== 'ADMIN'">
               <label>Comisiones Asignadas *</label>
               <div class="checkbox-group-container" formArrayName="comissions">
                 @for (comission of comissionList; track comission; let i = $index) {
@@ -247,7 +247,7 @@
                   <div class="user-avatar">{{ user.name.charAt(0).toUpperCase() }}</div>
                   <div class="user-info">
                     <span class="user-name">{{ user.name }}</span>
-                    <span class="user-dni">DNI: {{ user.dni }}</span>
+                    <span class="user-dni" style="color: var(--text-primary);">DNI: {{ user.dni }}</span>
                   </div>
                 </button>
               </li>

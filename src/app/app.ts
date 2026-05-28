@@ -1,19 +1,30 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, OnInit, signal } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Component, HostListener, inject, NgZone, OnInit, signal } from '@angular/core';
+import {
+  NavigationCancel,
+  NavigationEnd,
+  NavigationError,
+  NavigationStart,
+  Router,
+  RouterModule,
+} from '@angular/router';
 import { UiService } from './services/ui.service';
 import { AuthService } from './services/auth.service';
 import { User } from './models/user.model';
 import { Role } from './models/roles';
+import { LoadService } from './services/load.service';
+import { LoadSpinner } from './components/load-spinner/load-spinner';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, LoadSpinner],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class App implements OnInit {
   protected readonly title = signal('cursitu');
+
+  private ngZone = inject(NgZone);
 
   isSidebarOpen = false;
   currentUser: User | null = null;
@@ -22,16 +33,34 @@ export class App implements OnInit {
     public uiService: UiService,
     public authService: AuthService,
     private router: Router,
+    private loadService: LoadService,
   ) {}
 
   menuItems: any[] = [];
 
   ngOnInit() {
-    this.authService.getAuthStatus()
     this.authService.userRole$.subscribe((rol) => {
       this.buildMenu(rol);
     });
     this.getCurrentUser();
+  }
+
+  setupLoader() {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.ngZone.run(() => {
+          this.loadService.show();
+        });
+      } else if (
+        event instanceof NavigationEnd ||
+        event instanceof NavigationCancel ||
+        event instanceof NavigationError
+      ) {
+        this.ngZone.run(() => {
+          this.loadService.hide();
+        });
+      }
+    });
   }
 
   getCurrentUser() {

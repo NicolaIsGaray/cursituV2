@@ -1,6 +1,5 @@
 import { CommonModule, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Aviso } from '../../../notices/temp.model.notices';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { NoticeService } from '../../../services/notice.service';
 import { Notice } from '../../../models/notice.model';
