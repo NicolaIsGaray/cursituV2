@@ -6,6 +6,7 @@ import { Notice } from '../../../models/notice.model';
 import { User } from '../../../models/user.model';
 import { UserService } from '../../../services/user.service';
 import { Observable, tap } from 'rxjs';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-notice-details',
@@ -18,15 +19,20 @@ export class NoticeDetails implements OnInit {
 
   autor$!: Observable<User>;
 
+  reader!: User;
+
   constructor(
     private route: ActivatedRoute,
     private location: Location,
+    private authService: AuthService,
     private actRoute: ActivatedRoute,
     private noticeService: NoticeService,
     private userService: UserService
   ) {}
 
   ngOnInit() {
+    this.reader = this.authService.currentUserValue!;
+
     this.loadNotice();
   }
 
@@ -36,12 +42,20 @@ export class NoticeDetails implements OnInit {
     this.currentNotice$ = this.noticeService.getNoticeById(id!).pipe(
       tap((notice: Notice) => {
         this.loadAutorInfo(notice.senderId);
+        this.checkReadStatus(notice.id!);
       })
     );
   }
 
   loadAutorInfo(id: string) {
     this.autor$ = this.userService.getUserById(id);
+  }
+
+  checkReadStatus(noticeId: string) {
+    this.noticeService.checkReadNoticeStatus(noticeId, this.reader.id!).subscribe({
+      next: () => {},
+      error: (err) => console.error("Hubo un problema al marcar como leido este aviso: ", err)
+    })
   }
 
   formatDate(original: Date | string): string {

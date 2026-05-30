@@ -80,7 +80,7 @@ export class AnnouncementPanel implements OnInit{
   }
 
   submitNotice() {
-    this.noticeService.createNotice(this.newNotice).subscribe({
+    this.noticeService.createNotice(this.newNotice, this.currentUser.id!).subscribe({
       next: () => {
         alert("Aviso Creado Exitosamente.");
         window.location.reload();

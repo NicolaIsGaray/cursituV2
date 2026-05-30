@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Group } from '../models/group.model';
 import { environment } from '../../environments/environment.development';
+import { GroupDTO } from '../models/dto/groupDTO';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +22,10 @@ export class GroupService {
 
   getGroupsInSubject(subjectId: string): Observable<Group[]> {
     return this.http.get<Group[]>(`${this.apiUrl}/subject/${subjectId}`);
+  }
+
+  getCurrentStudentGroups(studentId: string, subjectId: string): Observable<GroupDTO[]> {
+    return this.http.get<GroupDTO[]>(`${this.apiUrl}/user/${studentId}/groups/${subjectId}`);
   }
 
   createGroup(group: Group): Observable<Object> {

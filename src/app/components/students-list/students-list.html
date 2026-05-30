@@ -13,7 +13,7 @@
           <button
             class="subject-chip-btn"
             [style.background-color]="subject.color"
-            [class.selected]="subject.id === selectedSubject?.id"
+            [class.selected]="subject.id === selectedSubject.id"
             (click)="getSelectedSubject(subject.id!)"
           >
             {{ subject.subject_name | uppercase }}

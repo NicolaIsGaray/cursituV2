@@ -29,6 +29,33 @@ h2 {
     box-shadow 0.25s ease;
 }
 
+.subjects-card {
+  overflow-y: auto;
+  max-height: 65vh;
+}
+
+/* ==========================================================================
+   REFACTORIZACIÓN GLOBAL DE BARRAS DE DESPLAZAMIENTO (SCROLLBARS)
+   ========================================================================== */
+.subjects-card::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.subjects-card::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.subjects-card::-webkit-scrollbar-thumb {
+  background: var(--border-input, var(--border-color, #cbd5e1));
+  border-radius: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.subjects-card-container::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary, #94a3b8);
+}
+
 .btn-back {
   background: none;
   border: none;
@@ -106,7 +133,7 @@ h2 {
   font-weight: 700;
   white-space: normal; /* Permitimos 2 líneas en móviles si es necesario */
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

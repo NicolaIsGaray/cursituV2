@@ -2,9 +2,59 @@
 <main *ngIf="authService.userRole$ | async as rol">
   <div class="dashboard-grid" *ngIf="rol === 'ALUMNO'">
     <div class="card wide">
-      <h3>Avisos Recientes</h3>
-      <div class="card-content empty">
-        <p>No hay avisos recientes</p>
+      <h3>Avisos No Leidos</h3>
+
+      <div class="card-content">
+        @for (notice of noticeList$ | async; track notice.id) {
+          <div class="notice-item" (click)="goToNotice(notice.id!)">
+            @if (notice.type === 'info') {
+              <div class="notice-icon-wrapper">
+                <span class="material-symbols-outlined">info</span>
+              </div>
+            } @else if (notice.type === 'announcement') {
+              <div class="notice-icon-wrapper">
+                <span class="material-symbols-outlined">campaign</span>
+              </div>
+            } @else if (notice.type === 'warning') {
+              <div class="notice-icon-wrapper" style="background-color: var(--yellow-warning)">
+                <span class="material-symbols-outlined" style="color: var(--text-primary)"
+                  >warning</span
+                >
+              </div>
+            } @else if (notice.type === 'event') {
+              <div class="notice-icon-wrapper">
+                <span class="material-symbols-outlined">event</span>
+              </div>
+            } @else if (notice.type === 'build') {
+              <div class="notice-icon-wrapper" style="background-color: #1358b1">
+                <span class="material-symbols-outlined">handyman</span>
+              </div>
+            }
+            <div class="notice-main-content">
+              <div class="notice-meta">
+                @if (notice.type === 'info') {
+                  <span class="notice-subject">Aviso</span>
+                } @else if (notice.type === 'announcement') {
+                  <span class="notice-subject">Anuncio</span>
+                } @else if (notice.type === 'warning') {
+                  <span class="notice-subject">Importante</span>
+                } @else if (notice.type === 'event') {
+                  <span class="notice-subject">Evento</span>
+                } @else if (notice.type === 'build') {
+                  <span class="notice-subject">Mantenimiento</span>
+                }
+                <span class="notice-date">Ayer, 18:15</span>
+              </div>
+              <h4 class="notice-title">{{ notice.title }}</h4>
+              <div class="notice-description" [innerHTML]="notice.message"></div>
+            </div>
+          </div>
+        } @empty {
+          <div class="notice-empty-state">
+            <span class="material-symbols-outlined">notifications_off</span>
+            <p>No hay avisos recientes</p>
+          </div>
+        }
       </div>
     </div>
 
@@ -14,18 +64,20 @@
         @if (pendingList.length > 0) {
           <div class="card-content">
             <ul class="pending-list">
-              <li *ngFor="let item of pendingList" class="pending-item">
-                <div class="pending-info">
-                  <span class="subject-name">{{ item.title }}</span>
-                  <span class="subject-tag">Materia: {{ item.subjectNameResolved }}</span>
-                  <span class="due-date">
-                    Vence: {{ item.dateLimit | date: 'dd/MM/yyyy HH:mm' }}
-                  </span>
-                </div>
-                <button class="btn-goto">
-                  <span class="material-symbols-outlined">arrow_forward</span>
-                </button>
-              </li>
+              @for (pending of pendingList; track pending) {
+                <li class="pending-item">
+                  <div class="pending-info">
+                    <span class="subject-name">{{ pending.title }}</span>
+                    <span class="subject-tag">Materia: {{ pending.subjectName }}</span>
+                    <span class="due-date">
+                      Vence: {{ pending.dateLimit | date: 'dd/MM/yyyy HH:mm' }}
+                    </span>
+                  </div>
+                  <button class="btn-goto" [routerLink]="['/send-task', pending.id]">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                  </button>
+                </li>
+              }
             </ul>
           </div>
         } @else {
@@ -42,7 +94,7 @@
     </div>
 
     <div class="card small">
-      <h3>Última Materia Vista</h3>
+      <h3>Última Actividad Visitada</h3>
       @if (lastActivity$ | async; as activity) {
         <div class="actividad-recent-content">
           <div class="actividad-info-main">
@@ -82,15 +134,23 @@
                 No cuenta con entrega.
               </span>
             }
-            <span class="meta-item-time"> Hace 2 minutos. </span>
+            <span class="meta-item-time"> {{ activityTime.timeAgo }} </span>
           </footer>
         </div>
       } @else {
-        <div class="empty-state">
+        <div
+          class="empty-state"
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+          "
+        >
           <div class="empty-icon-wrapper">
             <span class="material-symbols-outlined">history</span>
           </div>
-          <p>No has visitado ninguna actividad hoy</p>
+          <p style="color: var(--text-secondary)">No ha visitado ninguna actividad hoy</p>
         </div>
       }
     </div>

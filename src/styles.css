@@ -26,6 +26,7 @@
   --success-green: #2ecc71;
   --slider-bg-off: #ccc;
   --error-red: #c91919;
+  --yellow-warning: #c0b234;
 }
 
 [data-theme='dark'] {

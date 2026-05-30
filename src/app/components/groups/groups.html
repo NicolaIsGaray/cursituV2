@@ -7,38 +7,91 @@
 
 <main *ngIf="authService.userRole$ | async as rol" class="gestion-grupos-container">
   <div class="groups-layout-alumno" *ngIf="rol === 'ALUMNO'">
-    <div class="selection-panel">
-      <h3>Materias Inscriptas</h3>
-      <div class="subjects-list">
-        <button
-          class="subject-chip-btn"
-          *ngFor="let m of subjectList$ | async"
-          [style.background-color]="m.color"
-          [class.selected]="m.id === selectedSubject?.id"
-        >
-          {{ m.subject_name | uppercase }}
-        </button>
+    @if ((studentSubjects$ | async)?.length === 0) {
+      <div class="full-empty-state">
+        <div class="empty-icon-container">
+          <span class="material-symbols-outlined">school</span>
+        </div>
+        <h4>No registrás inscripciones</h4>
+        <p>
+          Aún no estás vinculado a ninguna materia en la plataforma. Comunicate con secretaría o tu
+          docente si esto es un error.
+        </p>
       </div>
-    </div>
-
-    <div class="group-detail-panel" *ngIf="selectedSubject">
-      <header class="group-header" [style.background-color]="selectedSubject.color">
-        <span class="group-number">Grupo N° 2</span>
-        <span class="members-count">Integrantes: 6</span>
-      </header>
-
-      <div class="members-list">
-        <div class="member-item">
-          <div class="member-avatar">
-            <span class="material-symbols-outlined">person</span>
-          </div>
-          <div class="member-info">
-            <p class="member-name">CARLOS – A</p>
-            <p class="member-role">Estudiante</p>
-          </div>
+    } @else {
+      <div class="selection-panel">
+        <h3>Materias Inscriptas</h3>
+        <div class="subjects-list">
+          @for (subject of studentSubjects$ | async; track subject.id) {
+            <button
+              class="subject-chip-btn"
+              [style.background-color]="subject.color"
+              [class.selected]="subject.id === selectedSubject.id"
+              (click)="switchGroupSubject(subject.id!)"
+            >
+              {{ subject.subject_name | uppercase }}
+            </button>
+          }
         </div>
       </div>
-    </div>
+
+      <div class="group-detail-panel">
+        @if (selectedSubject && studentGroups$) {
+          @for (group of studentGroups$ | async; track group) {
+            <header class="group-header" [style.background-color]="selectedSubject.color">
+              <span class="group-number">Grupo N° {{ group.groupNumber }}</span>
+              <span class="members-count">Integrantes: {{ group.memberIds.length }}</span>
+            </header>
+
+            <div class="members-list">
+              <div class="member-item">
+                <div class="member-avatar">
+                  <span class="material-symbols-outlined">person</span>
+                </div>
+                <div class="member-info">
+                  @if (group.memberName === userData.name) {
+                    <p class="member-name">{{ "(Tú) " + group.memberName + ' - Comisión "' + group.memberComission + '" ' | uppercase }}</p>
+                  } @else {
+                    <p class="member-name">{{ group.memberName + ' - Comisión "' + group.memberComission + '"' | uppercase }}</p>
+                  }
+                  <p class="member-role">{{ group.memberRole }}</p>
+                </div>
+              </div>
+            </div>
+          } @empty {
+            <div class="group-empty-state">
+              <div
+                class="empty-icon-container"
+                [style.color]="selectedSubject.color"
+                [style.background-color]="selectedSubject.color + '15'"
+              >
+                <span class="material-symbols-outlined">group_off</span>
+              </div>
+              <h4>Sin grupo asignado</h4>
+              <p>
+                Todavía no formás parte de ningún grupo de trabajo para la materia
+                <strong>{{ selectedSubject.subject_name }}</strong
+                >.
+              </p>
+              <span class="empty-hint"
+                >Los grupos serán configurados y asignados por el docente a cargo.</span
+              >
+            </div>
+          }
+        } @else {
+          <div class="group-empty-state">
+            <div class="empty-icon-container">
+              <span class="material-symbols-outlined">arrow_back</span>
+            </div>
+            <h4>Seleccioná una materia</h4>
+            <p>
+              Elegí una materia del panel izquierdo para ver los detalles de tu grupo de trabajo y
+              compañeros.
+            </p>
+          </div>
+        }
+      </div>
+    }
   </div>
 
   <div class="groups-layout-docente" *ngIf="rol === 'DOCENTE'">
@@ -51,8 +104,8 @@
           <button
             class="subject-chip-btn"
             [style.background-color]="subject.color"
-            [class.selected]="subject.id === selectedSubject?.id"
-            (click)="getSelectedSubject(subject.id!)"
+            [class.selected]="subject.id === selectedSubject.id"
+            (click)="selectProfessorSubject(subject)"
           >
             {{ subject.subject_name | uppercase }}
           </button>
@@ -63,8 +116,14 @@
     @if (selectedSubject) {
       <div class="docente-grid-split">
         <form class="form-card-section" [formGroup]="groupForm" (ngSubmit)="onSubmitGroup()">
-          <h3>{{ mode === 'crear' ? 'Configurar Grupo' : 'Modificar Grupo N° ' + groupForm.get('groupNumber')?.value }}</h3>
-  
+          <h3>
+            {{
+              mode === 'crear'
+                ? 'Configurar Grupo'
+                : 'Modificar Grupo N° ' + groupForm.get('groupNumber')?.value
+            }}
+          </h3>
+
           <div class="form-group">
             <label class="form-label">Número del Grupo</label>
             <div class="input-icon-wrapper">
@@ -77,13 +136,16 @@
                 (keydown)="validateKeyboard($event)"
               />
             </div>
-            @if (groupForm.get('groupNumber')?.touched && groupForm.get('groupNumber')?.errors?.['required']) {
-              <span style="color: #dc2626; font-size: 0.8rem; font-weight: 600;">
+            @if (
+              groupForm.get('groupNumber')?.touched &&
+              groupForm.get('groupNumber')?.errors?.['required']
+            ) {
+              <span style="color: #dc2626; font-size: 0.8rem; font-weight: 600">
                 Debe elegir un número identificador para el grupo.
               </span>
             }
           </div>
-  
+
           <div class="form-group">
             <label class="form-label">Límite de Integrantes</label>
             <input
@@ -94,16 +156,19 @@
               formControlName="groupLimit"
               (keydown)="validateKeyboard($event)"
             />
-            @if (groupForm.get('groupLimit')?.touched && groupForm.get('groupLimit')?.errors?.['required']) {
-              <span style="color: #dc2626; font-size: 0.8rem; font-weight: 600;">
+            @if (
+              groupForm.get('groupLimit')?.touched &&
+              groupForm.get('groupLimit')?.errors?.['required']
+            ) {
+              <span style="color: #dc2626; font-size: 0.8rem; font-weight: 600">
                 Debe establecer un límite de integrantes para el grupo (Mínimo 1).
               </span>
             }
           </div>
-  
+
           <div class="form-group">
             <label class="form-label">Seleccionar Alumnos Sin Grupo</label>
-  
+
             <div class="custom-multiselect-box" formArrayName="groupMembers">
               @for (student of studentFormArray.controls; track student; let i = $index) {
                 <label [formGroupName]="i" class="multiselect-option" [for]="'student-' + i">
@@ -115,8 +180,8 @@
               }
             </div>
           </div>
-  
-          <div style="display: flex; gap: 10px;">
+
+          <div style="display: flex; gap: 10px">
             <button
               class="btn-primary-action"
               type="submit"
@@ -124,30 +189,44 @@
             >
               {{ mode === 'crear' ? 'Guardar Grupo' : 'Actualizar Grupo' }}
             </button>
-            <button *ngIf="mode === 'editar'" type="button" class="btn-back" style="margin-top: 10px;" (click)="cancelEdit()">
+            <button
+              *ngIf="mode === 'editar'"
+              type="button"
+              class="btn-back"
+              style="margin-top: 10px"
+              (click)="cancelEdit()"
+            >
               Cancelar
             </button>
           </div>
         </form>
-  
+
         <div class="grupos-view-section">
           <h3>Planilla de Grupos</h3>
-  
+
           <div class="grupos-scroll-grid">
             @for (group of groupList$ | async; track group.id) {
               <div class="grupo-card">
                 <header class="grupo-card-header">
                   <span class="title">Grupo N° {{ group.number }}</span>
                   <div class="grupo-actions">
-                    <button class="action-icon-btn edit" title="Editar Grupo" (click)="editGroup(group)">
+                    <button
+                      class="action-icon-btn edit"
+                      title="Editar Grupo"
+                      (click)="editGroup(group)"
+                    >
                       <span class="material-symbols-outlined">edit</span>
                     </button>
-                    <button class="action-icon-btn delete" title="Eliminar Grupo" (click)="deleteGroup(group)">
+                    <button
+                      class="action-icon-btn delete"
+                      title="Eliminar Grupo"
+                      (click)="deleteGroup(group)"
+                    >
                       <span class="material-symbols-outlined">delete</span>
                     </button>
                   </div>
                 </header>
-  
+
                 <ul class="integrantes-list">
                   <li *ngFor="let name of group.member_names">{{ name }}</li>
                 </ul>
@@ -159,8 +238,8 @@
                 </div>
                 <h4>No hay grupos configurados</h4>
                 <p>
-                  Aún no se han armado grupos para esta materia. Utilizá el panel para dar de alta el
-                  primer grupo de trabajo.
+                  Aún no se han armado grupos para esta materia. Utilizá el panel para dar de alta
+                  el primer grupo de trabajo.
                 </p>
               </div>
             }
@@ -168,12 +247,18 @@
         </div>
       </div>
     } @else {
-      <div class="empty-groups-placeholder" style="max-width: 600px; margin: 2rem auto; min-height: 250px;">
+      <div
+        class="empty-groups-placeholder"
+        style="max-width: 600px; margin: 2rem auto; min-height: 250px"
+      >
         <div class="placeholder-icon-box">
           <span class="material-symbols-outlined">school</span>
         </div>
         <h4>Por favor, seleccione una materia</h4>
-        <p>Debe hacer clic en una de las materias inscriptas listadas arriba para poder gestionar sus correspondientes grupos de trabajo.</p>
+        <p>
+          Debe hacer clic en una de las materias inscriptas listadas arriba para poder gestionar sus
+          correspondientes grupos de trabajo.
+        </p>
       </div>
     }
   </div>

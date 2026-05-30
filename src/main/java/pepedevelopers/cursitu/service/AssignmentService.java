@@ -1,5 +1,8 @@
 package pepedevelopers.cursitu.service;
 
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,10 +11,7 @@ import pepedevelopers.cursitu.model.ClassroomEntity;
 import pepedevelopers.cursitu.model.SubjectEntity;
 import pepedevelopers.cursitu.model.UserEntity;
 import pepedevelopers.cursitu.model.dto.*;
-import pepedevelopers.cursitu.model.subject_submodel.AssignmentEntity;
-import pepedevelopers.cursitu.model.subject_submodel.GradesEntity;
-import pepedevelopers.cursitu.model.subject_submodel.SubmissionEntity;
-import pepedevelopers.cursitu.model.subject_submodel.TopicEntity;
+import pepedevelopers.cursitu.model.subject_submodel.*;
 import pepedevelopers.cursitu.repository.*;
 
 import java.util.ArrayList;
@@ -41,6 +41,15 @@ public class AssignmentService {
   }
 
   @Transactional
+  public AssignmentEntity createAssignment(AssignmentEntity assignment) {
+    if (assignment == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Actividad a crear erronea.");
+    }
+
+    return assignmentRepo.save(assignment);
+  }
+
+  @Transactional
   public AssignmentEntity updateAssignment(String id, AssignmentEntity update) {
     AssignmentEntity assignment = assignmentRepo.findById(id).orElse(null);
 
@@ -53,6 +62,7 @@ public class AssignmentService {
     assignment.setDate_limit(update.getDate_limit() == null ? assignment.getDate_limit() : update.getDate_limit());
     assignment.setEnabled_to_deliver(update.getEnabled_to_deliver() == null ? assignment.getEnabled_to_deliver() : update.getEnabled_to_deliver());
     assignment.setType(update.getType() == null ? assignment.getType() : update.getType());
+    assignment.setDeliverMode(update.getDeliverMode() == null ? assignment.getDeliverMode() : update.getDeliverMode());
     assignment.setSentBy(update.getSentBy() == null ? assignment.getSentBy() : update.getSentBy());
 
     return assignmentRepo.save(assignment);
@@ -113,6 +123,7 @@ public class AssignmentService {
         return new AssignmentDTO(
           activity.getId(),
           activity.getTitle(),
+          activity.getSubject_name(),
           activity.getDate_limit(),
           status
         );

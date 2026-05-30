@@ -19,8 +19,8 @@ export class NoticeService {
     return this.http.get<Notice>(`${this.apiUrl}/${id}`);
   }
 
-  createNotice(notice: Notice): Observable<Object> {
-    return this.http.post(this.apiUrl, notice);
+  createNotice(notice: Notice, senderId: string): Observable<Object> {
+    return this.http.post(`${this.apiUrl}/sent-by/${senderId}`, notice);
   }
 
   modifyNotice(id: string, notice: Notice) {
@@ -33,5 +33,13 @@ export class NoticeService {
 
   getSenderNotices(senderId: string): Observable<Notice[]> {
     return this.http.get<Notice[]>(`${this.apiUrl}/sender/${senderId}`);
+  }
+
+  getNotReadNotices(studentId: string): Observable<Notice[]> {
+    return this.http.get<Notice[]>(`${this.apiUrl}/not-read/${studentId}`);
+  }
+
+  checkReadNoticeStatus(noticeId: string, studentId: string) {
+    return this.http.get(`${this.apiUrl}/status/${noticeId}/user/${studentId}`);
   }
 }

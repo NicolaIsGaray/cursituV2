@@ -74,7 +74,7 @@
             <div
               class="subject-main main-clickable"
               [style.background-color]="subject.color"
-              (click)="navigateToClassroom('/current-classroom', subject.classroom_id!)"
+              (click)="navigateToClassroom('/current-classroom', subject.classroom_id!, subject.id)"
             >
               <div class="subject-info">
                 <h3>{{ subject.subject_name | uppercase }}</h3>

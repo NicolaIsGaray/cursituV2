@@ -47,8 +47,7 @@ h2 {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 300px;
-  overflow-y: auto;
+  max-height: 380px;
 }
 
 .pending-item {
@@ -76,9 +75,13 @@ h2 {
   transition: color 0.2s ease;
 }
 
+.subject-tag {
+  color: var(--text-primary);
+}
+
 .due-date {
   font-size: 0.85rem;
-  color: var(--error-red); /* Mapeado a la variable semántica de error */
+  color: var(--error-red);
   transition: color 0.2s ease;
 }
 
@@ -98,6 +101,12 @@ h2 {
   transform: translateX(4px);
 }
 
+.card-content {
+  overflow-y: auto; /* Corregido: cambia scroll permanente por auto-detección */
+  overflow-x: hidden;
+  padding-right: 5px;
+}
+
 /* RECUADRO GRIS INTERNO (ESTADO VACÍO) */
 .card-content.empty {
   flex-grow: 1;
@@ -108,7 +117,7 @@ h2 {
   text-align: center;
   padding: 20px;
   border: 1px solid var(--border-color);
-  background: var(--bg-empty-box, #fafafa); /* Sutil fondo adaptativo */
+  background: var(--bg-empty-box, #fafafa);
   border-radius: 12px;
   color: var(--text-secondary);
   transition: all 0.25s ease;
@@ -242,7 +251,6 @@ h2 {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  /* El SVG cambia la flecha dinámicamente según la variable seteada en style.css */
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 14px center;
@@ -357,19 +365,178 @@ h2 {
   padding: 20px;
 }
 
-/* PERSONALIZACIÓN DE SCROLLBARS INTERNOS */
-.students-scroll-area::-webkit-scrollbar {
-  width: 6px;
+/* === CONTENEDOR DE AVISOS RECIENTES === */
+.card.wide {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 25px;
+  max-height: 200px;
+  box-shadow: 0px 10px 30px var(--sidebar-shadow);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
-.students-scroll-area::-webkit-scrollbar-track {
-  background: transparent;
+
+.card.wide h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  color: var(--text-primary);
 }
-.students-scroll-area::-webkit-scrollbar-thumb {
-  background: var(--border-input, #cbd5e1);
-  border-radius: 10px;
+
+/* === LISTA DE AVISOS === */
+.notices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px; /* Control de altura para netbooks */
+  overflow-y: auto;
+  padding-right: 5px;
 }
-.students-scroll-area::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+
+/* === TARJETA DE AVISO INDIVIDUAL (ITEM) === */
+.notice-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  margin-bottom: 2vh;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.notice-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-input, var(--border-color));
+  transform: translateX(2px);
+}
+
+/* Variante para Avisos Urgentes o Críticos */
+.notice-item.urgent {
+  border-left: 4px solid var(--danger-red, #ef4444);
+  background: rgba(239, 68, 68, 0.03);
+}
+
+.notice-item.urgent:hover {
+  background: rgba(239, 68, 68, 0.06);
+}
+
+/* Contenedor del Icono informativo */
+.notice-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.notice-item.urgent .notice-icon-wrapper {
+  color: var(--danger-red, #f87171);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.notice-icon-wrapper span {
+  font-size: 20px;
+}
+
+/* Cuerpo de Contenido */
+.notice-main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+/* Meta información (Materia y Fecha) */
+.notice-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.notice-subject {
+  color: var(--primary-purple);
+}
+
+.notice-item.urgent .notice-subject {
+  color: var(--danger-red, #f87171);
+}
+
+.notice-date {
+  color: var(--text-muted);
+}
+
+/* Título del Aviso */
+.notice-title {
+  margin: 2px 0 0 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+/* Descripción / Cuerpo del mensaje */
+.notice-description {
+  margin: 4px 0 0 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  max-height: calc(1.4rem * 2); 
+  overflow: hidden;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word; 
+}
+
+.notice-description * {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  font-size: inherit !important;
+  color: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+}
+
+/* === ESTADO VACÍO === */
+.notice-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-input);
+}
+
+.notice-empty-state span {
+  font-size: 48px;
+  margin-bottom: 10px;
+  opacity: 0.7;
+}
+
+.notice-empty-state p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 /* ==========================================================================
@@ -573,6 +740,36 @@ h2 {
 }
 
 /* ==========================================================================
+   REFACTORIZACIÓN GLOBAL DE BARRAS DE DESPLAZAMIENTO (SCROLLBARS)
+   ========================================================================== */
+.card-content::-webkit-scrollbar,
+.students-scroll-area::-webkit-scrollbar,
+.notices-list::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.card-content::-webkit-scrollbar-track,
+.students-scroll-area::-webkit-scrollbar-track,
+.notices-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.card-content::-webkit-scrollbar-thumb,
+.students-scroll-area::-webkit-scrollbar-thumb,
+.notices-list::-webkit-scrollbar-thumb {
+  background: var(--border-input, var(--border-color, #cbd5e1));
+  border-radius: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.card-content::-webkit-scrollbar-thumb:hover,
+.students-scroll-area::-webkit-scrollbar-thumb:hover,
+.notices-list::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary, #94a3b8);
+}
+
+/* ==========================================================================
    MEDIA QUERIES (SOPORTE DE DISEÑO EN PANTALLAS CHICAS / NETBOOKS - INTACTO)
    ========================================================================== */
 @media (max-width: 1100px) {
@@ -680,6 +877,27 @@ h2 {
   }
   .success-text {
     font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .card.wide {
+    padding: 15px;
+  }
+
+  .notice-item {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .notice-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .notice-date {
+    font-size: 0.7rem;
   }
 }
 

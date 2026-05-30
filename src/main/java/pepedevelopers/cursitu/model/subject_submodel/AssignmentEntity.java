@@ -22,6 +22,7 @@ public class AssignmentEntity {
   private LocalDateTime date_limit;
   private String allowed_format;
   private String type;
+  private String deliverMode;
   private List<String> sentBy;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")

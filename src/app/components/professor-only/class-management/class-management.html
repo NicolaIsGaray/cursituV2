@@ -219,6 +219,31 @@
               </div>
 
               <div class="delivery-column">
+                <label>¿Modo de entrega?</label>
+                <div class="toggle-group">
+                  <button
+                    type="button"
+                    class="toggle-btn"
+                    [class.active]="deliverType === 'individual'"
+                    [class.inactive]="deliverType !== 'individual'"
+                    (click)="setDeliverMode('individual')"
+                  >
+                    Individual
+                  </button>
+
+                  <button
+                    type="button"
+                    class="toggle-btn"
+                    [class.active]="deliverType === 'grupo'"
+                    [class.inactive]="deliverType !== 'grupo'"
+                    (click)="setDeliverMode('grupo')"
+                  >
+                    En Grupo
+                  </button>
+                </div>
+              </div>
+
+              <div class="delivery-column">
                 <label>¿Está habilitado para entregar?</label>
                 <div class="toggle-group">
                   <button

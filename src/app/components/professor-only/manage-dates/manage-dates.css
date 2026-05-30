@@ -356,10 +356,21 @@
   transition: all 0.2s ease;
 }
 
+.btn-action.important.yes {
+  background-color: #f1c638;
+  color: var(--text-primary);
+}
+
 .btn-action:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
   border-color: var(--border-input, var(--border-color));
+}
+
+.btn-action.important:hover {
+  background: rgba(239, 199, 68, 0.12);
+  color: #f1c638;
+  border-color: rgba(239, 171, 68, 0.25);
 }
 
 .btn-action.delete:hover {

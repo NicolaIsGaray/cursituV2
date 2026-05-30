@@ -58,47 +58,114 @@
     border-color 0.25s ease;
 }
 
+/* ESTADO BASE DE LA FILA (UNIFICADO) */
 .aviso-row-item {
-  display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  display: flex;
   align-items: center;
   gap: 20px;
-  padding: 16px;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
+  padding: 14px 20px;
   background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
   cursor: pointer;
   box-sizing: border-box;
   transition: all 0.2s ease-in-out;
 }
 
 .aviso-row-item:hover {
+  background: var(--bg-hover);
   border-color: var(--primary-purple);
   transform: translateX(2px);
   box-shadow: 0 4px 12px var(--sidebar-shadow);
-  background: var(--bg-hover);
 }
 
+/* VARIACIONES PARA EL ESTADO NO LEÍDO (UNREAD) */
+.aviso-row-item.unread {
+  background: rgba(var(--primary-purple-rgb, 63, 54, 137), 0.04);
+  border-color: rgba(var(--primary-purple-rgb, 63, 54, 137), 0.25);
+}
+
+.aviso-row-item.unread:hover {
+  background: rgba(var(--primary-purple-rgb, 63, 54, 137), 0.08);
+}
+
+.aviso-row-item.unread .aviso-asunto-text {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.aviso-row-item.unread .leer-action-trigger {
+  color: var(--primary-purple);
+  font-weight: 700;
+}
+
+/* CONTENEDOR DEL ICONO Y PUNTO DE NOTIFICACIÓN */
 .aviso-status-icon {
-  width: 54px;
-  height: 54px;
-  background: rgba(255, 145, 44, 0.15);
-  color: #ff912c;
-  border-radius: 10px;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  border-radius: 10px;
   flex-shrink: 0;
+  transition: all 0.2s ease;
 }
 
 .aviso-status-icon .material-symbols-outlined {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
 }
 
+.aviso-row-item.unread .aviso-status-icon {
+  color: var(--primary-purple);
+  background: rgba(var(--primary-purple-rgb, 63, 54, 137), 0.1);
+}
+
+/* PUNTO DE NOTIFICACIÓN (BADGE DOT) */
+.unread-badge-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background-color: var(--error-red, #ef4444);
+  border: 2px solid var(--bg-card);
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+.aviso-row-item:hover .unread-badge-dot {
+  border-color: var(--bg-hover);
+}
+
+.aviso-row-item.unread:hover .unread-badge-dot {
+  border-color: rgba(var(--primary-purple-rgb, 63, 54, 137), 0.08);
+}
+
+/* ANIMACIÓN DE PULSO */
+@keyframes pulse-dot {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 5px rgba(239, 68, 68, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+/* CONTENEDORES DE INFORMACIÓN */
 .aviso-main-info {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex: 1;
   min-width: 0;
 }
 
@@ -344,11 +411,11 @@
     padding: 12px;
   }
   .aviso-status-icon {
-    width: 46px;
-    height: 46px;
+    width: 40px;
+    height: 40px;
   }
   .aviso-status-icon .material-symbols-outlined {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
   }
   .aviso-asunto-text {
     font-size: 0.95rem;
@@ -382,13 +449,12 @@
   }
 
   .aviso-meta-side {
-    display: none;
+    display: none; /* Oculta fecha y acción en tablets reducidas */
   }
 
   .aviso-row-item {
-    grid-template-columns: auto 1fr auto;
+    padding: 12px 14px;
     gap: 12px;
-    padding: 14px 10px;
   }
 
   .detalle-view-header {
@@ -417,14 +483,13 @@
   }
 
   .aviso-row-item {
-    grid-template-columns: 1fr auto;
-    gap: 8px;
     padding: 12px;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .aviso-status-icon {
-    display: none;
+    display: none; /* Eliminación limpia sin romper el flujo flex */
   }
 
   .aviso-asunto-text {
@@ -443,7 +508,6 @@
   }
 
   .aviso-action-view-btn {
-    align-self: center;
     width: 38px;
     height: 38px;
   }

@@ -75,8 +75,8 @@ export class StudentsList implements OnInit {
         const studentGroupMap = new Map<string, number>();
 
         currentGroups.forEach((group) => {
-          if (group.members_id) {
-            group.members_id.forEach((studentId) => {
+          if (group.membersId) {
+            group.membersId.forEach((studentId) => {
               studentGroupMap.set(String(studentId), group.number);
             });
           }

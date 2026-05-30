@@ -5,17 +5,40 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import pepedevelopers.cursitu.model.NoticeEntity;
+import pepedevelopers.cursitu.model.UserEntity;
 import pepedevelopers.cursitu.repository.INotice;
+import pepedevelopers.cursitu.repository.IUser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class NoticeService {
   private final INotice noticeRepo;
+  private final IUser userRepo;
 
-  public NoticeService(INotice noticeRepo) {
+  public NoticeService(INotice noticeRepo, IUser userRepo) {
     this.noticeRepo = noticeRepo;
+    this.userRepo = userRepo;
+  }
+
+  @Transactional
+  public NoticeEntity createNotice(NoticeEntity notice, String senderId) {
+    if (notice == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aviso no válido.");
+    }
+
+    if (senderId.isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID del emisor no válido.");
+    }
+
+    List<String> emisor = new ArrayList<>();
+    emisor.add(senderId);
+
+    notice.setReadBy(emisor);
+
+    return noticeRepo.save(notice);
   }
 
   @Transactional
@@ -33,10 +56,59 @@ public class NoticeService {
 
     notice.setTitle(updates.getTitle() == null ? notice.getTitle() : updates.getTitle());
     notice.setMessage(updates.getMessage() == null ? notice.getMessage() : updates.getMessage());
-    notice.setRead_by(new ArrayList<>());
+    notice.setReadBy(new ArrayList<>());
     notice.setType(updates.getType() == null ? "info" : updates.getType());
     notice.setCreated_at(updates.getCreated_at() == null ? notice.getCreated_at() : updates.getCreated_at());
 
     noticeRepo.save(notice);
+  }
+
+  @Transactional
+  public List<NoticeEntity> showNotRead(String studentId) {
+    List<NoticeEntity> notices = noticeRepo.findAll();
+    List<NoticeEntity> notRead = new ArrayList<>();
+
+    if (!notices.isEmpty()) {
+      notices.forEach(notice -> {
+        userRepo.findById(studentId).ifPresent(student -> {
+          if (notice.getReadBy().isEmpty()) {
+            notRead.add(notice);
+          } else {
+            for (String readerId : notice.getReadBy()) {
+              if (!Objects.equals(student.getId(), readerId) || notice.getReadBy().isEmpty()) {
+                notRead.add(notice);
+              }
+            }
+          }
+        });
+      });
+    }
+
+    return notRead;
+  }
+
+  @Transactional
+  public void checkAndUpdateReadStatus(String noticeId, String userId) {
+    NoticeEntity notice = noticeRepo.findById(noticeId).orElseThrow(
+      () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aviso no encontrado.")
+    );
+
+    List<String> readByIds = notice.getReadBy();
+
+    userRepo.findById(userId).ifPresent(user -> {
+      if (readByIds.isEmpty()) {
+        readByIds.add(user.getId());
+      } else {
+        for (String readerId : readByIds) {
+          if (!Objects.equals(user.getId(), readerId)) {
+            readByIds.add(user.getId());
+          }
+        }
+      }
+
+      notice.setReadBy(readByIds);
+
+      noticeRepo.save(notice);
+    });
   }
 }

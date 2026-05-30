@@ -3,7 +3,7 @@
    ========================================================================== */
 
 .form-scroll-container {
-  max-height: 80vh;
+  max-height: 78.5vh;
   overflow-y: auto;
   padding-right: 12px;
 }

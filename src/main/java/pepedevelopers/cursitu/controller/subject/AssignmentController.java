@@ -32,7 +32,7 @@ public class AssignmentController {
 
   @PostMapping
   public ResponseEntity<AssignmentEntity> addAssignment(@RequestBody AssignmentEntity newAssignment) {
-    return new ResponseEntity<>(assignRepo.save(newAssignment), HttpStatus.CREATED);
+    return new ResponseEntity<>(assignmentService.createAssignment(newAssignment), HttpStatus.CREATED);
   }
 
   @GetMapping("/{id}")
@@ -93,13 +93,7 @@ public class AssignmentController {
 
   @GetMapping("/student/{id}/pending")
   public ResponseEntity<List<AssignmentDTO>> getStudentPendings(@PathVariable String id) {
-    List<AssignmentDTO> list = assignmentService.getPendingAssignmentsForStudent(id);
-
-    if (list == null || list.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
-
-    return ResponseEntity.ok(list);
+    return ResponseEntity.ok(assignmentService.getPendingAssignmentsForStudent(id));
   }
 
   @GetMapping("/{classroomId}/tasks/{taskId}/stats")

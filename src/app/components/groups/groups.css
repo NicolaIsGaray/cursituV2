@@ -56,6 +56,7 @@ h3 {
 .selection-panel {
   background: var(--bg-card);
   padding: 24px;
+  height: 380px;
   border-radius: 16px;
   border: 1px solid var(--border-color);
   box-shadow: 0 4px 20px var(--sidebar-shadow);
@@ -454,6 +455,97 @@ h3 {
 .subjects-list::-webkit-scrollbar-thumb {
   background: var(--border-input, var(--border-color));
   border-radius: 10px;
+}
+
+/* === ESTADO VACÍO GENERAL (SIN MATERIAS) === */
+.full-empty-state {
+  grid-column: span 2; /* Ocupa todo el layout de la grilla del alumno */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 40px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: 0px 10px 30px var(--sidebar-shadow);
+  margin: 10px;
+}
+
+.full-empty-state h4 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 10px 0;
+}
+
+.full-empty-state p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  max-width: 460px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* === ESTADO VACÍO DENTRO DEL PANEL DE GRUPOS === */
+.group-empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 30px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  min-height: 350px;
+}
+
+.group-empty-state h4 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 10px 0;
+}
+
+.group-empty-state p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  max-width: 340px;
+  line-height: 1.5;
+  margin: 0 0 15px 0;
+}
+
+.group-empty-state p strong {
+  color: var(--text-primary);
+}
+
+.empty-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+  max-width: 280px;
+}
+
+/* CONTENEDOR ANMADO DE ICONOS PARA ESTADOS VACÍOS */
+.empty-icon-container {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.empty-icon-container span {
+  font-size: 32px;
 }
 
 /* === ADAPTACIÓN RESPONSIVA === */

@@ -26,6 +26,8 @@ export class SubjectsList implements OnInit {
 
   expandedSubjectId: string | null = null;
 
+  private readonly SUBJECT_KEY = 'cursitu_selected_subject';
+
   constructor(
     private router: Router,
     public authService: AuthService,
@@ -95,7 +97,8 @@ export class SubjectsList implements OnInit {
     this.expandedSubjectId = this.expandedSubjectId === subjectId ? null : subjectId;
   }
 
-  navigateToClassroom(path: string, classroomId: string) {
+  navigateToClassroom(path: string, classroomId: string, subjectId: string) {
+    localStorage.setItem(this.SUBJECT_KEY, subjectId);
     this.router.navigate([path, classroomId]);
   }
 

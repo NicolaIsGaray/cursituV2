@@ -78,4 +78,9 @@ public class UserController {
   public List<UserEntity> getOnlyProfessors() {
     return userRepo.findByRole("DOCENTE");
   }
+
+  @GetMapping("/users-by-id/{ids}")
+  public ResponseEntity<List<UserEntity>> getAllUsersById(@PathVariable List<String> ids) {
+    return  ResponseEntity.ok(userRepo.findAllById(ids));
+  }
 }

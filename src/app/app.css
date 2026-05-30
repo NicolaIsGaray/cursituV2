@@ -18,7 +18,7 @@ body {
   width: 100%;
   box-sizing: border-box;
   transition: background-color 0.25s ease;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 .main-content {
@@ -48,7 +48,7 @@ body {
 .sidebar {
   width: var(--sidebar-width);
   min-width: var(--sidebar-width);
-  height: calc(103vh - 20px); 
+  height: calc(103vh - 20px);
   background: var(--bg-card);
   box-shadow: 0px 4px 20px var(--sidebar-shadow);
   display: flex;
@@ -57,7 +57,10 @@ body {
   box-sizing: border-box;
   flex-shrink: 0;
   z-index: 1000;
-  transition: transform 0.3s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    transform 0.3s ease,
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .app-title {
@@ -159,9 +162,15 @@ body {
   border-radius: 50%;
   flex-shrink: 0;
 }
-.dot.blue { background: #3498db; }
-.dot.red { background: #e74c3c; }
-.dot.green { background: #2ecc71; }
+.dot.blue {
+  background: #3498db;
+}
+.dot.red {
+  background: #e74c3c;
+}
+.dot.green {
+  background: #2ecc71;
+}
 
 /* Footer de Perfil de Usuario */
 .user-footer {
@@ -178,9 +187,9 @@ body {
   margin-bottom: 1rem;
 }
 
-.user-icon { 
-  font-size: 32px; 
-  color: var(--text-primary); 
+.user-icon {
+  font-size: 32px;
+  color: var(--text-primary);
   transition: color 0.2s ease;
 }
 
@@ -208,7 +217,9 @@ body {
   border-radius: 10px;
   text-decoration: none;
   color: var(--text-secondary);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .settings-btn p {
@@ -242,7 +253,9 @@ body {
   padding: 6px 16px 6px 6px;
   border-radius: 10px;
   box-shadow: 0px 2px 10px var(--sidebar-shadow);
-  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .profile-thumb {
@@ -254,7 +267,66 @@ body {
   justify-content: center;
   border-radius: 6px;
   color: var(--text-primary);
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+/* === CONTENEDOR DEL BOTÓN DE NOTIFICACIONES === */
+.notification-trigger {
+  position: relative; /* Requisito para el posicionamiento del badge */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === BADGE NUMÉRICO DE NOTIFICACIONES === */
+.notification-badge-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: var(--error-red, #ef4444);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+
+  /* Estructura adaptable para números de 1, 2 o más dígitos */
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  /* Anillo de aislamiento estético con el fondo del botón */
+  border: 2px solid var(--bg-navbar, #1e1e2f);
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+
+  /* Comportamiento de la tipografía */
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  user-select: none;
+  pointer-events: none; /* Evita interferir con el click del botón */
+
+  animation: scaleIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Animación de emergencia sutil al aparecer */
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .welcome-text {
@@ -283,7 +355,10 @@ body {
   color: var(--text-primary);
   box-shadow: 0px 2px 5px var(--sidebar-shadow);
   cursor: pointer;
-  transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .action-btn:hover {
@@ -306,11 +381,14 @@ body {
   color: var(--text-primary);
   box-shadow: 0px 10px 25px var(--dropdown-shadow);
   padding: 10px;
-  display: none; 
+  display: none;
   z-index: 1100;
   border: 1px solid var(--border-color);
   box-sizing: border-box;
-  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .dropdown-menu.show {
@@ -356,7 +434,9 @@ body {
   font-size: 0.85rem;
   font-weight: 600;
   border-radius: 8px;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
   cursor: pointer;
 }
 
@@ -387,7 +467,9 @@ body {
 }
 
 /* ELEMENTOS MÓVIL */
-.menu-toggle, .close-sidebar-mobile, .sidebar-overlay {
+.menu-toggle,
+.close-sidebar-mobile,
+.sidebar-overlay {
   display: none;
 }
 
@@ -439,8 +521,10 @@ body {
   .sidebar-open .sidebar-overlay {
     display: block;
     position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background: var(--overlay-bg);
     z-index: 999;
   }
@@ -459,8 +543,12 @@ body {
   .sidebar-section:nth-child(3) {
     display: none !important;
   }
-  .app-title { margin-bottom: 1rem; }
-  .top-bar { padding: 0.5rem 1.5rem; }
+  .app-title {
+    margin-bottom: 1rem;
+  }
+  .top-bar {
+    padding: 0.5rem 1.5rem;
+  }
 }
 
 /* ==========================================================================

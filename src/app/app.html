@@ -176,9 +176,19 @@
       </div>
 
       <div class="header-actions">
-        <button class="action-btn">
-          <span class="material-symbols-outlined">notifications</span>
-        </button>
+        @if (authService.userRole$ | async; as role) {
+          <button class="action-btn notification-trigger" routerLink="/notices" *ngIf="role !== 'ADMIN'">
+            <span class="material-symbols-outlined">notifications</span>
+  
+            @if (unreadCount$ | async; as count) {
+              @if (count > 0) {
+                <span class="notification-badge-count">
+                  {{ count > 99 ? '+99' : count }}
+                </span>
+              }
+            }
+          </button>
+        }
 
         <!-- Dropdown de Usuario -->
         <div class="user-dropdown-container">

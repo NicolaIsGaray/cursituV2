@@ -30,4 +30,8 @@ export class DateService {
   deleteDateEvent(id: string) {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  assignDateToExam(examId: string) {
+    return this.http.get(`${this.apiUrl}/exam-date/${examId}`);
+  }
 }

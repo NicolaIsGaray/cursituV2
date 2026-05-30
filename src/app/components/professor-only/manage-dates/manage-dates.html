@@ -103,10 +103,21 @@
                   />
                 </div>
                 <div class="action-buttons">
-                  <button class="btn-action" title="Notificar como importante">
+                  <button
+                    class="btn-action important"
+                    [class.yes]="date.important"
+                    title="{{
+                      date.important ? 'Desmarcar como importante' : 'Notificar como importante'
+                    }}"
+                    (click)="setImportant(date)"
+                  >
                     <span class="material-symbols-outlined">notifications</span>
                   </button>
-                  <button class="btn-action delete" title="Eliminar Fecha" (click)="deleteDateEvent(date.id!)">
+                  <button
+                    class="btn-action delete"
+                    title="Eliminar Fecha"
+                    (click)="deleteDateEvent(date.id!)"
+                  >
                     <span class="material-symbols-outlined">delete</span>
                   </button>
                 </div>

@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 import { Assignment } from '../../../models/assignment.model';
 import { AssignmentService } from '../../../services/assignment.service';
 import { TopicDTO } from '../../../models/dto/topicDTO';
+import { DateService } from '../../../services/date.service';
 
 @Component({
   selector: 'app-add-class',
@@ -28,9 +29,11 @@ export class ClassManagement implements OnInit {
   assignmentType: 'tarea' | 'parcial' = 'tarea';
   assignmentEnabled: 'habilitado' | 'deshabilitado' = 'habilitado';
   enableToDeliver: boolean = true;
+  deliverType: 'individual' | 'grupo' = 'individual';
 
   subject$!: Observable<Subject>;
   subjectId: string | null = null;
+  subjectName: string | null = null;
 
   currentClassroom: Classroom | null = null;
   classroom_id!: string;
@@ -58,6 +61,7 @@ export class ClassManagement implements OnInit {
     private topicService: TopicService,
     private assignmentService: AssignmentService,
     private classroomService: ClassroomService,
+    private dateService: DateService,
     private fb: FormBuilder,
     private router: Router,
     private location: Location,
@@ -88,8 +92,7 @@ export class ClassManagement implements OnInit {
     this.class_mode = localStorage.getItem('class_mode');
 
     if (this.class_mode === 'editar') {
-      this.topicToEditId = localStorage.getItem('cursitu_selected_topic');
-      this.topicToEditId = this.topicToEditId!.replace(/"/g, '');
+      this.topicToEditId = this.topicService.getTopicFromStorage();
 
       if (this.topicToEditId) {
         this.topicService.getTopicById(this.topicToEditId).subscribe({
@@ -124,6 +127,7 @@ export class ClassManagement implements OnInit {
         document.documentElement.style.setProperty('--subject-color', subjectData.color);
 
         this.classroom_id = subjectData.classroom_id!;
+        this.subjectName = subjectData.subject_name;
 
         this.loadCurrentClassroom(this.classroom_id);
       },
@@ -159,9 +163,11 @@ export class ClassManagement implements OnInit {
       this.newAssignment = {
         title: assignmentTitle.trim(),
         content: assignmentContent,
+        subject_name: this.subjectName!,
         date_limit: assignmentLimit,
         allowed_format: this.assignmentFormat,
         type: this.assignmentType,
+        deliverMode: this.deliverType,
         enabled_to_deliver: this.enableToDeliver,
         subject_id: this.subjectId!,
       };
@@ -179,9 +185,11 @@ export class ClassManagement implements OnInit {
       this.newAssignment = {
         title: assignmentTitle.trim(),
         content: assignmentContent,
+        subject_name: this.subjectName!,
         date_limit: assignmentLimit,
         allowed_format: this.assignmentFormat,
         type: this.assignmentType,
+        deliverMode: this.deliverType,
         enabled_to_deliver: this.enableToDeliver,
         subject_id: this.subjectId!,
       };
@@ -216,6 +224,17 @@ export class ClassManagement implements OnInit {
   }
 
   topicToEdit(topic: Topic, assignment: Assignment | null) {
+    if (assignment) {
+      if (assignment!.type === 'parcial') {
+        this.assignmentType = 'parcial';
+      }
+
+      if (assignment!.deliverMode === 'grupo') {
+        this.deliverType = 'grupo';
+      }
+    }
+
+    
     this.topicForm.patchValue({
       title: topic.title,
       content: topic.content,
@@ -261,6 +280,10 @@ export class ClassManagement implements OnInit {
 
   setType(newType: 'tarea' | 'parcial') {
     this.assignmentType = newType;
+  }
+
+  setDeliverMode(newMode: 'individual' | 'grupo') {
+    this.deliverType = newMode;
   }
 
   setAvaiability(isAvaiable: 'habilitado' | 'deshabilitado') {

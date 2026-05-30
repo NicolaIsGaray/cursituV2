@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pepedevelopers.cursitu.model.GroupEntity;
+import pepedevelopers.cursitu.model.dto.GroupDTO;
 import pepedevelopers.cursitu.repository.IGroup;
 import pepedevelopers.cursitu.service.GroupService;
 
@@ -60,5 +61,10 @@ public class GroupController {
   @GetMapping("/subject/{id}")
   public ResponseEntity<List<GroupEntity>> getGroupsInSubject(@PathVariable String id) {
     return ResponseEntity.ok(groupService.obtainGroupListBySubject(id));
+  }
+
+  @GetMapping("/user/{studentId}/groups/{subjectId}")
+  public ResponseEntity<List<GroupDTO>> getStudentGroups(@PathVariable String studentId, @PathVariable String subjectId) {
+    return ResponseEntity.ok(groupService.showStudentAssignedGroups(studentId, subjectId));
   }
 }

@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, inject, NgZone, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  inject,
+  NgZone,
+  OnInit,
+  signal,
+} from '@angular/core';
 import {
   NavigationCancel,
   NavigationEnd,
@@ -14,6 +22,10 @@ import { User } from './models/user.model';
 import { Role } from './models/roles';
 import { LoadService } from './services/load.service';
 import { LoadSpinner } from './components/load-spinner/load-spinner';
+import { filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { Notice } from './models/notice.model';
+import { NoticeService } from './services/notice.service';
+import { UserService } from './services/user.service';
 
 @Component({
   selector: 'app-root',
@@ -26,14 +38,20 @@ export class App implements OnInit {
 
   private ngZone = inject(NgZone);
 
+  noticeList$!: Observable<Notice[]>;
+  unreadCount$!: Observable<number>;
+  currentUser$!: Observable<User>;
+
   isSidebarOpen = false;
-  currentUser: User | null = null;
 
   constructor(
     public uiService: UiService,
     public authService: AuthService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
     private loadService: LoadService,
+    private noticeService: NoticeService,
+    private userService: UserService,
   ) {}
 
   menuItems: any[] = [];
@@ -42,7 +60,25 @@ export class App implements OnInit {
     this.authService.userRole$.subscribe((rol) => {
       this.buildMenu(rol);
     });
-    this.getCurrentUser();
+
+    this.authService.currentUser$
+      .pipe(
+        filter((user) => !!user && !!user.id),
+        take(1),
+        switchMap((authUser) => {
+          return this.userService.getUserById(authUser?.id!);
+        }),
+      )
+      .subscribe({
+        next: (dbUser) => {
+          this.currentUser$ = of(dbUser);
+
+          this.getNotices(dbUser.id!);
+        },
+        error: (err) => {
+          console.error('Error en la cadena de inicialización de usuario/avisos:', err);
+        },
+      });
   }
 
   setupLoader() {
@@ -63,8 +99,31 @@ export class App implements OnInit {
     });
   }
 
-  getCurrentUser() {
-    this.currentUser = this.authService.currentUserValue;
+  getNotices(userId: string): void {
+    this.noticeList$ = this.noticeService.getAllNotices().pipe(
+      map((notices: Notice[]) =>
+        notices.map((notice) => ({
+          ...notice,
+          hasRead: notice.readBy ? notice.readBy.includes(userId) : false,
+        })),
+      ),
+    );
+
+    this.unreadCount$ = this.noticeList$.pipe(
+      map((notices: Notice[]) => {
+        if (!notices) return 0;
+
+        return notices.filter((notice) => {
+          const isUnread = !notice.hasRead;
+
+          const isNotOwnNotice = notice.senderId !== userId;
+
+          return isUnread && isNotOwnNotice;
+        }).length;
+      }),
+    );
+
+    this.cdr.detectChanges();
   }
 
   buildMenu(rol: Role) {
@@ -88,12 +147,6 @@ export class App implements OnInit {
     }
   }
 
-  // En el .ts correspondiente
-  cambiarRol(event: any) {
-    this.authService.setSimulatedRole(event.target.value);
-  }
-
-  // Retorna true si la ruta actual es /login
   isLoginPage(): boolean {
     return this.router.url === '/login';
   }
@@ -104,7 +157,6 @@ export class App implements OnInit {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
-  // Cierra el dropdown si el usuario hace clic fuera de él
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
