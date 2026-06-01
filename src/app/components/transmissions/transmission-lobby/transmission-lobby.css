@@ -142,6 +142,44 @@ h2 {
   transform: scale(0.98);
 }
 
+/* Separador sutil para los controles dinámicos */
+.section-divider-lines {
+  height: 1px;
+  background: var(--border-color);
+  margin: 2.5rem 0 2rem 0;
+  width: 100%;
+}
+
+/* Resaltado del nombre de la materia seleccionada */
+.highlight-text {
+  color: var(--primary-purple);
+  font-weight: 800;
+}
+
+/* Estado vacío del contenedor de grupos derecho */
+.empty-rooms-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--text-muted);
+  gap: 12px;
+}
+
+.empty-rooms-state span {
+  font-size: 2.5rem;
+  opacity: 0.6;
+}
+
+.empty-rooms-state p {
+  font-size: 0.85rem;
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
 /* === CONTROLES EXCLUSIVOS DOCENTE === */
 .docente-controls {
   width: 100%;

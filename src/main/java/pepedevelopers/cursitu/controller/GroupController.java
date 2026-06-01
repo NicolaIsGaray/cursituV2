@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pepedevelopers.cursitu.model.GroupEntity;
 import pepedevelopers.cursitu.model.dto.GroupDTO;
+import pepedevelopers.cursitu.model.dto.GroupOrderDTO;
 import pepedevelopers.cursitu.repository.IGroup;
 import pepedevelopers.cursitu.service.GroupService;
 
@@ -66,5 +67,14 @@ public class GroupController {
   @GetMapping("/user/{studentId}/groups/{subjectId}")
   public ResponseEntity<List<GroupDTO>> getStudentGroups(@PathVariable String studentId, @PathVariable String subjectId) {
     return ResponseEntity.ok(groupService.showStudentAssignedGroups(studentId, subjectId));
+  }
+
+  @PutMapping("/update-order")
+  public ResponseEntity<Void> updateGroupsOrder(@RequestBody List<GroupOrderDTO> groupOrders) {
+    if (groupOrders == null || groupOrders.isEmpty()) {
+      return ResponseEntity.badRequest().build();
+    }
+    groupService.updateAllOrders(groupOrders);
+    return ResponseEntity.ok().build();
   }
 }

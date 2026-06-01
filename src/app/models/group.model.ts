@@ -7,4 +7,6 @@ export class Group {
     subjectId!: string;
     professor_id!: string;
     classroom_id!: string;
+    status!: string;
+    order?: number;
 }

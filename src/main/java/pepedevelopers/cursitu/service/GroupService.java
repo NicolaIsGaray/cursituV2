@@ -1,25 +1,26 @@
 package pepedevelopers.cursitu.service;
 
+import org.apache.catalina.Group;
+import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import pepedevelopers.cursitu.model.GroupEntity;
-import pepedevelopers.cursitu.model.SubjectEntity;
 import pepedevelopers.cursitu.model.UserEntity;
-import pepedevelopers.cursitu.model.dto.AssignmentDTO;
 import pepedevelopers.cursitu.model.dto.GroupDTO;
-import pepedevelopers.cursitu.model.subject_submodel.AssignmentEntity;
-import pepedevelopers.cursitu.model.subject_submodel.SubmissionEntity;
+import pepedevelopers.cursitu.model.dto.GroupOrderDTO;
 import pepedevelopers.cursitu.repository.IGroup;
 import pepedevelopers.cursitu.repository.ISubject;
 import pepedevelopers.cursitu.repository.IUser;
 
-import java.util.ArrayList;
+import org.springframework.data.mongodb.core.query.Query;
+
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class GroupService {
@@ -27,10 +28,13 @@ public class GroupService {
   private final IUser userRepo;
   private final ISubject subjectRepo;
 
-  public GroupService(IGroup groupRepo, IUser userRepo, ISubject subjectRepo) {
+  private final MongoTemplate mongoTemplate;
+
+  public GroupService(IGroup groupRepo, IUser userRepo, ISubject subjectRepo, MongoTemplate mongoTemplate) {
     this.groupRepo = groupRepo;
     this.userRepo = userRepo;
     this.subjectRepo = subjectRepo;
+    this.mongoTemplate = mongoTemplate;
   }
 
   @Transactional
@@ -57,6 +61,9 @@ public class GroupService {
 
       group.setMember_names(memberNames);
     }
+
+    group.setStatus("NOT_TRANSMITTING");
+    group.setOrder(0);
 
     return groupRepo.save(group);
   }
@@ -155,5 +162,29 @@ public class GroupService {
       group.getMembersId() == null ? null : group.getMembersId(),
       group.getSubjectId() == null ? null : group.getSubjectId()
     )).toList();
+  }
+
+  @Transactional
+  public void updateAllOrders(List<GroupOrderDTO> groupOrders) {
+    BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Group.class);
+
+    for (GroupOrderDTO dto : groupOrders) {
+      Query query = new Query(Criteria.where("id").is(dto.getId()));
+      Update update = new Update();
+
+      // Asignamos el orden físico
+      update.set("order", dto.getOrder());
+
+      // LÓGICA DE ESTADO: Si es el primer turno, pasa a TRANSMITTING. Si no, a WAITING.
+      if (dto.getOrder() != null && dto.getOrder() == 1) {
+        update.set("status", "TRANSMITTING");
+      } else {
+        update.set("status", "WAITING");
+      }
+
+      bulkOps.updateOne(query, update);
+    }
+
+    bulkOps.execute();
   }
 }

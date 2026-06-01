@@ -39,4 +39,11 @@ export class GroupService {
   deleteGroup(groupId: string) {
     return this.http.delete(`${this.apiUrl}/${groupId}`);
   }
+
+  /**
+   * @param groupOrders
+   */
+  updateGroupsOrder(groupOrders: { id: string; order: number }[]): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/update-order`, groupOrders);
+  }
 }

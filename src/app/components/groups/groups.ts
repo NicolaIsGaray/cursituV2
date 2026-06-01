@@ -204,6 +204,7 @@ export class Groups implements OnInit {
       subjectId: this.selectedSubject.id!,
       professor_id: this.selectedSubject.professor_id,
       classroom_id: this.selectedSubject.classroom_id!,
+      status: "NOT_TRANSMITTING"
     };
 
     if (this.mode === 'crear') {

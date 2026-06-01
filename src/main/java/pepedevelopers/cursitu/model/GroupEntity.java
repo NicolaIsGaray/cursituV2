@@ -19,4 +19,6 @@ public class GroupEntity {
     private String subjectId;
     private String professor_id;
     private String classroom_id;
+    private String status;
+    private Integer order;
 }
