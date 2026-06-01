@@ -48,6 +48,14 @@ export class StudentsList implements OnInit {
 
   getProfessorSubjects() {
     this.professorSubjects$ = this.subjectService.getProfessorSubjects(this.userData.id!);
+
+    this.professorSubjects$.subscribe({
+      next: (subjects) => {
+        this.selectedSubject = subjects[0];
+
+        this.getSelectedSubject(this.selectedSubject.id!);
+      }
+    })
   }
 
   getSelectedSubject(id: string) {

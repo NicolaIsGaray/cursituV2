@@ -157,6 +157,7 @@ public class AssignmentService {
     SubmissionEntity newSubmission = new SubmissionEntity();
     newSubmission.setActivityId(assignment.getId());
     newSubmission.setStudentId(studentId);
+    newSubmission.setFileName(submission.getFileName());
     newSubmission.setFile_url(submission.getFile_url());
     newSubmission.setComment(submission.getComment());
     newSubmission.setSubmission_date(submission.getSubmission_date());
@@ -217,6 +218,7 @@ public class AssignmentService {
       }
 
       String submissionId = (submission != null) ? submission.getId() : null;
+      String fileName = (submission != null) ? submission.getFileName() : null;
       String fileUrl = (submission != null) ? submission.getFile_url() : null;
       String subDate = (submission != null) ? submission.getSubmission_date().toString() : null;
       Float qualification = (grade != null) ? grade.getQualification() : 0.0f;
@@ -230,6 +232,7 @@ public class AssignmentService {
         student.getId(),
         student.getName(),
         submissionId,
+        fileName,
         fileUrl,
         subDate,
         isLate,
@@ -280,6 +283,7 @@ public class AssignmentService {
       }
 
       String submissionId = (submission != null) ? submission.getId() : null;
+      String fileName = (submission != null) ? submission.getFileName() : null;
       String fileUrl = (submission != null) ? submission.getFile_url() : null;
       String subDate = (submission != null) ? submission.getSubmission_date().toString() : null;
       Float qualification = (grade != null) ? grade.getQualification() : 0.0f;
@@ -295,6 +299,7 @@ public class AssignmentService {
         student.getId(),
         student.getName(),
         submissionId,
+        fileName,
         fileUrl,
         subDate,
         isLate,
@@ -384,6 +389,13 @@ public class AssignmentService {
   @Transactional
   public List<SubmissionEntity> getAllSubmited() {
     return submissionRepo.findAll();
+  }
+
+  @Transactional
+  public SubmissionEntity getSubmitedActivity(String studentId, String activityId) {
+    return submissionRepo.findByActivityIdAndStudentId(activityId, studentId).orElseThrow(
+      () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entrega no encontrada.")
+    );
   }
 
   @Transactional

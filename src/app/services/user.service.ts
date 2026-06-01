@@ -46,4 +46,15 @@ export class UserService {
   getOnlyProfessors(): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/professors`);
   }
+
+  changePassword(userId: string, data: {
+    current: string,
+    update: string
+  }) {
+    return this.http.put(`${this.apiUrl}/change-password/${userId}`, data);
+  }
+
+  updateAvatar(userId: string, url: string) {
+    return this.http.put(`${this.apiUrl}/update-pfp/${userId}`, url);
+  }
 }

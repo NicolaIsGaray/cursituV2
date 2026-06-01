@@ -93,6 +93,10 @@
   color: #3b82f6; /* Ajustado para mejor contraste en modo oscuro */
 }
 
+.icon-doc {
+  color: #3b82f6;
+}
+
 .file-info {
   display: flex;
   flex-direction: column;

@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pepedevelopers.cursitu.model.dto.AssignmentDTO;
+import pepedevelopers.cursitu.model.dto.FileDTO;
 import pepedevelopers.cursitu.model.dto.TaskStatsDTO;
 import pepedevelopers.cursitu.model.dto.TeacherSubmissionDTO;
 import pepedevelopers.cursitu.model.subject_submodel.AssignmentEntity;
@@ -139,7 +140,8 @@ public class AssignmentController {
   public ResponseEntity<SubmissionEntity> submitAssignment(
     @RequestParam String activityId,
     @RequestParam String studentId,
-    @RequestBody SubmissionEntity submission) {
+    @RequestBody SubmissionEntity submission
+  ) {
 
     SubmissionEntity submited = assignmentService.submitActivity(activityId, studentId, submission);
 
@@ -153,6 +155,11 @@ public class AssignmentController {
   @GetMapping("/submited")
   public ResponseEntity<List<SubmissionEntity>> getAllSubmitedAssignments() {
     return ResponseEntity.ok(assignmentService.getAllSubmited());
+  }
+
+  @GetMapping("/get-submited/{studentId}/{activityId}")
+  public ResponseEntity<SubmissionEntity> getSubmitedAssignment(@PathVariable String studentId, @PathVariable String activityId) {
+    return ResponseEntity.ok(assignmentService.getSubmitedActivity(studentId, activityId));
   }
 
   @DeleteMapping("/submited/{id}")

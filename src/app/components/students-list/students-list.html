@@ -9,7 +9,7 @@
     <div class="selection-panel">
       <h3>Materias Asignadas</h3>
       <div class="subjects-list">
-        @for (subject of professorSubjects$ | async; track subject.id) {
+        @for (subject of professorSubjects$ | async; track subject) {
           <button
             class="subject-chip-btn"
             [style.background-color]="subject.color"

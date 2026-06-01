@@ -16,6 +16,8 @@ import { ClassroomService } from '../../services/classroom.service';
 import { Assignment } from '../../models/assignment.model';
 import { Notice } from '../../models/notice.model';
 import { NoticeService } from '../../services/notice.service';
+import { DateEvent } from '../../models/date-event.model';
+import { DateService } from '../../services/date.service';
 
 @Component({
   selector: 'app-home',
@@ -41,6 +43,8 @@ export class Home implements OnInit {
 
   currentUser$!: Observable<User>;
 
+  dateList$!: Observable<DateEvent[]>;
+
   private readonly SUBJECT_KEY = 'cursitu_selected_subject';
 
   constructor(
@@ -52,6 +56,7 @@ export class Home implements OnInit {
     private subjectService: SubjectService,
     private topicService: TopicService,
     private noticeService: NoticeService,
+    private dateService: DateService,
     private classroomService: ClassroomService,
   ) {}
 
@@ -60,20 +65,21 @@ export class Home implements OnInit {
     this.currentUser$ = this.userService.getUserById(user.id!);
 
     const topicId = this.topicService.getTopicFromStorage();
-    
+
     this.activityTime = this.topicService.getTopicTimeFromStorage();
-    
+
     this.getNoticeList();
     this.loadLastActivityVisited(topicId!);
+    this.loadDateList();
 
     if (user.role === 'ALUMNO') {
       this.loadPendingAssignments();
     }
 
     if (user.role === 'ADMIN') {
-      this.router.navigate(["/user-management"])
+      this.router.navigate(['/user-management']);
     }
-    
+
     if (user.role === 'DOCENTE') {
       this.loadProfessorSubjects();
     }
@@ -151,7 +157,7 @@ export class Home implements OnInit {
   }
 
   goToNotice(noticeId: string) {
-    this.router.navigate(["/notices", noticeId]);
+    this.router.navigate(['/notices', noticeId]);
   }
 
   onSubjectChange(event: Event): void {
@@ -172,7 +178,39 @@ export class Home implements OnInit {
   }
 
   loadPendingAssignments() {
-    this.pendingAssignments$ = this.assignmentService.getPendingAssignments(this.authService.currentUserValue?.id!);
+    this.pendingAssignments$ = this.assignmentService.getPendingAssignments(
+      this.authService.currentUserValue?.id!,
+    );
+  }
+
+  goToActivity(path: string, subjectId: string): void {
+    localStorage.setItem(this.SUBJECT_KEY, subjectId);
+    this.router.navigate([path]);
+  }
+
+  loadDateList() {
+    this.dateList$ = this.dateService.getAllDateEvents();
+  }
+
+  formatDate(original: Date | string): string {
+    const date = new Date(original);
+
+    const formatter = new Intl.DateTimeFormat('es-AR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+
+    let formattedDate = formatter.format(date);
+
+    formattedDate = formattedDate.replace(/,/g, '');
+    formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    formattedDate = formattedDate.replace(/\./g, '').toUpperCase();
+
+    return formattedDate;
   }
 
   translateDayToSpanish(day: string): string {
@@ -186,11 +224,6 @@ export class Home implements OnInit {
       SUNDAY: 'Domingo',
     };
     return translations[day.toUpperCase()] || day;
-  }
-
-  goToActivity(path: string, subjectId: string): void {
-    localStorage.setItem(this.SUBJECT_KEY, subjectId);
-    this.router.navigate([path]);
   }
 
   navigateTo(path: string) {

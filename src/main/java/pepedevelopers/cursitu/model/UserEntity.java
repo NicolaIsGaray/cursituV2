@@ -17,6 +17,7 @@ public class UserEntity {
     private String email;
     private String password;
     private String dni;
+    private String profileUrl;
 
     @Indexed
     private String role;

@@ -6,13 +6,13 @@
 </nav>
 
 <div class="course-header" *ngIf="subject$ | async as subject">
-  <h2 style="color: var(--text-primary);">{{ subject.subject_name }}</h2>
+  <h2 style="color: var(--text-primary)">{{ subject.subject_name }}</h2>
 </div>
 
 <main *ngIf="authService.userRole$ | async as rol" style="overflow: hidden">
   <div class="form-scroll-container" *ngIf="rol === 'DOCENTE'">
     <div class="form-card" *ngIf="subject$ | async as subject">
-      <h2>{{class_mode === 'editar' ? 'Editar Sección' : 'Agregar Nueva Sección'}}</h2>
+      <h2>{{ class_mode === 'editar' ? 'Editar Sección' : 'Agregar Nueva Sección' }}</h2>
       <form [formGroup]="topicForm" (ngSubmit)="onSubmit()">
         <section class="form-group">
           <label for="section-name">Nombre de la sección:</label>
@@ -35,7 +35,7 @@
               theme="snow"
               [modules]="editorModules"
               placeholder="Escribe el contenido didáctico del curso aquí..."
-              style="color: var(--text-primary);"
+              style="color: var(--text-primary)"
             ></quill-editor>
           </div>
         </section>
@@ -45,35 +45,86 @@
           <div class="files-column">
             <div class="column-header">
               <label>Material de clase:</label>
-              <!-- type="button" evita que este botón dispare el submit del form por accidente -->
-              <button type="button" class="btn-upload" title="Agregar archivos">
-                <span class="material-symbols-outlined">add_circle</span>
-                <span>Adjuntar</span>
-              </button>
             </div>
 
-            <label class="sub-label">Documentos añadidos a la sección:</label>
-            <ul class="file-list">
-              <li>
-                <span class="material-symbols-outlined icon-doc">description</span>
-                <span class="file-name">Manejo de Errores.pdf</span>
-              </li>
-              <li>
-                <span class="material-symbols-outlined icon-folder">folder</span>
-                <span class="file-name">Ejemplos Polimorfismo</span>
-              </li>
-              <li>
-                <span class="material-symbols-outlined icon-doc">description</span>
-                <span class="file-name">Polimorfismo.docx</span>
-              </li>
-              <li>
-                <span class="material-symbols-outlined icon-folder">folder</span>
-                <span class="file-name">Guías y Ejercicios</span>
-              </li>
-              <li>
-                <span class="material-symbols-outlined icon-doc">description</span>
-                <span class="file-name">Teoría de Herencia.pdf</span>
-              </li>
+            <div class="upload-dropzone" (click)="fileInput.click()">
+              <input
+                type="file"
+                #fileInput
+                multiple
+                style="display: none"
+                (change)="onFilesSelected($event)"
+              />
+              <span class="material-symbols-outlined dropzone-icon">cloud_upload</span>
+              <p class="dropzone-text">Seleccioná los archivos para el materia de tu clase acá</p>
+              <p class="dropzone-subtext">Soportado: PDFs, Documentos, ZIPs e Imágenes (Hasta 50Mb)</p>
+            </div>
+
+            <label class="sub-label"
+              >Documentos añadidos a la sección ({{ uploadedFiles.length }}):</label
+            >
+
+            <ul class="file-list-modern">
+              @for (file of existingFiles; track $index) {
+                <li class="file-item-row" style="border-left: 3px solid #10b981">
+                  <div class="file-info-block">
+                    <span class="material-symbols-outlined icon-doc">{{
+                      getFileIcon(file.fileName)
+                    }}</span>
+                    <div class="file-text-meta">
+                      <span class="file-name" [title]="file.fileName">{{ file.fileName }}</span>
+                      <span class="file-size" style="color: #10b981; font-weight: 700"
+                        >Cargado</span
+                      >
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    class="btn-remove-file"
+                    (click)="removeExistingFile($index)"
+                    title="Eliminar del servidor"
+                  >
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </li>
+              }
+
+              @for (file of uploadedFiles; track $index) {
+                <li class="file-item-row">
+                  <div class="file-info-block">
+                    <span class="material-symbols-outlined icon-zip">{{
+                      getFileIcon(file.name)
+                    }}</span>
+                    <div class="file-text-meta">
+                      <span class="file-name" [title]="file.name">{{ file.name }}</span>
+                      <span class="file-size">{{ formatFileSize(file.size) }}</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    class="btn-remove-file"
+                    (click)="removeFile($index)"
+                    title="Quitar archivo"
+                  >
+                    <span class="material-symbols-outlined">close</span>
+                  </button>
+                </li>
+              }
+
+              @if (existingFiles.length === 0 && uploadedFiles.length === 0) {
+                <div
+                  style="
+                    text-align: center;
+                    padding: 1.5rem;
+                    border: 1px dashed var(--border-color);
+                    border-radius: 12px;
+                  "
+                >
+                  <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted)">
+                    No hay archivos en esta sección.
+                  </p>
+                </div>
+              }
             </ul>
           </div>
 
@@ -138,7 +189,7 @@
                     theme="snow"
                     [modules]="editorModules"
                     placeholder="Redacta los criterios de aceptación, pautas o consignas específicas para la entrega..."
-                    style="color: var(--text-primary);"
+                    style="color: var(--text-primary)"
                   ></quill-editor>
                 </div>
               </div>

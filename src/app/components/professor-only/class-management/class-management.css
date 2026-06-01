@@ -96,7 +96,7 @@ label {
 }
 
 /* ==========================================================================
-   SECCIÓN DE ADJUNTOS Y PARAMETRIZACIÓN (GRID)
+   SECCIÓN DE ADJUNTOS Y PARAMETRIZACIÓN (GRID COLUMNS)
    ========================================================================== */
 
 .grid-columns {
@@ -116,81 +116,154 @@ label {
   margin-bottom: 5px;
 }
 
-/* BOTONES DE SUBIDA */
-.btn-upload {
-  display: inline-flex;
+/* === NUEVA ZONA INTERACTIVA DROPZONE (DRAG & DROP) === */
+.upload-dropzone {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  background: var(--bg-input);
-  color: var(--subject-color, var(--primary-purple));
-  border: 1px dashed var(--subject-color, var(--primary-purple));
-  border-radius: 12px;
-  padding: 10px 20px;
-  font-weight: 700;
-  font-size: 0.9rem;
+  padding: 2rem 1.5rem;
+  background-color: var(--bg-input);
+  border: 2px dashed var(--border-color);
+  border-radius: 16px;
   cursor: pointer;
+  text-align: center;
+  margin-bottom: 1.5rem;
   transition:
-    background 0.2s,
-    transform 0.1s,
-    border-color 0.2s;
+    border-color 0.2s ease,
+    background-color 0.2s ease;
 }
 
-.btn-upload:hover {
-  background: hsl(from var(--subject-color, var(--primary-purple)) h s l / 0.12);
+.upload-dropzone:hover {
+  border-color: var(--subject-color, var(--primary-purple));
+  background-color: hsl(from var(--subject-color, var(--primary-purple)) h s l / 0.04);
 }
 
-.btn-upload span.material-symbols-outlined {
-  font-size: 20px;
+.dropzone-icon {
+  font-size: 2.5rem;
+  color: var(--subject-color, var(--primary-purple));
+  margin-bottom: 0.75rem;
+  opacity: 0.8;
 }
 
-/* COMPONENTES DE LISTA DE ARCHIVOS */
-.file-list {
+.dropzone-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
+}
+
+.dropzone-text .browse-link {
+  color: var(--subject-color, var(--primary-purple));
+  text-decoration: underline;
+}
+
+.dropzone-subtext {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* === NUEVA LISTA DE ARCHIVOS AVANZADA === */
+.file-list-modern {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
-.file-list li {
+.file-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.6rem 1rem;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.file-item-row:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-input, var(--border-color));
+}
+
+.file-info-block {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
-  background: var(--bg-input);
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
-  transition:
-    transform 0.2s,
-    background 0.2s,
-    border-color 0.2s;
+  overflow: hidden;
+  flex: 1;
 }
 
-.file-list li:hover {
-  background: var(--bg-hover);
-  border-color: var(--border-input, var(--border-color));
-  transform: translateX(3px);
+.file-text-meta {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.file-list li span.material-symbols-outlined {
-  font-size: 20px;
-}
-
-.icon-doc {
-  color: #3b82f6;
-}
-.icon-folder {
-  color: #eab308;
-} /* Ajustado para mejor contraste */
 .file-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+}
+
+.file-size {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Colores Dinámicos de Iconos */
+.icon-doc {
+  color: #3b82f6;
+  flex-shrink: 0;
+}
+
+.icon-zip {
+  color: #eab308;
+  flex-shrink: 0;
+}
+
+.icon-image {
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+/* Acciones de Eliminación Individual */
+.btn-remove-file {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 50%;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+  margin-left: 8px;
+}
+
+.btn-remove-file:hover {
+  background-color: rgba(231, 76, 60, 0.12);
+  color: #ef4444;
+}
+
+.btn-remove-file span {
+  font-size: 18px;
 }
 
 /* CONTROL DE ENTREGA (TOGGLES) */
@@ -357,7 +430,6 @@ label {
   color: var(--text-primary);
 }
 
-/* Estado seleccionado dinámico */
 .format-card-btn.selected {
   border-color: var(--subject-color, var(--primary-purple));
   background: hsl(from var(--subject-color, var(--primary-purple)) h s l / 0.06);
@@ -386,17 +458,6 @@ label {
 .btn-back:hover {
   background-color: var(--bg-hover);
   color: var(--primary-purple);
-}
-
-/* ==========================================================================
-   RESPONSIVE EXTRA PARA LA NUEVA COMPOSICIÓN
-   ========================================================================== */
-
-@media (max-width: 950px) {
-  .assignment-grid {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
 }
 
 /* ==========================================================================
@@ -452,6 +513,13 @@ label {
   }
 }
 
+@media (max-width: 950px) {
+  .assignment-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
 @media (max-width: 850px) {
   .grid-columns {
     grid-template-columns: 1fr;
@@ -489,12 +557,11 @@ label {
     height: 160px;
   }
 
-  .btn-upload {
-    padding: 8px 16px;
-    font-size: 0.85rem;
+  .upload-dropzone {
+    padding: 1.5rem 1rem;
   }
 
-  .file-list li {
+  .file-item-row {
     font-size: 0.85rem;
     padding: 8px 12px;
   }
@@ -506,5 +573,15 @@ label {
   .btn-finalizar {
     padding: 12px 50px;
     font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .upload-dropzone {
+    max-width: 50vw;
+  }
+
+  .file-item-row {
+    max-width: 55vw;
   }
 }

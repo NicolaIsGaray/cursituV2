@@ -1,5 +1,5 @@
 import { CommonModule, Location } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ClassroomService } from '../../../services/classroom.service';
@@ -9,6 +9,7 @@ import { AssignmentService } from '../../../services/assignment.service';
 import { ClassroomDTO } from '../../../models/dto/classroomDTO';
 import { SubjectService } from '../../../services/subject.service';
 import { Topic } from '../../../models/topic.model';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-classroom',
@@ -26,8 +27,9 @@ export class CurrentClassroom implements OnInit {
   private selectedTopicSubject = new BehaviorSubject<any | null>(null);
   selectedTopic$ = this.selectedTopicSubject.asObservable();
 
-  private readonly TOPIC_KEY = 'cursitu_selected_topic';
   private readonly SUBJECT_KEY = 'cursitu_selected_subject';
+
+  private http = inject(HttpClient);
 
   constructor(
     public authService: AuthService,
@@ -57,21 +59,23 @@ export class CurrentClassroom implements OnInit {
         next: (topic: Topic) => {
           this.selectTopic(topic);
         },
-        error: () => console.warn("No hay topico seleccionado...")
-      })
+        error: () => console.warn('No hay topico seleccionado...'),
+      });
     }
 
     this.loadClassroomData();
   }
 
   loadClassroomData() {
-    this.subjectService.getSubjectById(localStorage.getItem(this.SUBJECT_KEY)!.replace(/"/g, '')).subscribe({
-      next: (subject) => {
-        this.subjectColor = subject.color
-        this.cdr.detectChanges();
-      },
-      error: (err) => console.error("Hubo un problema al obtener la materia: ", err)
-    })
+    this.subjectService
+      .getSubjectById(localStorage.getItem(this.SUBJECT_KEY)!.replace(/"/g, ''))
+      .subscribe({
+        next: (subject) => {
+          this.subjectColor = subject.color;
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error('Hubo un problema al obtener la materia: ', err),
+      });
     this.classroomData$ = this.classroomService.obtainClassroomActivities(this.classroomId!).pipe(
       take(1),
       tap((data: ClassroomDTO) => {
@@ -152,6 +156,56 @@ export class CurrentClassroom implements OnInit {
 
   managementMode(mode: 'crear' | 'editar') {
     localStorage.setItem('class_mode', mode);
+  }
+
+  /**
+   * @param file
+   */
+  downloadFile(file: { fileName: string; url: string }): void {
+    if (!file || !file.url) {
+      console.error('El archivo no contiene una URL válida.');
+      return;
+    }
+
+    this.http.get(file.url, { responseType: 'blob' }).subscribe({
+      next: (blob: Blob) => {
+        const blobUrl = window.URL.createObjectURL(blob);
+
+        const anchor = document.createElement('a');
+        anchor.href = blobUrl;
+
+        anchor.download = file.fileName;
+
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+
+        window.URL.revokeObjectURL(blobUrl);
+      },
+      error: (err) => {
+        console.error('Error al intentar descargar el archivo desde Appwrite:', err);
+        alert('No se pudo descargar el archivo. Por favor, reintente más tarde.');
+      },
+    });
+  }
+
+  getFileIcon(fileName: string): string {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'pdf':
+        return 'description';
+      case 'zip':
+      case 'rar':
+      case '7z':
+        return 'folder_zip';
+      case 'png':
+      case 'jpg':
+      case 'jpeg':
+      case 'webp':
+        return 'image';
+      default:
+        return 'draft';
+    }
   }
 
   goBack() {

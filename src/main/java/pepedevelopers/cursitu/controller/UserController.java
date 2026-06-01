@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import pepedevelopers.cursitu.model.dto.PasswordDTO;
 import pepedevelopers.cursitu.repository.IUser;
 import pepedevelopers.cursitu.model.UserEntity;
 import pepedevelopers.cursitu.service.UserService;
@@ -82,5 +83,17 @@ public class UserController {
   @GetMapping("/users-by-id/{ids}")
   public ResponseEntity<List<UserEntity>> getAllUsersById(@PathVariable List<String> ids) {
     return  ResponseEntity.ok(userRepo.findAllById(ids));
+  }
+
+  @PutMapping("/change-password/{id}")
+  public ResponseEntity<?> updateUserPassword(@PathVariable String id, @RequestBody PasswordDTO passwordDTO) {
+    userService.updatePassword(id, passwordDTO);
+    return ResponseEntity.ok(Map.of("message", "Contraseña actualizada exitosamente."));
+  }
+
+  @PutMapping("/update-pfp/{id}")
+  public ResponseEntity<?> updateUserAvatar(@PathVariable String id, @RequestBody String url) {
+    userService.updateProfileImage(id, url);
+    return ResponseEntity.ok(Map.of("message", "Foto de perfil actualizada con éxito."));
   }
 }

@@ -1,0 +1,112 @@
+<div class="settings-container">
+  <header class="settings-header">
+    <h2>Ajustes de Usuario</h2>
+    <p>Gestioná la seguridad de tu cuenta y personalizá tu identidad visual.</p>
+  </header>
+
+  <div class="settings-grid">
+    <section class="settings-card">
+      <h3>Identidad Personal</h3>
+      <p class="card-subtitle">Cambia tu foto de perfil visible para docentes y compañeros.</p>
+
+      <div class="avatar-management-box">
+        <div class="avatar-wrapper">
+          <img [src]="avatarPreview" alt="Foto de perfil" class="profile-avatar-img" />
+          <label for="avatar-input" class="btn-change-avatar-overlay" title="Subir nueva imagen">
+            <span class="material-symbols-outlined">photo_camera</span>
+          </label>
+          <input
+            type="file"
+            id="avatar-input"
+            accept="image/*"
+            (change)="onAvatarSelected($event)"
+            style="display: none"
+          />
+        </div>
+
+        <div class="avatar-actions" *ngIf="selectedAvatarFile">
+          <p class="pending-file-name">{{ selectedAvatarFile.name }}</p>
+          <button
+            type="button"
+            class="btn-save-settings"
+            (click)="updateProfilePicture()"
+            [disabled]="isSavingAvatar"
+          >
+            <span class="material-symbols-outlined" *ngIf="!isSavingAvatar">done</span>
+            {{ isSavingAvatar ? 'Guardando...' : 'Confirmar Cambio' }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="settings-card">
+      <h3>Seguridad de la Cuenta</h3>
+      <p class="card-subtitle">
+        Actualizá tu contraseña periódicamente para mantener tu cuenta protegida.
+      </p>
+
+      <form [formGroup]="passwordForm" (ngSubmit)="onSubmitPassword()" class="settings-form">
+        <div class="form-group-sub">
+          <label for="currentPassword">Contraseña Actual</label>
+          <input
+            type="password"
+            id="currentPassword"
+            formControlName="currentPassword"
+            class="input-field"
+            placeholder="••••••••"
+          />
+        </div>
+
+        <div class="form-group-sub">
+          <label for="newPassword">Nueva Contraseña</label>
+          <input
+            type="password"
+            id="newPassword"
+            formControlName="newPassword"
+            class="input-field"
+            placeholder="Mínimo 8 caracteres"
+          />
+          <span
+            class="error-text"
+            *ngIf="
+              passwordForm.get('newPassword')?.touched &&
+              passwordForm.get('newPassword')?.errors?.['minlength']
+            "
+          >
+            Debe contener al menos 6 caracteres.
+          </span>
+        </div>
+
+        <div class="form-group-sub">
+          <label for="confirmPassword">Confirmar Nueva Contraseña</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            class="input-field"
+            placeholder="••••••••"
+          />
+          <span
+            class="error-text"
+            *ngIf="
+              passwordForm.get('confirmPassword')?.touched && passwordForm.errors?.['mismatch']
+            "
+          >
+            Las contraseñas no coinciden.
+          </span>
+        </div>
+
+        <div class="form-actions-right">
+          <button
+            type="submit"
+            class="btn-save-settings"
+            [disabled]="passwordForm.invalid || isSavingPassword"
+          >
+            <span class="material-symbols-outlined" *ngIf="!isSavingPassword">lock_reset</span>
+            {{ isSavingPassword ? 'Actualizando...' : 'Actualizar Contraseña' }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+</div>

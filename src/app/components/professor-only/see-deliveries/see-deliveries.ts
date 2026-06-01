@@ -132,10 +132,6 @@ export class SeeDeliveries implements OnInit {
     }
   }
 
-  getFileName(fileUrl: string): string {
-    return fileUrl ? fileUrl.split('/').pop() || 'Archivo_Adjunto' : '';
-  }
-
   downloadFile(url: string) {
     window.location.href = url;
   }

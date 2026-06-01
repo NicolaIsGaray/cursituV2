@@ -175,6 +175,7 @@ public class ClassroomService {
         .orElse(null);
 
       String submissionId = (submission != null) ? submission.getId() : null;
+      String fileName = (submission != null) ? submission.getFileName() : null;
       String fileUrl = (submission != null) ? submission.getFile_url() : null;
       String submissionDate = (submission != null && submission.getSubmission_date() != null)
         ? submission.getSubmission_date().toString() : null;
@@ -190,6 +191,7 @@ public class ClassroomService {
         student.getId(),
         student.getName(),
         submissionId,
+        fileName,
         fileUrl,
         submissionDate,
         isLate,

@@ -155,10 +155,38 @@
       }
     </div>
 
-    <div class="card wide">
-      <h3>Fechas Importantes</h3>
-      <div class="card-content empty">
-        <p>No hay ninguna fecha importante anunciada</p>
+    <div class="card wide dates-card-container">
+      <div class="card-header-title">
+        <h3>Fechas Importantes</h3>
+      </div>
+
+      <div class="dates-list-wrapper">
+        @for (date of dateList$ | async; track date) {
+          <div class="date-item-row" [class.is-exam]="date.event === 'EXAMEN'">
+            <div class="date-icon-indicator">
+              <span class="material-symbols-outlined">
+                {{ date.event === 'EXAMEN' ? 'notification_important' : 'event' }}
+              </span>
+            </div>
+
+            <div class="date-main-content">
+              <h4 class="date-item-title">{{ date.title }}</h4>
+              <span class="date-item-badge">{{ date.event }}</span>
+            </div>
+
+            <div class="date-timestamp-side">
+              <span class="material-symbols-outlined text-icon">schedule</span>
+              <p class="date-text-formatted">{{ formatDate(date.date) }}</p>
+            </div>
+          </div>
+        } @empty {
+          <div class="card-content empty-dates-fallback">
+            <div class="fallback-icon">
+              <span class="material-symbols-outlined">calendar_today</span>
+            </div>
+            <p>No hay ninguna fecha importante anunciada</p>
+          </div>
+        }
       </div>
     </div>
   </div>

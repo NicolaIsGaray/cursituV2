@@ -26,6 +26,8 @@ import { filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { Notice } from './models/notice.model';
 import { NoticeService } from './services/notice.service';
 import { UserService } from './services/user.service';
+import { DateEvent } from './models/date-event.model';
+import { DateService } from './services/date.service';
 
 @Component({
   selector: 'app-root',
@@ -41,6 +43,9 @@ export class App implements OnInit {
   noticeList$!: Observable<Notice[]>;
   unreadCount$!: Observable<number>;
   currentUser$!: Observable<User>;
+  dateList$!: Observable<DateEvent[]>;
+
+  userAvatar: string | null = null;
 
   isSidebarOpen = false;
 
@@ -51,6 +56,7 @@ export class App implements OnInit {
     private cdr: ChangeDetectorRef,
     private loadService: LoadService,
     private noticeService: NoticeService,
+    private dateService: DateService,
     private userService: UserService,
   ) {}
 
@@ -60,6 +66,8 @@ export class App implements OnInit {
     this.authService.userRole$.subscribe((rol) => {
       this.buildMenu(rol);
     });
+
+    this.getDates();
 
     this.authService.currentUser$
       .pipe(
@@ -72,6 +80,8 @@ export class App implements OnInit {
       .subscribe({
         next: (dbUser) => {
           this.currentUser$ = of(dbUser);
+
+          this.userAvatar = dbUser.profileUrl!;
 
           this.getNotices(dbUser.id!);
         },
@@ -124,6 +134,27 @@ export class App implements OnInit {
     );
 
     this.cdr.detectChanges();
+  }
+
+  getDates() {
+    this.dateList$ = this.dateService.getAllDateEvents().pipe(
+      map((dates: any[]) => {
+        if (!dates) return [];
+
+        const examDates = dates.filter((date) => date.event === 'EXAMEN' || date.event === 'FINAL');
+
+        const now = new Date();
+
+        const fourteenDaysFromNow = new Date();
+        fourteenDaysFromNow.setDate(now.getDate() + 14);
+
+        return examDates.filter((date) => {
+          const eventDate = new Date(date.date);
+
+          return eventDate >= now && eventDate <= fourteenDaysFromNow;
+        });
+      }),
+    );
   }
 
   buildMenu(rol: Role) {

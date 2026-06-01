@@ -3,6 +3,7 @@ export class Submission {
     activity_id?: string;
     student_id?: string;
     comment?: string;
+    fileName!: string;
     file_url!: string;
     submission_date!: string;
     status?: string;

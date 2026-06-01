@@ -93,22 +93,17 @@ public class NoticeService {
       () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aviso no encontrado.")
     );
 
-    List<String> readByIds = notice.getReadBy();
-
     userRepo.findById(userId).ifPresent(user -> {
-      if (readByIds.isEmpty()) {
-        readByIds.add(user.getId());
-      } else {
-        for (String readerId : readByIds) {
-          if (!Objects.equals(user.getId(), readerId)) {
-            readByIds.add(user.getId());
-          }
-        }
+
+      if (notice.getReadBy() == null) {
+        notice.setReadBy(new ArrayList<>());
       }
 
-      notice.setReadBy(readByIds);
+      if (!notice.getReadBy().contains(user.getId())) {
+        notice.getReadBy().add(user.getId());
 
-      noticeRepo.save(notice);
+        noticeRepo.save(notice);
+      }
     });
   }
 }

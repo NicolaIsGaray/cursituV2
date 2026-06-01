@@ -51,8 +51,12 @@
             <div class="col-archivo">
               @if (item.fileUrl) {
                 <a class="file-link" (click)="downloadFile(item.fileUrl)">
-                  <span class="material-symbols-outlined">description</span>
-                  {{ getFileName(item.fileUrl) }}
+                  @if (item.fileName?.includes('.txt')) {
+                    <span class="material-symbols-outlined">description</span>
+                  } @else {
+                    <span class="material-symbols-outlined">description</span>
+                  }
+                  {{ item.fileName }}
                 </a>
               } @else {
                 <span class="no-file">—</span>

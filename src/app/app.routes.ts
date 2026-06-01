@@ -27,6 +27,7 @@ import { AnnouncementPanel } from './components/admin/announcement-panel/announc
 import { ManageAssignments } from './components/professor-only/manage-assignments/manage-assignments';
 import { AssignmentPreview } from './components/professor-only/assignment-preview/assignment-preview';
 import { authGuard } from './guard/auth.guard';
+import { UserSettings } from './components/user-settings/user-settings';
 
 export const routes: Routes = [
     // RUTAS PÚBLICAS
@@ -39,6 +40,7 @@ export const routes: Routes = [
     { path: 'groups', component: Groups, canActivate: [authGuard] },
     { path: 'transmission-lobby', component: TransmissionLobby, canActivate: [authGuard] },
     { path: 'transmission-live', component: TransmissionLive, canActivate: [authGuard] },
+    { path: 'user-settings', component: UserSettings, canActivate: [authGuard] },
 
     { path: 'user-management', component: UserManagement, canActivate: [authGuard] },
     { path: 'subject-management', component: SubjectManagement, canActivate: [authGuard] },

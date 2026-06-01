@@ -42,6 +42,28 @@
   color: var(--primary-purple);
 }
 
+/* ==========================================================================
+   REFACTORIZACIÓN GLOBAL DE BARRAS DE DESPLAZAMIENTO (SCROLLBARS)
+   ========================================================================== */
+.avisos-card-list::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.avisos-card-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.avisos-card-list::-webkit-scrollbar-thumb {
+  background: var(--border-input, var(--border-color, #cbd5e1));
+  border-radius: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.avisos-card-list::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary, #94a3b8);
+}
+
 /* === SECCIÓN 1: VISTA LISTADO DE AVISOS === */
 .avisos-card-list {
   background: var(--bg-card);
@@ -50,8 +72,10 @@
   box-shadow: 0 4px 20px var(--sidebar-shadow);
   border: 1px solid var(--border-color);
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   gap: 12px;
+  max-height: 65vh;
+  overflow-y: auto;
   box-sizing: border-box;
   transition:
     background-color 0.25s ease,

@@ -496,12 +496,12 @@ h2 {
   font-size: 0.85rem;
   color: var(--text-secondary);
   line-height: 1.4;
-  max-height: calc(1.4rem * 2); 
+  max-height: calc(1.4rem * 2);
   overflow: hidden;
   display: -webkit-box;
   line-clamp: 2;
   -webkit-box-orient: vertical;
-  word-break: break-word; 
+  word-break: break-word;
 }
 
 .notice-description * {
@@ -744,20 +744,23 @@ h2 {
    ========================================================================== */
 .card-content::-webkit-scrollbar,
 .students-scroll-area::-webkit-scrollbar,
-.notices-list::-webkit-scrollbar {
+.notices-list::-webkit-scrollbar,
+.dates-list-wrapper::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 .card-content::-webkit-scrollbar-track,
 .students-scroll-area::-webkit-scrollbar-track,
-.notices-list::-webkit-scrollbar-track {
+.notices-list::-webkit-scrollbar-track,
+.dates-list-wrapper::-webkit-scrollbar-track {
   background: transparent;
 }
 
 .card-content::-webkit-scrollbar-thumb,
 .students-scroll-area::-webkit-scrollbar-thumb,
-.notices-list::-webkit-scrollbar-thumb {
+.notices-list::-webkit-scrollbar-thumb,
+.dates-list-wrapper::-webkit-scrollbar-thumb {
   background: var(--border-input, var(--border-color, #cbd5e1));
   border-radius: 10px;
   transition: background-color 0.2s ease;
@@ -765,8 +768,160 @@ h2 {
 
 .card-content::-webkit-scrollbar-thumb:hover,
 .students-scroll-area::-webkit-scrollbar-thumb:hover,
-.notices-list::-webkit-scrollbar-thumb:hover {
+.notices-list::-webkit-scrollbar-thumb:hover,
+.dates-list-wrapper::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary, #94a3b8);
+}
+
+/* === CONTENEDOR PRINCIPAL DE LA TARJETA === */
+.dates-card-container {
+  background-color: var(--bg-card, #1e1e2f);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-color, #2d2d44);
+}
+
+.card-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-color, #2d2d44);
+  padding-bottom: 0.75rem;
+}
+
+.card-header-title h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary, #ffffff);
+  margin: 0;
+}
+
+.card-header-title .header-icon {
+  color: var(--primary-color, #3b82f6);
+}
+
+/* === LISTADO DE FILAS === */
+.dates-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Elemento Fila Estándar */
+.date-item-row {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-item);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--accent-muted, #64748b);
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.date-item-row:hover {
+  transform: translateX(2px);
+  background-color: var(--bg-item-hover, #2a2a3f);
+}
+
+/* Variante visual estricta para Exámenes */
+.date-item-row.is-exam {
+  border-left-color: var(--error-red, #ef4444);
+}
+
+/* Contenedor del Icono de Fila */
+.date-icon-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.is-exam .date-icon-indicator {
+  color: var(--error-red, #ef4444);
+}
+
+/* Bloque de Contenido Central */
+.date-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.date-item-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary, #ffffff);
+  margin: 0;
+}
+
+.date-item-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  background-color: rgba(148, 163, 184, 0.15);
+  color: var(--text-muted, #94a3b8);
+  letter-spacing: 0.5px;
+}
+
+.is-exam .date-item-badge {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: var(--error-red, #ef4444);
+}
+
+/* Bloque Lateral Derecho (Fecha) */
+.date-timestamp-side {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-secondary, #cbd5e1);
+  font-size: 0.88rem;
+  font-weight: 500;
+  background-color: rgba(0, 0, 0, 0.15);
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+}
+
+.date-timestamp-side .text-icon {
+  font-size: 1rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.date-text-formatted {
+  margin: 0;
+}
+
+/* === ESTADO VACÍO (FALLBACK) === */
+.empty-dates-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--text-muted, #94a3b8);
+}
+
+.empty-dates-fallback .fallback-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.4;
+}
+
+.empty-dates-fallback p {
+  margin: 0;
+  font-size: 0.9rem;
 }
 
 /* ==========================================================================

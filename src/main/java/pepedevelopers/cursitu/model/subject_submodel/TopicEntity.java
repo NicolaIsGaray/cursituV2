@@ -3,6 +3,9 @@ package pepedevelopers.cursitu.model.subject_submodel;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import pepedevelopers.cursitu.model.dto.FileDTO;
+
+import java.util.List;
 
 @Data
 @Document(collection = "topics")
@@ -13,5 +16,6 @@ public class TopicEntity {
   private String title;
   private String content;
   private String assignmentId;
+  private List<FileDTO> files;
   private String classroom_id;
 }

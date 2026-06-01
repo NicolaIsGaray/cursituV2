@@ -84,8 +84,10 @@ public class TopicService {
     if (modified == null) throw  new ResponseStatusException(HttpStatus.NOT_FOUND, "Clase no encontrada.");
 
     if ("teorico".equals(mode) && assignment == null) {
-      assignmentRepo.findById(modified.getAssignmentId()).ifPresent(assignmentRepo::delete);
-      modified.setAssignmentId(null);
+      if (modified.getAssignmentId() != null) {
+        assignmentRepo.findById(modified.getAssignmentId()).ifPresent(assignmentRepo::delete);
+        modified.setAssignmentId(null);
+      }
     } else if ("entregable".equals(mode) && assignment != null) {
       AssignmentEntity newAssignment = assignmentRepo.save(assignment);
       modified.setAssignmentId(newAssignment.getId());
@@ -93,6 +95,7 @@ public class TopicService {
 
     modified.setTitle(updates.getTitle() == null ? modified.getTitle() : updates.getTitle());
     modified.setContent(updates.getContent() == null ? modified.getContent() : updates.getContent());
+    modified.setFiles(updates.getFiles() == null ? modified.getFiles() : updates.getFiles());
 
     topicRepo.save(modified);
   }

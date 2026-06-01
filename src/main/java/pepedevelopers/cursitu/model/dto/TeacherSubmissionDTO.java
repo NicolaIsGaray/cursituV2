@@ -4,6 +4,7 @@ public record TeacherSubmissionDTO(
   String studentId,
   String studentName,
   String submissionId,
+  String fileName,
   String fileUrl,
   String submissionDate,
   Boolean isLate,

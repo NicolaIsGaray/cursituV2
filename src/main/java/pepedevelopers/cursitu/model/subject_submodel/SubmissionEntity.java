@@ -15,6 +15,7 @@ public class SubmissionEntity {
 
   private String activityId;
   private String studentId;
+  private String fileName;
   private String file_url;
   private String comment;
 

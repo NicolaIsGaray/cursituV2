@@ -138,38 +138,112 @@ body {
   color: var(--primary-purple);
 }
 
-/* Indicadores de Estados de Exámenes */
-.exam-items li {
+/* ==========================================================================
+   NUEVO REDISEÑO: COMPONENTE DE PRÓXIMOS PARCIALES (SIDEBAR)
+   ========================================================================== */
+.exam-sidebar-container {
+  padding: 0.2rem 0.1rem;
+}
+
+.sidebar-section-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 0;
+  gap: 0.4rem;
+  margin-bottom: 0.8rem;
 }
 
-.exam-items p {
-  margin: 0;
-  font-size: 0.75rem;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: color 0.2s ease;
+.sidebar-section-header .section-icon {
+  font-size: 1.1rem;
+  color: var(--error-red, #ef4444);
 }
 
-.dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+.exam-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.exam-item-card {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-main); /* Contraste sutil sobre el fondo de la sidebar */
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.5rem;
+  gap: 0.65rem;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.exam-item-card:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--primary-purple);
+}
+
+.exam-item-card.high-priority {
+  border-left: 3px solid var(--error-red, #ef4444);
+}
+
+.exam-calendar-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  min-width: 36px;
+  height: 40px;
+  padding: 0.15rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
   flex-shrink: 0;
 }
-.dot.blue {
-  background: #3498db;
+
+.exam-month {
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--primary-purple);
+  letter-spacing: 0.3px;
+  line-height: 1;
+  margin-bottom: 2px;
 }
-.dot.red {
-  background: #e74c3c;
+
+.exam-item-card.high-priority .exam-month {
+  color: var(--error-red, #ef4444);
 }
-.dot.green {
-  background: #2ecc71;
+
+.exam-day {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.exam-info-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  overflow: hidden;
+}
+
+.exam-subject-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+  white-space: normal;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.exam-status-tag {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  align-self: flex-start;
 }
 
 /* Footer de Perfil de Usuario */
@@ -272,9 +346,14 @@ body {
     color 0.25s ease;
 }
 
+.profile-thumb img {
+  width: 100%;
+  border-radius: 20px;
+}
+
 /* === CONTENEDOR DEL BOTÓN DE NOTIFICACIONES === */
 .notification-trigger {
-  position: relative; /* Requisito para el posicionamiento del badge */
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -290,34 +369,25 @@ body {
   font-size: 0.72rem;
   font-weight: 800;
   line-height: 1;
-
-  /* Estructura adaptable para números de 1, 2 o más dígitos */
   min-width: 18px;
   height: 18px;
   padding: 0 5px;
   border-radius: 10px;
-
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-
-  /* Anillo de aislamiento estético con el fondo del botón */
   border: 2px solid var(--bg-navbar, #1e1e2f);
   box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
-
-  /* Comportamiento de la tipografía */
   font-family:
     system-ui,
     -apple-system,
     sans-serif;
   user-select: none;
-  pointer-events: none; /* Evita interferir con el click del botón */
-
+  pointer-events: none;
   animation: scaleIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Animación de emergencia sutil al aparecer */
 @keyframes scaleIn {
   from {
     transform: scale(0);
@@ -451,7 +521,7 @@ body {
 
 .logout-item:hover {
   color: #e74c3c !important;
-  background: rgba(231, 76, 60, 0.1) !important; /* Opacidad sutil nativa para ambos modos */
+  background: rgba(231, 76, 60, 0.1) !important;
 }
 
 /* Animación de entrada */
@@ -540,7 +610,8 @@ body {
 
 /* FIX ALTURA CRÍTICA (NETBOOKS/JUANA MANSO) */
 @media (max-height: 620px) {
-  .sidebar-section:nth-child(3) {
+  /* Oculta la sección completa de parciales si no hay altura vertical suficiente */
+  .sidebar-section:has(.exam-sidebar-container) {
     display: none !important;
   }
   .app-title {
