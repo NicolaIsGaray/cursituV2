@@ -17,33 +17,33 @@ export interface LoginData {
 export class AuthService {
   private http = inject(HttpClient);
   private route = inject(Router);
-  private apiUrl = `${environment.api}/auth`
+  private apiUrl = `${environment.api}/auth`;
 
   private readonly ROL_KEY = 'cursitu_mock_role';
   private readonly USER_KEY = 'cursitu_mock_user';
 
   private userSubject = new BehaviorSubject<User | null>(this.getUserFromLocalStorage());
-  
+
   currentUser$ = this.userSubject.asObservable();
 
   private roleSubject = new BehaviorSubject<Role>(
-    (localStorage.getItem(this.ROL_KEY) as Role) || 'ALUMNO'
+    (localStorage.getItem(this.ROL_KEY) as Role) || 'ALUMNO',
   );
   userRole$ = this.roleSubject.asObservable();
 
   constructor() {}
 
   login(user: LoginData): Observable<User> {
-  return this.http.post<User>(`${this.apiUrl}/login`, user).pipe(
-    tap((loggedUser) => {
-      if (loggedUser && loggedUser.role) {
-        this.setSimulatedRole(loggedUser.role as Role);
-        localStorage.setItem(this.USER_KEY, JSON.stringify(loggedUser));
-        this.userSubject.next(loggedUser);
-      }
-    })
-  );
-}
+    return this.http.post<User>(`${this.apiUrl}/login`, user).pipe(
+      tap((loggedUser) => {
+        if (loggedUser && loggedUser.role) {
+          this.setSimulatedRole(loggedUser.role as Role);
+          localStorage.setItem(this.USER_KEY, JSON.stringify(loggedUser));
+          this.userSubject.next(loggedUser);
+        }
+      }),
+    );
+  }
 
   setSimulatedRole(nuevoRol: Role) {
     localStorage.setItem(this.ROL_KEY, nuevoRol);
@@ -63,20 +63,13 @@ export class AuthService {
     localStorage.removeItem(this.ROL_KEY);
 
     this.userSubject.next(null);
-    this.roleSubject.next('ALUMNO' as Role); 
+    this.roleSubject.next('ALUMNO' as Role);
 
-    this.getAuthStatus();
+    window.location.reload();
   }
 
-  getAuthStatus() {
-    if (!this.currentUserValue) {
-      this.route.navigate(['/login']);
-      return;
-    }
-
-    if (this.currentRole === 'ADMIN') {
-      this.route.navigate(['/user-management']);
-    }
+  isLoggedIn(): boolean {
+    return !!this.currentUserValue;
   }
 
   // Método auxiliar privado para el constructor del Subject

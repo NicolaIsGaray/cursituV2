@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import pepedevelopers.cursitu.model.ClassroomEntity;
 import pepedevelopers.cursitu.model.subject_submodel.AssignmentEntity;
+import pepedevelopers.cursitu.model.subject_submodel.DateEntity;
 import pepedevelopers.cursitu.model.subject_submodel.SubmissionEntity;
 import pepedevelopers.cursitu.model.subject_submodel.TopicEntity;
 import pepedevelopers.cursitu.repository.*;
@@ -24,17 +25,17 @@ public class TopicService {
   private final IClassroom classroomRepo;
   private final IAssignment assignmentRepo;
   private final ISubmission submissionRepo;
-  private final IGrades gradeRepo;
+  private final IDate dateRepo;
 
   @Autowired
   private ClassroomService classroomService;
 
-  public TopicService(ITopics topicRepo, IClassroom classroomRepo, IAssignment assignmentRepo, ISubmission submissionRepo, IGrades gradeRepo) {
+  public TopicService(ITopics topicRepo, IClassroom classroomRepo, IAssignment assignmentRepo, ISubmission submissionRepo, IDate dateRepo) {
     this.topicRepo = topicRepo;
     this.classroomRepo = classroomRepo;
     this.assignmentRepo = assignmentRepo;
     this.submissionRepo = submissionRepo;
-    this.gradeRepo = gradeRepo;
+    this.dateRepo = dateRepo;
   }
 
   @Transactional
@@ -42,6 +43,18 @@ public class TopicService {
     if ("entregable".equals(mode) && newAssignment != null) {
       AssignmentEntity savedAssignment = assignmentRepo.save(newAssignment);
       newTopic.setAssignmentId(savedAssignment.getId());
+
+      if ("parcial".equals(savedAssignment.getType())) {
+        DateEntity examDate = new DateEntity();
+
+        examDate.setTitle(savedAssignment.getTitle());
+        examDate.setSubjectId(savedAssignment.getSubject_id());
+        examDate.setDate(savedAssignment.getDate_limit());
+        examDate.setEvent("EXAMEN");
+        examDate.setImportant(true);
+
+        dateRepo.save(examDate);
+      }
     }
     else {
       newTopic.setAssignmentId(null);
@@ -71,8 +84,10 @@ public class TopicService {
     if (modified == null) throw  new ResponseStatusException(HttpStatus.NOT_FOUND, "Clase no encontrada.");
 
     if ("teorico".equals(mode) && assignment == null) {
-      assignmentRepo.findById(modified.getAssignmentId()).ifPresent(assignmentRepo::delete);
-      modified.setAssignmentId(null);
+      if (modified.getAssignmentId() != null) {
+        assignmentRepo.findById(modified.getAssignmentId()).ifPresent(assignmentRepo::delete);
+        modified.setAssignmentId(null);
+      }
     } else if ("entregable".equals(mode) && assignment != null) {
       AssignmentEntity newAssignment = assignmentRepo.save(assignment);
       modified.setAssignmentId(newAssignment.getId());
@@ -80,6 +95,7 @@ public class TopicService {
 
     modified.setTitle(updates.getTitle() == null ? modified.getTitle() : updates.getTitle());
     modified.setContent(updates.getContent() == null ? modified.getContent() : updates.getContent());
+    modified.setFiles(updates.getFiles() == null ? modified.getFiles() : updates.getFiles());
 
     topicRepo.save(modified);
   }

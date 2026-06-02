@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface INotice extends MongoRepository<NoticeEntity, String> {
   Optional<List<NoticeEntity>> findBySenderId(String senderId);
+  Optional<NoticeEntity> findByReadByIn(List<String> ids);
 }

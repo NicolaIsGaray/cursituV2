@@ -1,6 +1,13 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { Observable } from 'rxjs';
+import { Subject } from '../../../models/subject.model';
+import { AssignmentDTO } from '../../../models/dto/assignmentDTO';
+import { SubjectService } from '../../../services/subject.service';
+import { AssignmentService } from '../../../services/assignment.service';
+import { User } from '../../../models/user.model';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-pending-tasks',
@@ -8,29 +15,54 @@ import { RouterModule } from '@angular/router';
   templateUrl: './pending-tasks.html',
   styleUrl: './pending-tasks.css',
 })
-export class PendingTasks {
-  materias = [
-    { id: 1, nombre: 'Programación Orientada a Objetos', color: '#ff8c2e' },
-    { id: 2, nombre: 'Base de Datos Avanzada', color: '#2ecc71' },
-    { id: 3, nombre: 'Sistemas Operativos Aplicados', color: '#3b67be' },
-    { id: 4, nombre: 'Redes y Comunicaciones Distribuidas', color: '#b5b200' }
-  ];
+export class PendingTasks implements OnInit {
+  subjectList$!: Observable<Subject[]>;
 
-  materiaSeleccionada = this.materias[0];
+  selectedSubject!: Subject;
+  userData!: User;
 
-  // Esto vendría de un servicio filtrado por materiaId
-  tareasFiltradas = [
-    { id: 101, titulo: 'Trabajo Práctico N° 3', descripcion: 'Manejo de Excepciones y Polimorfismo', fechaVencimiento: '12/05/2026' },
-    { id: 102, titulo: 'Trabajo Práctico N° 3', descripcion: 'Manejo de Excepciones y Polimorfismo', fechaVencimiento: '12/05/2026' },
-    { id: 103, titulo: 'Trabajo Práctico N° 3', descripcion: 'Manejo de Excepciones y Polimorfismo', fechaVencimiento: '12/05/2026' },
-    { id: 104, titulo: 'Trabajo Práctico N° 3', descripcion: 'Manejo de Excepciones y Polimorfismo', fechaVencimiento: '12/05/2026' }
-  ];
+  pendingList$!: Observable<AssignmentDTO[]>;
+
+  constructor(
+    private location: Location,
+    private cdr: ChangeDetectorRef,
+    private subjectService: SubjectService,
+    private assignmentService: AssignmentService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    this.userData = this.authService.currentUserValue!;
+
+    this.loadSubjects();
+  }
+
+  loadSubjects() {
+    this.subjectList$ = this.subjectService.getStudentSubjects(this.userData.id!);
+
+    this.subjectList$.subscribe({
+      next: (subjects) => {
+        this.selectedSubject = subjects[0];
+        this.switchGroupSubject(this.selectedSubject.id!);
+      }
+    })
+  }
   
-  constructor (private location: Location) {}
+  loadPendings() {
+    this.pendingList$ = this.assignmentService.getPendingAssignments(this.userData.id!);
+  }
 
-  seleccionarMateria(materia: any) {
-    this.materiaSeleccionada = materia;
-    // Aquí deberías refrescar 'tareasFiltradas' con los datos de la nueva materia
+  switchGroupSubject(subjectId: string) {
+    this.subjectService.getSubjectById(subjectId).subscribe({
+      next: (subject) => {
+        this.selectedSubject = subject;
+
+        document.documentElement.style.setProperty('--subject-color', subject.color);
+
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Hubo un problema al intentar obtener la materia: ', err),
+    });
   }
 
   goBack() {

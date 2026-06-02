@@ -75,7 +75,7 @@ export class MyNotices implements OnInit {
     };
 
     if (this.mode === 'crear') {
-      this.noticeService.createNotice(payload).subscribe({
+      this.noticeService.createNotice(payload, this.userData.id!).subscribe({
         next: () => {
           alert('Anuncio Publicado Exitosamente.');
           this.refreshModules();

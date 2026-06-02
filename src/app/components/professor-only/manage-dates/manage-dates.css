@@ -11,7 +11,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -21,7 +21,7 @@
 }
 
 .btn-back:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: var(--bg-hover);
   color: var(--primary-purple);
 }
 
@@ -35,11 +35,12 @@
 .calendario-header h2 {
   font-size: 1.8rem;
   font-weight: 800;
-  color: #1a1a1a;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
 }
 
 .btn-programar {
-  background: #3f66cc;
+  background: var(--subject-color, var(--primary-purple));
   color: white;
   border: none;
   padding: 12px 24px;
@@ -50,7 +51,7 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(63, 102, 204, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
 }
 
 .btn-programar:hover {
@@ -60,15 +61,19 @@
 
 /* === CARD Y BANNER === */
 .calendario-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-  border: 1px solid #f0f0f0;
+  box-shadow: 0 15px 35px var(--sidebar-shadow);
+  border: 1px solid var(--border-color);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .calendario-banner {
-  background: var(--subject-color);
+  background: var(--subject-color, var(--primary-purple));
   padding: 1.2rem;
   color: white;
   text-align: center;
@@ -80,8 +85,8 @@
 
 /* === MODO EDICIÓN / CREACIÓN === */
 .fecha-item.formulario-creacion {
-  background-color: #f8fafc;
-  border: 2px dashed #6366f1;
+  background-color: var(--bg-input);
+  border: 2px dashed var(--subject-color, var(--primary-purple));
   animation: slideDown 0.2s ease-in-out;
 }
 
@@ -95,18 +100,21 @@
 .input-titulo-dinamico {
   font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
-  border: 1px solid #cbd5e1;
+  color: var(--text-primary);
+  border: 1px solid var(--border-input, var(--border-color));
   border-radius: 6px;
   padding: 6px 10px;
   outline: none;
-  background-color: #ffffff;
-  transition: border-color 0.15s ease;
+  background-color: var(--bg-card);
+  transition:
+    border-color 0.15s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .input-titulo-dinamico:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: var(--subject-color, var(--primary-purple));
+  box-shadow: 0 0 0 3px hsl(from var(--subject-color, var(--primary-purple)) h s l / 0.15);
 }
 
 .select-wrapper {
@@ -118,24 +126,32 @@
 .select-tipo-dinamico {
   appearance: none;
   -webkit-appearance: none;
-  background-color: #e2e8f0;
-  color: #334155;
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
   font-size: 0.75rem;
   font-weight: 700;
   padding: 4px 24px 4px 8px;
-  border: none;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   cursor: pointer;
   outline: none;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.select-tipo-dinamico option {
+  background-color: var(--bg-input);
+  color: var(--text-primary);
 }
 
 .select-arrow {
   position: absolute;
-  right: 2px;
+  right: 6px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 16px;
-  color: #475569;
+  color: var(--text-muted);
   pointer-events: none;
 }
 
@@ -143,7 +159,7 @@
   border: none;
   background: transparent;
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--text-primary);
   font-family: inherit;
   outline: none;
   cursor: pointer;
@@ -151,16 +167,17 @@
 }
 
 .date-input-wrapper.focusable:focus-within {
-  border-color: #6366f1;
-  background-color: #ffffff;
+  border-color: var(--subject-color, var(--primary-purple));
+  background-color: var(--bg-card);
 }
 
 .btn-action.success {
-  color: #16a34a;
+  color: var(--success-green, #10b981);
 }
 
 .btn-action.success:hover {
-  background-color: #dcfce7;
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  color: var(--success-green, #10b981) !important;
 }
 
 /* === PLACEHOLDER ESTADO VACÍO === */
@@ -171,42 +188,48 @@
   justify-content: center;
   text-align: center;
   padding: 40px 20px;
-  background-color: #f8fafc;
-  border: 2px dashed #cbd5e1;
+  background-color: var(--bg-input);
+  border: 2px dashed var(--border-color);
   border-radius: 8px;
   margin: 16px 0;
   animation: fadeIn 0.3s ease-in-out;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .empty-calendar-placeholder .icon-container {
   width: 56px;
   height: 56px;
-  background-color: #f1f5f9;
+  background-color: var(--bg-hover);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 14px;
+  transition: background-color 0.25s ease;
 }
 
 .empty-calendar-placeholder .icon-container span {
   font-size: 28px;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 .empty-calendar-placeholder h3 {
   font-size: 1.15rem;
-  color: #334155;
+  color: var(--text-primary);
   margin: 0 0 6px 0;
   font-weight: 600;
+  transition: color 0.2s ease;
 }
 
 .empty-calendar-placeholder p {
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--text-muted);
   margin: 0;
   max-width: 400px;
   line-height: 1.4;
+  transition: color 0.2s ease;
 }
 
 /* === LISTA DE FECHAS === */
@@ -222,15 +245,16 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.5rem;
-  background: #fff;
-  border: 1px solid #f0f0f0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 18px;
   transition: all 0.2s ease;
 }
 
 .fecha-item:hover {
-  border-color: #d0d0d0;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
+  border-color: var(--border-input, var(--border-color));
+  box-shadow: 0 5px 15px var(--sidebar-shadow);
+  background: var(--bg-hover);
 }
 
 .fecha-main-info {
@@ -250,27 +274,29 @@
 }
 
 .icon-box.examen {
-  background: linear-gradient(135deg, #ff5f6d, #e74c3c);
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
 }
 .icon-box.entrega {
-  background: linear-gradient(135deg, #11998e, #2ecc71);
+  background: linear-gradient(135deg, #10b981, #047857);
 }
 .icon-box.clase {
-  background: linear-gradient(135deg, #3f66cc, #5a88ff);
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
 }
 
 .fecha-text h4 {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
 }
 
 .tag-tipo {
   font-size: 0.7rem;
   font-weight: 800;
-  color: #888;
+  color: var(--text-muted);
   letter-spacing: 0.5px;
+  transition: color 0.2s ease;
 }
 
 /* === CONTROLES Y VISUALIZACIÓN DE FECHA === */
@@ -284,27 +310,31 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #f8f9fa;
+  background: var(--bg-input);
   padding: 8px 12px;
   border-radius: 10px;
-  border: 1px solid #eee;
+  border: 1px solid var(--border-color);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .date-input-wrapper .material-symbols-outlined {
   font-size: 1.2rem;
-  color: #666;
+  color: var(--text-secondary);
 }
 
-/* Unificado sin duplicación y adaptado a vistas extensas */
 .date-display {
   border: none;
   background: transparent;
   font-family: inherit;
   font-weight: 700;
   font-size: 0.9rem;
-  color: #444;
-  width: 180px; 
+  color: var(--text-primary);
+  width: 180px;
   outline: none;
+  transition: color 0.2s ease;
+  color-scheme: light;
 }
 
 .action-buttons {
@@ -313,8 +343,8 @@
 }
 
 .btn-action {
-  background: white;
-  border: 1px solid #eee;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   width: 38px;
   height: 38px;
@@ -322,19 +352,31 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  color: #666;
-  transition: all 0.2s;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.btn-action.important.yes {
+  background-color: #f1c638;
+  color: var(--text-primary);
 }
 
 .btn-action:hover {
-  background: #f0f0f0;
-  color: #333;
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-input, var(--border-color));
+}
+
+.btn-action.important:hover {
+  background: rgba(239, 199, 68, 0.12);
+  color: #f1c638;
+  border-color: rgba(239, 171, 68, 0.25);
 }
 
 .btn-action.delete:hover {
-  background: #fff0f0;
-  color: #e74c3c;
-  border-color: #ffd0d0;
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--danger-red, #ef4444);
+  border-color: rgba(239, 68, 68, 0.25);
 }
 
 /* === MEDIA QUERIES === */
@@ -348,9 +390,10 @@
 
   .fecha-controls {
     justify-content: space-between;
-    background: #fdfdfd;
-    padding-top: 1rem;
-    border-top: 1px dashed #eee;
+    background: var(--bg-input);
+    padding: 1rem;
+    border-radius: 12px;
+    border-top: 1px dashed var(--border-color);
   }
 }
 
@@ -374,6 +417,14 @@
   .action-buttons {
     width: 100%;
     justify-content: center;
+  }
+
+  .date-display-editable {
+    width: 32vw;
+  }
+
+  .input-titulo-dinamico {
+    width: 30vw;
   }
 
   .action-buttons {

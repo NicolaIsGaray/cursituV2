@@ -50,4 +50,10 @@ public class DateController {
 
     return ResponseEntity.ok(Map.of("message", "Fecha eliminada con éxito."));
   }
+
+  @GetMapping("/exam-date/{examId}")
+  public ResponseEntity<?> assignDateToExam(@PathVariable String examId) {
+    dateService.createExamDate(examId);
+    return ResponseEntity.ok(Map.of("message", "Fecha de parcial creada con éxito."));
+  }
 }

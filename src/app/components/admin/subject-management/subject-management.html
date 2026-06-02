@@ -1,7 +1,7 @@
 <main *ngIf="authService.userRole$ | async as rol">
   <div class="admin-container" *ngIf="rol === 'ADMIN'">
     <div class="selection-panel">
-      <h3>Gestión de Materias</h3>
+      <h3 style="color: var(--text-primary);">Gestión de Materias</h3>
       <p class="section-description">
         Configura las materias, asigna docentes y define periodos académicos.
       </p>

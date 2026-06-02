@@ -1,15 +1,17 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Subject } from '../../../models/subject.model';
 import { SubjectService } from '../../../services/subject.service';
-import { filter, map, Observable, shareReplay, switchMap, tap } from 'rxjs';
+import { filter, Observable, shareReplay, switchMap, tap } from 'rxjs';
 import { Assignment } from '../../../models/assignment.model';
 import { AssignmentService } from '../../../services/assignment.service';
 import { QuillEditorComponent } from 'ngx-quill';
 import { Submission } from '../../../models/submission.model';
 import { AuthService } from '../../../services/auth.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { AppwriteService } from '../../../services/appwrite.service';
+import { FileDTO } from '../../../models/dto/fileDTO';
 
 @Component({
   selector: 'app-send-task',
@@ -33,7 +35,11 @@ export class SendTask implements OnInit {
   newSubmit!: Submission;
 
   submitForm!: FormGroup;
-  submissionStatus$!: Observable<string>;
+  submissionStatus$!: Observable<Submission>;
+
+  fileToSend!: FileDTO;
+  fileUrl: string | null = null;
+  uploadedFile: File | null = null;
 
   editorModules = {
     toolbar: [
@@ -43,6 +49,8 @@ export class SendTask implements OnInit {
     ],
   };
 
+  private appwriteService = inject(AppwriteService);
+
   constructor(
     private subjectService: SubjectService,
     private assignmentService: AssignmentService,
@@ -50,6 +58,7 @@ export class SendTask implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private location: Location,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -89,11 +98,10 @@ export class SendTask implements OnInit {
   }
 
   private loadSubmissionStatus(): void {
-    this.submissionStatus$ = this.assignmentService
-      .checkSubmissionStatus(this.authService.currentUserValue?.id!, this.activityId!)
-      .pipe(
-        map((res) => res.status),
-      );
+    this.submissionStatus$ = this.assignmentService.getStudentNewSubmission(
+      this.authService.currentUserValue?.id!,
+      this.activityId!,
+    );
   }
 
   formatDateDisplay(original: Date | string): string {
@@ -122,9 +130,17 @@ export class SendTask implements OnInit {
     return new Date() <= limit;
   }
 
-  sendActivity(activity: Assignment) {
+  async sendActivity(activity: Assignment) {
     this.submissionDate = new Date();
     const limit = new Date(activity.date_limit);
+
+    let subject = new Subject();
+    this.subjectService.getSubjectById(this.subjectId!).subscribe({
+      next: (s) => {
+        subject = s;
+      },
+      error: (err) => console.error(err),
+    });
 
     this.submissionTimeStatus = this.submissionDate <= limit ? 'A término' : 'Fuera de término';
 
@@ -138,9 +154,24 @@ export class SendTask implements OnInit {
 
     const { comment } = this.submitForm.value;
 
+    let folderName = subject.subject_name.replace(/ /g, '-') + '-' + subject.year_level + 'año';
+
+    if (this.uploadedFile) {
+      const downloadUrl = await this.appwriteService.uploadFiles(
+        this.uploadedFile,
+        `/deliveries-${folderName}`,
+      );
+
+      this.fileToSend = {
+        fileName: this.uploadedFile.name,
+        url: downloadUrl,
+      };
+    }
+
     this.newSubmit = {
       comment: comment,
-      file_url: 'google.com',
+      fileName: this.fileToSend.fileName === null ? 'Archivo Adjunto' : this.fileToSend.fileName,
+      file_url: this.fileToSend.url === null ? '' : this.fileToSend.url,
       submission_date: formattedDate,
     };
 
@@ -151,13 +182,22 @@ export class SendTask implements OnInit {
           alert('Actividad Entregada Exitosamente.');
           this.submitForm.reset();
           this.loadSubmissionStatus();
+
+          this.cdr.detectChanges();
         },
         error: (err) => console.error('Hubo un error al entregar la actividad: ', err),
       });
   }
 
-  triggerFileInput() {
-    alert('Simulación de carga de archivo.');
+  onFileSelected(e: any): void {
+    this.uploadedFile = e.target.files[0];
+    if (!this.uploadedFile) return;
+
+    const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;
+
+    if (this.uploadedFile.size > MAX_FILE_SIZE_BYTES) {
+      alert(`El archivo "${this.uploadedFile.name}" supera el límite máximo permitido de 50 MB.`);
+    }
   }
 
   goBack() {

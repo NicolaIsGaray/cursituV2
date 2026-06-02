@@ -4,13 +4,15 @@
   max-width: 1400px;
   margin: 0 auto;
   font-family: inherit;
+  box-sizing: border-box;
 }
 
 .avisos-layout-docente h2 {
   font-size: 1.8rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 25px;
+  transition: color 0.2s ease;
 }
 
 /* === TOP NAV & BTN BACK === */
@@ -25,7 +27,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -35,8 +37,8 @@
 }
 
 .btn-back:hover {
-  background-color: #f1f5f9;
-  color: #1e293b;
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 /* === GRID SPLIT ESTRUCTURAL ASIMÉTRICO === */
@@ -49,18 +51,23 @@
 
 /* === FORMULARIOS (LADO IZQUIERDO) === */
 .form-card-section {
-  background: white;
+  background: var(--bg-card);
   padding: 30px;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 20px var(--sidebar-shadow);
+  border: 1px solid var(--border-color);
+  box-sizing: border-box;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .form-card-section h3 {
   font-size: 1.3rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 20px 0;
+  transition: color 0.2s ease;
 }
 
 .form-group {
@@ -71,20 +78,21 @@
   display: block;
   font-size: 0.88rem;
   font-weight: 700;
-  color: #475569;
+  color: var(--text-secondary);
   margin-bottom: 8px;
+  transition: color 0.2s ease;
 }
 
 .input-field {
   width: 100%;
   box-sizing: border-box;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--border-input, var(--border-color));
   border-radius: 10px;
   padding: 12px 16px;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #334155;
-  background: #f8fafc;
+  color: var(--text-primary);
+  background: var(--bg-input);
   font-family: inherit;
   transition: all 0.25s ease;
 }
@@ -92,23 +100,18 @@
 .input-field:focus {
   border-color: var(--primary-purple);
   outline: none;
-  background: white;
-  box-shadow: 0 0 0 4px rgba(63, 54, 137, 0.08);
-}
-
-.textarea-field {
-  height: 160px;
-  resize: vertical;
-  min-height: 120px;
-  line-height: 1.5;
+  background: var(--bg-card);
+  box-shadow: 0 0 0 4px rgba(63, 54, 137, 0.15);
 }
 
 /* BOTÓN PRINCIPAL DE ACCIÓN */
 .btn-primary-action {
   width: 100%;
+  box-sizing: border-box;
   border: none;
   padding: 14px;
   border-radius: 10px;
+  background: var(--primary-purple);
   color: white;
   font-weight: 800;
   font-size: 1rem;
@@ -120,12 +123,16 @@
   transition:
     transform 0.2s,
     filter 0.2s;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary-action:hover {
   filter: brightness(1.08);
   transform: translateY(-1px);
+}
+
+.btn-primary-action:active {
+  transform: scale(0.99);
 }
 
 /* === PLANILLA DE COMUNICADOS (LADO DERECHO) === */
@@ -136,8 +143,9 @@
 .avisos-view-section h3 {
   font-size: 1.3rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 20px 0;
+  transition: color 0.2s ease;
 }
 
 .avisos-scroll-grid {
@@ -153,25 +161,29 @@
 .avisos-scroll-grid::-webkit-scrollbar {
   width: 6px;
 }
+.avisos-scroll-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
 .avisos-scroll-grid::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--border-input, var(--border-color));
   border-radius: 4px;
 }
 
 /* CARD DE AVISO */
 .aviso-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 20px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 8px var(--sidebar-shadow);
+  box-sizing: border-box;
   transition: all 0.2s ease;
 }
 
 .aviso-card:hover {
   border-color: var(--primary-purple);
   transform: translateX(2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4px 12px var(--sidebar-shadow);
 }
 
 .aviso-card-header {
@@ -179,23 +191,27 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  gap: 12px;
 }
 
 .aviso-card-header .title {
   font-size: 1.05rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--text-primary);
+  word-break: break-word;
+  transition: color 0.2s ease;
 }
 
 /* ACCIONES MODULARES */
 .aviso-actions {
   display: flex;
   gap: 6px;
+  flex-shrink: 0;
 }
 
 .action-icon-btn {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   width: 34px;
   height: 34px;
@@ -211,32 +227,34 @@
 }
 
 .action-icon-btn.edit {
-  color: #475569;
+  color: var(--text-secondary);
 }
 .action-icon-btn.delete {
   color: #ef4444;
 }
 
 .action-icon-btn.edit:hover {
-  background: #f1f5f9;
-  border-color: #b0b1b3;
+  background: var(--bg-hover);
+  border-color: var(--border-input, var(--border-color));
+  color: var(--text-primary);
 }
 .action-icon-btn.delete:hover {
-  background: #fef2f2;
+  background: rgba(239, 68, 68, 0.15);
   border-color: #fca5a5;
 }
 
 /* METADATOS INTERNOS */
 .aviso-meta-content {
-  border-top: 1px dashed #f1f5f9;
+  border-top: 1px dashed var(--border-color);
   padding-top: 10px;
 }
 
 .aviso-fecha {
   font-size: 0.82rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-muted);
   margin: 0;
+  transition: color 0.2s ease;
 }
 
 /* === PLACEHOLDER ESTADO VACÍO === */
@@ -247,15 +265,16 @@
   justify-content: center;
   text-align: center;
   padding: 40px 20px;
-  background: white;
+  background: var(--bg-empty-box, var(--bg-input));
   border-radius: 12px;
-  border: 2px dashed #e2e8f0;
+  border: 2px dashed var(--border-color);
   min-height: 280px;
   box-sizing: border-box;
+  transition: all 0.25s ease;
 }
 
 .placeholder-icon-box {
-  background: #f1f5f9;
+  background: var(--bg-hover);
   color: var(--primary-purple);
   width: 60px;
   height: 60px;
@@ -264,6 +283,7 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 16px;
+  transition: background-color 0.25s ease;
 }
 
 .placeholder-icon-box .material-symbols-outlined {
@@ -273,26 +293,92 @@
 .empty-avisos-placeholder h4 {
   font-size: 1.1rem;
   font-weight: 800;
-  color: #334155;
+  color: var(--text-primary);
   margin: 0 0 8px 0;
+  transition: color 0.2s ease;
 }
 
 .empty-avisos-placeholder p {
   font-size: 0.88rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-muted);
   max-width: 360px;
   margin: 0;
   line-height: 1.5;
+  transition: color 0.2s ease;
 }
 
-/* === ADAPTACIÓN RESPONSIVE === */
+/* =========================================
+   ADAPTACIÓN RESPONSIVA MODERNA
+   ========================================= */
 @media (max-width: 968px) {
+  .gestion-avisos-container {
+    padding: 16px;
+  }
+
+  .avisos-layout-docente h2 {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .top-nav {
+    padding: 4px 8px;
+  }
+
   .docente-grid-split {
     grid-template-columns: 1fr;
-    gap: 25px;
+    gap: 24px;
   }
+
+  .form-card-section {
+    padding: 20px;
+  }
+
   .avisos-scroll-grid {
     max-height: none;
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-card-section {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .form-card-section h3,
+  .avisos-view-section h3 {
+    font-size: 1.15rem;
+    margin-bottom: 14px;
+  }
+
+  .input-field {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .textarea-field {
+    height: 130px;
+  }
+
+  .aviso-card {
+    padding: 16px;
+  }
+
+  .aviso-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .aviso-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .empty-avisos-placeholder {
+    min-height: 220px;
+    padding: 24px 16px;
   }
 }

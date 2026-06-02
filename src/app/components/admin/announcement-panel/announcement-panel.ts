@@ -6,6 +6,7 @@ import { AuthService } from '../../../services/auth.service';
 import { NoticeService } from '../../../services/notice.service';
 import { Notice } from '../../../models/notice.model';
 import { Observable } from 'rxjs';
+import { User } from '../../../models/user.model';
 
 @Component({
   selector: 'app-announcement-panel',
@@ -24,6 +25,8 @@ export class AnnouncementPanel implements OnInit{
 
   emisorId: string | null = null;
 
+  currentUser!: User;
+
   editorModules = {
     toolbar: [
       ['bold', 'italic', 'underline', 'clean'],
@@ -39,7 +42,9 @@ export class AnnouncementPanel implements OnInit{
   ) {}
 
   ngOnInit(): void {
-    this.noticeList$ = this.noticeService.getAllNotices();
+    this.currentUser = this.authService.currentUserValue!;
+    
+    this.noticeList$ = this.noticeService.getSenderNotices(this.currentUser.id!);
 
     this.announcementForm = this.fb.group({
       title: ['', Validators.required],
@@ -75,7 +80,7 @@ export class AnnouncementPanel implements OnInit{
   }
 
   submitNotice() {
-    this.noticeService.createNotice(this.newNotice).subscribe({
+    this.noticeService.createNotice(this.newNotice, this.currentUser.id!).subscribe({
       next: () => {
         alert("Aviso Creado Exitosamente.");
         window.location.reload();

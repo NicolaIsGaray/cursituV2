@@ -10,6 +10,7 @@ import { GroupService } from '../../services/group.service';
 import { User } from '../../models/user.model';
 import { ClassroomService } from '../../services/classroom.service';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { GroupDTO } from '../../models/dto/groupDTO';
 
 @Component({
   selector: 'app-groups',
@@ -21,10 +22,11 @@ export class Groups implements OnInit {
   mode: 'crear' | 'editar' = 'crear';
 
   professorSubjects$!: Observable<Subject[]>;
-  subjectList$?: Observable<Subject[]>;
+  studentSubjects$!: Observable<Subject[]>;
   selectedSubject!: Subject;
 
   groupList$!: Observable<Group[]>;
+  studentGroups$!: Observable<GroupDTO[] | null>;
   groupForm!: FormGroup;
   groupToEditId!: string;
 
@@ -45,8 +47,56 @@ export class Groups implements OnInit {
 
   ngOnInit(): void {
     this.userData = this.authService.currentUserValue!;
-    this.getProfessorSubjects();
-    this.initForm();
+
+    if (this.userData.role === 'ALUMNO') {
+      this.getStudentSubjects();
+    }
+
+    if (this.userData.role === 'DOCENTE') {
+      this.getProfessorSubjects();
+      this.initForm();
+    }
+  }
+
+  getStudentSubjects() {
+    this.studentSubjects$ = this.subjectService.getStudentSubjects(this.userData.id!);
+
+    this.studentSubjects$.subscribe({
+      next: (subjects) => {
+        this.selectedSubject = subjects[0];
+        this.showStudentGroups(this.selectedSubject.id!);
+      },
+      error: () => console.warn('No se pudo seleccionar la materia automaticamente.'),
+    });
+  }
+
+  switchGroupSubject(subjectId: string) {
+    this.subjectService.getSubjectById(subjectId).subscribe({
+      next: (subject) => {
+        this.selectedSubject = subject;
+
+        document.documentElement.style.setProperty('--subject-color', subject.color);
+        this.showStudentGroups(subject.id!);
+
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Hubo un problema al intentar obtener la materia: ', err),
+    });
+  }
+
+  showStudentGroups(subjectId: string) {
+    this.studentGroups$ = this.groupService
+      .getCurrentStudentGroups(this.userData.id!, subjectId)
+      .pipe(
+        catchError((error) => {
+          if (error.status === 404) {
+            console.log('El alumno no pertenece a ningún grupo en esta materia.');
+          } else {
+            console.error('Hubo un error inesperado en el servidor:', error);
+          }
+          return of(null);
+        }),
+      );
   }
 
   initForm() {
@@ -68,8 +118,8 @@ export class Groups implements OnInit {
       next: (currentGroups: Group[]) => {
         const occupiedStudentIds = new Set<string>();
         currentGroups.forEach((group) => {
-          if (group.members_id) {
-            group.members_id.forEach((id) => occupiedStudentIds.add(String(id)));
+          if (group.membersId) {
+            group.membersId.forEach((id) => occupiedStudentIds.add(String(id)));
           }
         });
 
@@ -103,10 +153,17 @@ export class Groups implements OnInit {
     });
   }
 
-  getProfessorSubjects() {
-    if (this.userData.role === 'DOCENTE') {
-      this.professorSubjects$ = this.subjectService.getProfessorSubjects(this.userData.id!);
-    }
+  getProfessorSubjects(): void {
+    this.professorSubjects$ = this.subjectService.getProfessorSubjects(this.userData.id!);
+
+    this.professorSubjects$.pipe(take(1)).subscribe({
+      next: (subjects) => {
+        if (subjects && subjects.length > 0) {
+          this.selectProfessorSubject(subjects[0]);
+        }
+      },
+      error: (err) => console.error('Error al cargar materias del docente:', err),
+    });
   }
 
   loadGroupSubjects(id: string) {
@@ -118,23 +175,17 @@ export class Groups implements OnInit {
     );
   }
 
-  getSelectedSubject(id: string) {
-    this.subjectService.getSubjectById(id).subscribe({
-      next: (subject) => {
-        this.mode = 'crear';
-        this.selectedSubject = subject;
+  selectProfessorSubject(subject: Subject) {
+    this.mode = 'crear';
+    this.selectedSubject = subject;
 
-        document.documentElement.style.setProperty('--subject-color', subject.color);
-        this.groupForm.reset();
+    document.documentElement.style.setProperty('--subject-color', subject.color);
+    this.groupForm.reset();
 
-        this.loadGroupSubjects(subject.id!);
+    this.loadGroupSubjects(subject.id!);
+    this.loadStudentsWithoutGroup(subject.classroom_id!);
 
-        this.loadStudentsWithoutGroup(subject.classroom_id!);
-
-        this.cdr.detectChanges();
-      },
-      error: (err) => console.error('Hubo un problema al intentar obtener la materia: ', err),
-    });
+    this.cdr.detectChanges();
   }
 
   onSubmitGroup(): void {
@@ -147,12 +198,13 @@ export class Groups implements OnInit {
       .map((student) => student.id!);
 
     const payload: Group = {
-      members_id: selectedStudentIds,
+      membersId: selectedStudentIds,
       number: this.groupForm.value.groupNumber,
       group_limit: this.groupForm.value.groupLimit,
-      subject_id: this.selectedSubject.id!,
+      subjectId: this.selectedSubject.id!,
       professor_id: this.selectedSubject.professor_id,
       classroom_id: this.selectedSubject.classroom_id!,
+      status: "NOT_TRANSMITTING"
     };
 
     if (this.mode === 'crear') {
@@ -190,7 +242,7 @@ export class Groups implements OnInit {
         this.studentFormArray.clear();
 
         this.rawStudents.forEach((student) => {
-          const isMember = group.members_id.includes(student.id!);
+          const isMember = group.membersId.includes(student.id!);
           this.studentFormArray.push(
             this.fb.group({
               selected: [isMember],

@@ -4,6 +4,7 @@ export class User {
     email!: string;
     password!: string;
     dni!: string;
+    profileUrl?: string;
     role!: string;
     comission!: string[];
     classroom_number!: number;

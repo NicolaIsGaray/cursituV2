@@ -48,6 +48,14 @@ export class StudentsList implements OnInit {
 
   getProfessorSubjects() {
     this.professorSubjects$ = this.subjectService.getProfessorSubjects(this.userData.id!);
+
+    this.professorSubjects$.subscribe({
+      next: (subjects) => {
+        this.selectedSubject = subjects[0];
+
+        this.getSelectedSubject(this.selectedSubject.id!);
+      }
+    })
   }
 
   getSelectedSubject(id: string) {
@@ -75,8 +83,8 @@ export class StudentsList implements OnInit {
         const studentGroupMap = new Map<string, number>();
 
         currentGroups.forEach((group) => {
-          if (group.members_id) {
-            group.members_id.forEach((studentId) => {
+          if (group.membersId) {
+            group.membersId.forEach((studentId) => {
               studentGroupMap.set(String(studentId), group.number);
             });
           }

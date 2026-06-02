@@ -24,5 +24,5 @@ public class NoticeEntity {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private LocalDate created_at;
 
-  private List<String> read_by;
+  private List<String> readBy;
 }

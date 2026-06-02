@@ -16,6 +16,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './manage-dates.css',
 })
 export class ManageDates implements OnInit {
+  important: true | false = false;
   subjectId: string | null = null;
 
   currentSubject$!: Observable<Subject>;
@@ -29,7 +30,7 @@ export class ManageDates implements OnInit {
     public authService: AuthService,
     private location: Location,
     private subjectService: SubjectService,
-    private dateService: DateService
+    private dateService: DateService,
   ) {}
 
   ngOnInit(): void {
@@ -100,6 +101,20 @@ export class ManageDates implements OnInit {
         error: (err) => console.error('Hubo un problema al intentar eliminar la fecha: ', err),
       });
     }
+  }
+
+  setImportant(date: DateEvent) {
+    if (date.important) {
+      date.important = false;
+    } else if (!date.important) {
+      date.important = true;
+    }
+
+    this.dateService.modifiyDateEvent(date.id!, date).subscribe({
+      next: () => {},
+      error: (err) =>
+        console.error('Hubo un problema al cambiar la importancia de la fecha: ', err),
+    });
   }
 
   goBack() {

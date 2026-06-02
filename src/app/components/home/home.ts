@@ -13,8 +13,11 @@ import { Subject } from '../../models/subject.model';
 import { Topic } from '../../models/topic.model';
 import { TopicService } from '../../services/topic.service';
 import { ClassroomService } from '../../services/classroom.service';
-import { Classroom } from '../../models/classroom.model';
 import { Assignment } from '../../models/assignment.model';
+import { Notice } from '../../models/notice.model';
+import { NoticeService } from '../../services/notice.service';
+import { DateEvent } from '../../models/date-event.model';
+import { DateService } from '../../services/date.service';
 
 @Component({
   selector: 'app-home',
@@ -24,7 +27,7 @@ import { Assignment } from '../../models/assignment.model';
   styleUrl: './home.css',
 })
 export class Home implements OnInit {
-  pendingAssignments$!: Observable<any[]>;
+  pendingAssignments$!: Observable<AssignmentDTO[]>;
   studentList$!: Observable<User[]>;
 
   professorSubjects$!: Observable<Subject[]>;
@@ -36,7 +39,11 @@ export class Home implements OnInit {
   lastActivityAssignment$!: Observable<Assignment>;
   activityTime!: any;
 
+  noticeList$!: Observable<Notice[]>;
+
   currentUser$!: Observable<User>;
+
+  dateList$!: Observable<DateEvent[]>;
 
   private readonly SUBJECT_KEY = 'cursitu_selected_subject';
 
@@ -48,29 +55,40 @@ export class Home implements OnInit {
     private assignmentService: AssignmentService,
     private subjectService: SubjectService,
     private topicService: TopicService,
+    private noticeService: NoticeService,
+    private dateService: DateService,
     private classroomService: ClassroomService,
   ) {}
 
   ngOnInit(): void {
-    this.authService.getAuthStatus();
-
     const user = this.authService.currentUserValue!;
     this.currentUser$ = this.userService.getUserById(user.id!);
 
+    const topicId = this.topicService.getTopicFromStorage();
+
     this.activityTime = this.topicService.getTopicTimeFromStorage();
 
-    this.loadLastActivityVisited();
-    this.loadAssignmentsWithSubjectNames();
+    this.getNoticeList();
+    this.loadLastActivityVisited(topicId!);
+    this.loadDateList();
+
+    if (user.role === 'ALUMNO') {
+      this.loadPendingAssignments();
+    }
+
+    if (user.role === 'ADMIN') {
+      this.router.navigate(['/user-management']);
+    }
+
     if (user.role === 'DOCENTE') {
       this.loadProfessorSubjects();
     }
   }
 
-  loadLastActivityVisited() {
-    const topicId = this.topicService.getTopicFromStorage();
-
+  loadLastActivityVisited(topicId: string) {
     if (topicId == null) return;
 
+    // ===XX PROBLEMA AQUI XX===
     this.lastActivity$ = this.topicService.getTopicById(topicId!);
 
     this.lastActivity$.subscribe({
@@ -134,6 +152,14 @@ export class Home implements OnInit {
       });
   }
 
+  getNoticeList() {
+    this.noticeList$ = this.noticeService.getNotReadNotices(this.authService.currentUserValue?.id!);
+  }
+
+  goToNotice(noticeId: string) {
+    this.router.navigate(['/notices', noticeId]);
+  }
+
   onSubjectChange(event: Event): void {
     const element = event.target as HTMLSelectElement;
     this.selectedSubjectId = element.value;
@@ -151,32 +177,40 @@ export class Home implements OnInit {
     });
   }
 
-  loadAssignmentsWithSubjectNames() {
-    this.pendingAssignments$ = this.authService.currentUser$.pipe(
-      filter((user) => !!user),
-      take(1),
-      switchMap((user) => {
-        return combineLatest([
-          this.assignmentService.getPendingAssignments(user.id!),
-          this.subjectService.getAllSubjects(),
-        ]).pipe(
-          map(([assignments, subjects]: [AssignmentDTO[], Subject[]]) => {
-            const subjectMap = new Map<string, string>(
-              subjects.map((s: any) => [s.id, s.subject_name]),
-            );
-
-            return assignments.map((activity: any) => ({
-              ...activity,
-              subjectNameResolved: subjectMap.get(activity.subject_id) || 'Materia No Asignada',
-            }));
-          }),
-        );
-      }),
-      catchError((err) => {
-        console.error('Error al cruzar actividades con materias en el front:', err);
-        return of([]);
-      }),
+  loadPendingAssignments() {
+    this.pendingAssignments$ = this.assignmentService.getPendingAssignments(
+      this.authService.currentUserValue?.id!,
     );
+  }
+
+  goToActivity(path: string, subjectId: string): void {
+    localStorage.setItem(this.SUBJECT_KEY, subjectId);
+    this.router.navigate([path]);
+  }
+
+  loadDateList() {
+    this.dateList$ = this.dateService.getAllDateEvents();
+  }
+
+  formatDate(original: Date | string): string {
+    const date = new Date(original);
+
+    const formatter = new Intl.DateTimeFormat('es-AR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+
+    let formattedDate = formatter.format(date);
+
+    formattedDate = formattedDate.replace(/,/g, '');
+    formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    formattedDate = formattedDate.replace(/\./g, '').toUpperCase();
+
+    return formattedDate;
   }
 
   translateDayToSpanish(day: string): string {
@@ -190,11 +224,6 @@ export class Home implements OnInit {
       SUNDAY: 'Domingo',
     };
     return translations[day.toUpperCase()] || day;
-  }
-
-  goToActivity(path: string, subjectId: string): void {
-    localStorage.setItem(this.SUBJECT_KEY, subjectId);
-    this.router.navigate([path]);
   }
 
   navigateTo(path: string) {

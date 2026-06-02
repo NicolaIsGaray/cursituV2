@@ -19,6 +19,10 @@ export class UserService {
     return this.http.get<User>(`${this.apiUrl}/${id}`);
   }
 
+  getAllById(ids: string[]): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/users-by-id/${ids}`);
+  }
+
   searchUserByDni(dni: String): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/dni/${dni}`);
   }
@@ -41,5 +45,16 @@ export class UserService {
 
   getOnlyProfessors(): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/professors`);
+  }
+
+  changePassword(userId: string, data: {
+    current: string,
+    update: string
+  }) {
+    return this.http.put(`${this.apiUrl}/change-password/${userId}`, data);
+  }
+
+  updateAvatar(userId: string, url: string) {
+    return this.http.put(`${this.apiUrl}/update-pfp/${userId}`, url);
   }
 }

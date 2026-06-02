@@ -9,28 +9,36 @@
   <h2>Avisos</h2>
 
   <div class="avisos-card-list">
-    @for (aviso of avisos; track aviso.id) {
-      <div class="aviso-row-item" (click)="verDetalle(aviso.id)">
+    @for (n of noticeList$ | async; track n.id) {
+      <div class="aviso-row-item" [class.unread]="!n.hasRead" (click)="seeNotice(n.id!)">
         <div class="aviso-status-icon">
-          <span class="material-symbols-outlined">mail</span>
+          <span class="material-symbols-outlined">
+            {{ n.hasRead ? 'drafts' : 'mail' }}
+          </span>
+          @if (!n.hasRead) {
+            <span class="unread-badge-dot"></span>
+          }
         </div>
 
         <div class="aviso-main-info">
-          <p class="aviso-autor-label">
-            Por: <span>{{ aviso.autor }}</span>
-          </p>
-          <p class="aviso-asunto-text">Asunto: "{{ aviso.asunto }}"</p>
+          @for (s of sendersList$ | async; track s.id) {
+            @if (s.id === n.senderId) {
+              <p class="aviso-autor-label">
+                Por: <span>{{ s.name }}</span>
+              </p>
+            }
+          }
+          <p class="aviso-asunto-text">Asunto: "{{ n.title }}"</p>
         </div>
 
         <div class="aviso-meta-side">
-          <p class="aviso-date-stamp">{{ aviso.fecha }}</p>
-          <span class="leer-action-trigger">Leer mensaje</span>
+          <p class="aviso-date-stamp">{{ n.created_at }}</p>
+          <span class="leer-action-trigger">
+            {{ n.hasRead ? 'Revisar mensaje' : 'Leer mensaje' }}
+          </span>
         </div>
 
-        <button
-          class="aviso-action-view-btn"
-          (click)="verDetalle(aviso.id); $event.stopPropagation()"
-        >
+        <button class="aviso-action-view-btn">
           <span class="material-symbols-outlined">visibility</span>
         </button>
       </div>
@@ -40,7 +48,7 @@
           <span class="material-symbols-outlined">campaign</span>
         </div>
         <h4>No hay comunicados activos</h4>
-        <p>Los avisos importantes cargados por los docentes aparecerán listados en esta sección.</p>
+        <p>Los avisos cargados aparecerán listados en esta sección.</p>
       </div>
     }
   </div>

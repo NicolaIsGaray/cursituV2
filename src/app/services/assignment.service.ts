@@ -57,17 +57,17 @@ export class AssignmentService {
     return this.http.get<TaskStatsDTO>(`${this.apiUrl}/${classroomId}/tasks/${taskId}/stats`);
   }
 
-  getStudentSubmissions(classroomId: string, activityId: string): Observable<TeacherSubmissionDTO[]> {
-    return this.http.get<TeacherSubmissionDTO[]>(`${this.apiUrl}/professor-table/classroom/${classroomId}/assignment/${activityId}`);
+  getStudentSubmissions(
+    classroomId: string,
+    activityId: string,
+  ): Observable<TeacherSubmissionDTO[]> {
+    return this.http.get<TeacherSubmissionDTO[]>(
+      `${this.apiUrl}/professor-table/classroom/${classroomId}/assignment/${activityId}`,
+    );
   }
 
-  checkSubmissionStatus(studentId: string, activityId: string): Observable<{ status: string }> {
-    let params = new HttpParams();
-
-    params = params.append('studentId', studentId);
-    params = params.append('activityId', activityId);
-
-    return this.http.get<{ status: string }>(`${this.apiUrl}/check-status`, { params });
+  getStudentNewSubmission(studentId: string, activityId: string): Observable<Submission> {
+    return this.http.get<Submission>(`${this.apiUrl}/get-submited/${studentId}/${activityId}`);
   }
 
   submitActivity(
@@ -84,7 +84,10 @@ export class AssignmentService {
   }
 
   saveOrUpdateGrade(studentId: string, activityId: string, note: number) {
-    return this.http.post(`${this.apiUrl}/professor-correction/student/${studentId}/assignment/${activityId}`, note);
+    return this.http.post(
+      `${this.apiUrl}/professor-correction/student/${studentId}/assignment/${activityId}`,
+      note,
+    );
   }
 
   deleteGrade(studentIdInGrade: string) {

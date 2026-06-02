@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import pepedevelopers.cursitu.model.ClassroomEntity;
 import pepedevelopers.cursitu.model.SubjectEntity;
 import pepedevelopers.cursitu.model.UserEntity;
+import pepedevelopers.cursitu.model.dto.PasswordDTO;
 import pepedevelopers.cursitu.repository.IClassroom;
 import pepedevelopers.cursitu.repository.ISubject;
 import pepedevelopers.cursitu.repository.IUser;
@@ -163,4 +164,33 @@ public class UserService {
     return userRepo.save(updatedUser);
   }
 
+  @Transactional
+  public void updateProfileImage(String userId, String imageUrl) {
+    UserEntity user = userRepo.findById(userId).orElseThrow(
+      () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
+    );
+
+    if (!imageUrl.isBlank()) {
+      user.setProfileUrl(imageUrl);
+    } else {
+      user.setProfileUrl(null);
+    }
+
+    userRepo.save(user);
+  }
+
+  @Transactional
+  public void updatePassword(String userId, PasswordDTO passwordDTO) {
+    UserEntity user = userRepo.findById(userId).orElseThrow(
+      () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")
+    );
+
+    if (user.getPassword().equals(passwordDTO.current())) {
+      user.setPassword(passwordDTO.update());
+    } else {
+      throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "La contraseña actual ingresada no es correcta. Intentelo de nuevo.");
+    }
+
+    userRepo.save(user);
+  }
 }

@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public record AssignmentDTO(
   String id,
   String title,
+  String subjectName,
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
   LocalDateTime dateLimit,

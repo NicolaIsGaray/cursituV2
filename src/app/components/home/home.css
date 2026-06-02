@@ -2,7 +2,8 @@ h2 {
   font-size: 1.4rem;
   font-weight: 700;
   margin-bottom: 20px;
-  color: #1a1a1a;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
 }
 
 :host {
@@ -12,36 +13,41 @@ h2 {
 
 .dashboard-grid {
   display: grid;
-  /* Definimos 3 columnas de igual tamaño */
   grid-template-columns: repeat(3, 1fr);
-  /* Altura base de las filas */
   grid-auto-rows: minmax(160px, auto);
   gap: 24px;
 }
 
-/* Estilo General de las Tarjetas */
+/* ==========================================================================
+   ESTILO GENERAL DE LAS TARJETAS (CARDS)
+   ========================================================================== */
 .card {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease;
+  box-shadow: 0 4px 15px var(--sidebar-shadow);
+  border: 1px solid var(--border-color);
+  transition:
+    transform 0.2s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .card h3 {
   font-size: 1rem;
   font-weight: 700;
   margin: 0 0 12px 0;
-  color: #1a1a1a;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
 }
 
 .pending-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 300px;
-  overflow-y: auto;
+  max-height: 380px;
 }
 
 .pending-item {
@@ -49,7 +55,8 @@ h2 {
   justify-content: space-between;
   align-items: center;
   padding: 12px 8px;
-  border-bottom: 1px solid var(--border-color, #eaeaea);
+  border-bottom: 1px solid var(--border-color);
+  transition: border-color 0.25s ease;
 }
 
 .pending-item:last-child {
@@ -64,29 +71,43 @@ h2 {
 
 .subject-name {
   font-weight: 600;
-  color: #333;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+
+.subject-tag {
+  color: var(--text-primary);
 }
 
 .due-date {
   font-size: 0.85rem;
-  color: #e74c3c; /* Tono rojo/alerta para indicar vencimiento */
+  color: var(--error-red);
+  transition: color 0.2s ease;
 }
 
 .btn-goto {
   background: none;
   border: none;
-  color: #3f3689;
+  color: var(--primary-purple);
   cursor: pointer;
   display: flex;
   align-items: center;
-  transition: transform 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    color 0.25s ease;
 }
 
 .btn-goto:hover {
   transform: translateX(4px);
 }
 
-/* El recuadro gris interno de cada sección */
+.card-content {
+  overflow-y: auto; /* Corregido: cambia scroll permanente por auto-detección */
+  overflow-x: hidden;
+  padding-right: 5px;
+}
+
+/* RECUADRO GRIS INTERNO (ESTADO VACÍO) */
 .card-content.empty {
   flex-grow: 1;
   display: flex;
@@ -95,9 +116,11 @@ h2 {
   justify-content: center;
   text-align: center;
   padding: 20px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--border-color);
+  background: var(--bg-empty-box, #fafafa);
   border-radius: 12px;
-  color: #8d8d8d;
+  color: var(--text-secondary);
+  transition: all 0.25s ease;
 }
 
 .card-content.empty p {
@@ -107,84 +130,74 @@ h2 {
 }
 
 .success-text {
-  color: #1a1a1a;
+  color: var(--text-primary);
   margin-top: 5px;
   font-size: 0.95rem;
+  transition: color 0.2s ease;
 }
 
-/* --- Lógica de Posicionamiento (Grid) --- */
+/* Modificadores de Grid */
 .card.wide {
-  grid-column: span 2; /* Ocupa las primeras dos columnas */
+  grid-column: span 2;
 }
-
 .card.tall {
-  grid-row: span 2; /* Se estira hacia abajo ocupando 2 filas */
-  grid-column: 3; /* Se queda fija en la columna de la derecha */
+  grid-column: 3;
+  grid-row: span 2;
 }
-
 .card.small {
-  grid-column: span 1; /* Ocupa solo una celda */
+  grid-column: span 1;
 }
 
-/* Ajuste de responsividad básico */
-@media (max-width: 1100px) {
-  .dashboard-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .card.tall {
-    grid-column: span 2;
-    grid-row: auto;
-  }
-}
-
-/* === DOCENTE STYLES === */
+/* ==========================================================================
+   VISTA DOCENTE: LAYOUTS Y CONTENEDORES
+   ========================================================================== */
 .dashboard-container {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
-/* ==========================================================================
-   SECCIÓN: CONTENEDOR GLOBAL DE LA GRILLA (CRÍTICO PARA EL SCROLL)
-   ========================================================================== */
 .info-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr; /* Mantiene la proporción de tus columnas */
+  grid-template-columns: 2fr 1fr;
   gap: 20px;
-
-  /* Limitamos la altura de la grilla al espacio disponible de la pantalla */
   height: calc(80vh - 160px);
   max-height: calc(100vh - 160px);
-
-  /* Evita que toda la página web genere un scroll general */
   overflow: hidden;
 }
 
-/* ==========================================================================
-   SECCIÓN: LISTADO DE ALUMNOS (ASIDE - ESTRUCTURA COMPLETA)
-   ========================================================================== */
-
-/* Columna derecha de la grilla */
 .side-stats {
   height: 100%;
   max-height: 100%;
-  min-height: 0; /* PERMITE QUE LOS HIJOS COLAPSEN Y GENEREN SCROLL INTERNO */
+  min-height: 0;
   display: flex;
   flex-direction: column;
 }
 
-/* LA TARJETA (CARD) */
+.stat-card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0px 4px 15px var(--sidebar-shadow);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+  box-sizing: border-box;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
 .stat-card.full-height {
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-height: 100%; /* Restricción estricta dentro de la columna */
-  box-sizing: border-box;
-  overflow: hidden; /* Asegura que nada se escape de los bordes redondeados */
+  max-height: 100%;
+  overflow: hidden;
 }
 
-/* Estado de carga */
 .loading-card-state {
   align-items: center;
   justify-content: center;
@@ -195,25 +208,28 @@ h2 {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
-  flex-shrink: 0; /* Impide que el título se achique o desaparezca */
+  flex-shrink: 0;
 }
 
 .card-header-inline h3 {
   margin: 0;
   font-size: 1.1rem;
-  color: var(--text-primary, #333);
+  color: var(--text-primary);
 }
 
 .count-badge {
-  background: #f0f2f7;
-  color: #3f3689;
+  background: var(--bg-hover);
+  color: var(--primary-purple);
   font-size: 0.8rem;
   font-weight: 700;
   padding: 4px 10px;
   border-radius: 20px;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
-/* COMPONENTE: DROPDOWN DE FILTRO POR MATERIAS */
+/* DROPDOWN DE FILTRADO POR MATERIA */
 .subject-filter-container {
   margin-bottom: 15px;
   width: 100%;
@@ -225,38 +241,36 @@ h2 {
   padding: 10px 14px;
   font-size: 0.88rem;
   font-weight: 600;
-  color: #475569;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
+  color: var(--text-primary);
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-input, #e2e8f0);
   border-radius: 12px;
   outline: none;
   cursor: pointer;
   box-sizing: border-box;
-  transition: all 0.2s ease;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 14px center;
   background-size: 14px;
+  transition: all 0.2s ease;
 }
 
 .select-subject:focus {
-  border-color: var(--primary-purple, #3f3689);
-  background-color: #ffffff;
-  box-shadow: 0 0 0 3px rgba(63, 54, 137, 0.1);
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 3px rgba(63, 54, 137, 0.15);
 }
 
-/* ÁREA DE SCROLL INTERNO (Previene el crecimiento infinito) */
+/* ÁREA DE SCROLL INTERNO DE ALUMNO */
 .students-scroll-area {
   flex: 1;
-  overflow-y: auto; /* Fuerza el scroll vertical aquí dentro */
+  overflow-y: auto;
   overflow-x: hidden;
   padding-right: 5px;
 }
 
-/* LISTA DE ITEMS */
 .students-list {
   display: flex;
   flex-direction: column;
@@ -268,7 +282,7 @@ h2 {
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  background: #f8faff;
+  background: var(--bg-input);
   border-radius: 12px;
   transition:
     transform 0.2s,
@@ -276,28 +290,27 @@ h2 {
 }
 
 .student-item:hover {
-  background: #f0f3fa;
+  background: var(--bg-hover);
   transform: translateX(3px);
 }
 
-/* AVATAR DEL ALUMNO */
 .student-avatar {
   width: 36px;
   height: 36px;
-  background: #3f3689;
+  background: var(--primary-purple);
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: background-color 0.25s ease;
 }
 
 .student-avatar span {
   font-size: 18px;
 }
 
-/* INFORMACIÓN ESCRITA */
 .student-info {
   display: flex;
   flex-direction: column;
@@ -308,22 +321,24 @@ h2 {
   margin: 0;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #444;
+  color: var(--text-primary);
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  transition: color 0.2s ease;
 }
 
 .student-email {
   margin: 0;
   font-size: 0.75rem;
-  color: #888;
+  color: var(--text-secondary);
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  transition: color 0.2s ease;
 }
 
-/* ESTADO VACÍO REDISEÑADO */
+/* ESTADOS VACÍOS O CARGAS INTERNAS */
 .empty-state-container {
   height: 100%;
   min-height: 150px;
@@ -331,7 +346,7 @@ h2 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #bbb;
+  color: var(--text-secondary);
   gap: 8px;
   text-align: center;
 }
@@ -339,40 +354,194 @@ h2 {
 .empty-state-container span {
   font-size: 36px;
 }
-
 .empty-state-container p {
   margin: 0;
   font-size: 0.85rem;
 }
-
 .list-loading {
   text-align: center;
-  color: #888;
+  color: var(--text-secondary);
   font-size: 0.85rem;
   padding: 20px;
 }
 
+/* === CONTENEDOR DE AVISOS RECIENTES === */
+.card.wide {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 25px;
+  max-height: 200px;
+  box-shadow: 0px 10px 30px var(--sidebar-shadow);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.card.wide h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  color: var(--text-primary);
+}
+
+/* === LISTA DE AVISOS === */
+.notices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px; /* Control de altura para netbooks */
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* === TARJETA DE AVISO INDIVIDUAL (ITEM) === */
+.notice-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  margin-bottom: 2vh;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.notice-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-input, var(--border-color));
+  transform: translateX(2px);
+}
+
+/* Variante para Avisos Urgentes o Críticos */
+.notice-item.urgent {
+  border-left: 4px solid var(--danger-red, #ef4444);
+  background: rgba(239, 68, 68, 0.03);
+}
+
+.notice-item.urgent:hover {
+  background: rgba(239, 68, 68, 0.06);
+}
+
+/* Contenedor del Icono informativo */
+.notice-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.notice-item.urgent .notice-icon-wrapper {
+  color: var(--danger-red, #f87171);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.notice-icon-wrapper span {
+  font-size: 20px;
+}
+
+/* Cuerpo de Contenido */
+.notice-main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+/* Meta información (Materia y Fecha) */
+.notice-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.notice-subject {
+  color: var(--primary-purple);
+}
+
+.notice-item.urgent .notice-subject {
+  color: var(--danger-red, #f87171);
+}
+
+.notice-date {
+  color: var(--text-muted);
+}
+
+/* Título del Aviso */
+.notice-title {
+  margin: 2px 0 0 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+/* Descripción / Cuerpo del mensaje */
+.notice-description {
+  margin: 4px 0 0 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  max-height: calc(1.4rem * 2);
+  overflow: hidden;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+.notice-description * {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  font-size: inherit !important;
+  color: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+}
+
+/* === ESTADO VACÍO === */
+.notice-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-input);
+}
+
+.notice-empty-state span {
+  font-size: 48px;
+  margin-bottom: 10px;
+  opacity: 0.7;
+}
+
+.notice-empty-state p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 /* ==========================================================================
-   DISEÑO DE LA BARRA DE DESPLAZAMIENTO (SCROLLBAR)
+   BANNER PRINCIPAL (BOTÓN CREAR ACTIVIDAD GIGANTE)
    ========================================================================== */
-.students-scroll-area::-webkit-scrollbar {
-  width: 6px;
-}
-
-.students-scroll-area::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.students-scroll-area::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 10px;
-}
-
-.students-scroll-area::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* --- BANNER PRINCIPAL --- */
 .action-banner {
   width: 100%;
   display: flex;
@@ -381,7 +550,7 @@ h2 {
 
 .btn-create-activity {
   width: 100%;
-  background: var(--primary-purple); /* #3f3689 */
+  background: var(--primary-purple);
   color: white;
   border: none;
   border-radius: 20px;
@@ -391,8 +560,11 @@ h2 {
   justify-content: center;
   gap: 15px;
   cursor: pointer;
-  box-shadow: 0px 8px 25px rgba(63, 54, 137, 0.3);
-  transition: transform 0.2s;
+  box-shadow: 0px 8px 25px var(--banner-shadow, rgba(63, 54, 137, 0.3));
+  transition:
+    transform 0.2s,
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .btn-create-activity:hover {
@@ -408,13 +580,7 @@ h2 {
   font-size: 3.5rem !important;
 }
 
-/* --- GRILLA DE TARJETAS --- */
-.info-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr; /* Proporción para la lista de alumnos */
-  gap: 1.5rem;
-}
-
+/* ESTRUCTURACIÓN DE LOGICA SUB-GRILLAS */
 .main-stats {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -422,23 +588,9 @@ h2 {
   gap: 1.5rem;
 }
 
-/* === CARD ESTRUCTURAL DE ESTADÍSTICAS / ÚLTIMA ACTIVIDAD === */
-.stat-card {
-  background: var(--white, #ffffff);
-  border-radius: 20px;
-  padding: 1.5rem;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e2e8f0;
-  display: flex;
-  flex-direction: column;
-  min-height: 220px;
-  box-sizing: border-box;
-}
-
 .wide-card {
   grid-column: span 2;
 }
-
 .full-height {
   height: 100%;
 }
@@ -446,13 +598,13 @@ h2 {
 .stat-card h3 {
   font-size: 0.9rem;
   font-weight: 800;
-  color: #64748b;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0 0 16px 0;
+  transition: color 0.2s ease;
 }
 
-/* --- CONTENIDO INTERNO DE LA ÚLTIMA ACTIVIDAD VISITADA --- */
 .actividad-recent-content {
   display: flex;
   flex-direction: column;
@@ -479,21 +631,21 @@ h2 {
 .actividad-titulo {
   font-size: 1.15rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 4px 0;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  transition: color 0.2s ease;
 }
 
-/* NUEVO BOTÓN EXPLICITO */
 .btn-actividad-link {
   background: none;
   border: none;
   padding: 0;
-  color: var(--primary-purple, #3f3689);
+  color: var(--primary-purple);
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
@@ -504,7 +656,7 @@ h2 {
 }
 
 .btn-actividad-link:hover {
-  color: #2e266a;
+  color: var(--light-purple);
 }
 
 .btn-actividad-link .material-symbols-outlined {
@@ -520,9 +672,10 @@ h2 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px dashed #f1f5f9;
+  border-top: 1px dashed var(--border-color);
   padding-top: 12px;
   margin-top: 12px;
+  transition: border-color 0.25s ease;
 }
 
 .meta-item {
@@ -531,21 +684,23 @@ h2 {
   gap: 6px;
   font-size: 0.82rem;
   font-weight: 700;
-  color: #475569;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
 }
 
 .meta-item .material-symbols-outlined {
   font-size: 1rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
 }
 
 .meta-item-time {
   font-size: 0.82rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
 }
 
-/* --- ESTADO VACÍO (FALLBACK UNIFICADO) --- */
 .stat-card .empty-state {
   flex-grow: 1;
   display: flex;
@@ -558,14 +713,17 @@ h2 {
 }
 
 .empty-icon-wrapper {
-  background: #f8fafc;
-  color: #94a3b8;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
   width: 42px;
   height: 42px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 .empty-icon-wrapper .material-symbols-outlined {
@@ -573,32 +731,223 @@ h2 {
 }
 
 .stat-card .empty-state p {
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-size: 0.88rem;
   font-weight: 600;
   max-width: 220px;
   margin: 0;
+  transition: color 0.2s ease;
 }
 
-/* =========================================
-   ADAPTACIÓN MOBILE (HOME)
-   ========================================= */
+/* ==========================================================================
+   REFACTORIZACIÓN GLOBAL DE BARRAS DE DESPLAZAMIENTO (SCROLLBARS)
+   ========================================================================== */
+.card-content::-webkit-scrollbar,
+.students-scroll-area::-webkit-scrollbar,
+.notices-list::-webkit-scrollbar,
+.dates-list-wrapper::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 
-/* --- AJUSTES PARA TABLETS (768px o menos) --- */
+.card-content::-webkit-scrollbar-track,
+.students-scroll-area::-webkit-scrollbar-track,
+.notices-list::-webkit-scrollbar-track,
+.dates-list-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.card-content::-webkit-scrollbar-thumb,
+.students-scroll-area::-webkit-scrollbar-thumb,
+.notices-list::-webkit-scrollbar-thumb,
+.dates-list-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border-input, var(--border-color, #cbd5e1));
+  border-radius: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.card-content::-webkit-scrollbar-thumb:hover,
+.students-scroll-area::-webkit-scrollbar-thumb:hover,
+.notices-list::-webkit-scrollbar-thumb:hover,
+.dates-list-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary, #94a3b8);
+}
+
+/* === CONTENEDOR PRINCIPAL DE LA TARJETA === */
+.dates-card-container {
+  background-color: var(--bg-card, #1e1e2f);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-color, #2d2d44);
+}
+
+.card-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-color, #2d2d44);
+  padding-bottom: 0.75rem;
+}
+
+.card-header-title h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary, #ffffff);
+  margin: 0;
+}
+
+.card-header-title .header-icon {
+  color: var(--primary-color, #3b82f6);
+}
+
+/* === LISTADO DE FILAS === */
+.dates-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Elemento Fila Estándar */
+.date-item-row {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-item);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--accent-muted, #64748b);
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.date-item-row:hover {
+  transform: translateX(2px);
+  background-color: var(--bg-item-hover, #2a2a3f);
+}
+
+/* Variante visual estricta para Exámenes */
+.date-item-row.is-exam {
+  border-left-color: var(--error-red, #ef4444);
+}
+
+/* Contenedor del Icono de Fila */
+.date-icon-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.is-exam .date-icon-indicator {
+  color: var(--error-red, #ef4444);
+}
+
+/* Bloque de Contenido Central */
+.date-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.date-item-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary, #ffffff);
+  margin: 0;
+}
+
+.date-item-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  background-color: rgba(148, 163, 184, 0.15);
+  color: var(--text-muted, #94a3b8);
+  letter-spacing: 0.5px;
+}
+
+.is-exam .date-item-badge {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: var(--error-red, #ef4444);
+}
+
+/* Bloque Lateral Derecho (Fecha) */
+.date-timestamp-side {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-secondary, #cbd5e1);
+  font-size: 0.88rem;
+  font-weight: 500;
+  background-color: rgba(0, 0, 0, 0.15);
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+}
+
+.date-timestamp-side .text-icon {
+  font-size: 1rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.date-text-formatted {
+  margin: 0;
+}
+
+/* === ESTADO VACÍO (FALLBACK) === */
+.empty-dates-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--text-muted, #94a3b8);
+}
+
+.empty-dates-fallback .fallback-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.4;
+}
+
+.empty-dates-fallback p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   MEDIA QUERIES (SOPORTE DE DISEÑO EN PANTALLAS CHICAS / NETBOOKS - INTACTO)
+   ========================================================================== */
+@media (max-width: 1100px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .card.tall {
+    grid-column: span 2;
+    grid-row: auto;
+  }
+}
+
 @media (max-width: 768px) {
   h2 {
+    text-align: center;
     font-size: 1.2rem;
     margin-bottom: 16px;
-    text-align: center;
   }
-
-  /* VISTA ALUMNO */
   .dashboard-grid {
     grid-template-columns: 1fr;
     grid-auto-rows: auto;
     gap: 16px;
   }
-
   .card.wide,
   .card.tall,
   .card.small {
@@ -607,73 +956,111 @@ h2 {
     min-height: 140px;
   }
 
-  /* VISTA DOCENTE */
   .info-grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 16px;
+    height: auto;
+    max-height: none;
+    overflow: visible;
   }
-
   .main-stats {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 16px;
   }
+  .side-stats {
+    height: auto;
+    max-height: none;
+  }
 
+  /* Mapeo de prioridades móviles */
+  .main-stats .stat-card:nth-child(2) {
+    order: 1;
+  }
+  .main-stats .stat-card:nth-child(1) {
+    order: 2;
+  }
+  .side-stats {
+    order: 3;
+  }
+  .main-stats .wide-card {
+    order: 4;
+  }
+
+  .stat-card.full-height {
+    height: auto;
+    max-height: 500px;
+    overflow: hidden;
+  }
+  .students-scroll-area {
+    max-height: 380px;
+  }
   .wide-card {
     grid-column: span 1;
   }
-
   .stat-card {
     min-height: 180px;
   }
-
   .btn-create-activity {
     padding: 1.5rem;
     border-radius: 12px;
   }
-
   .btn-create-activity span {
     font-size: 1.4rem;
   }
 }
 
-/* --- AJUSTES PARA MÓVILES PEQUEÑOS (480px o menos) --- */
 @media (max-width: 480px) {
   .card,
   .stat-card {
     padding: 16px;
   }
-
   .card h3,
   .stat-card h3 {
     font-size: 0.95rem;
   }
-
   .card-content.empty p,
   .stat-card .empty-state p {
     font-size: 0.85rem;
   }
-
-  /* Ajuste de Banner Docente */
   .btn-create-activity {
     padding: 1.2rem;
   }
-
   .btn-create-activity span {
     font-size: 1.2rem;
   }
-
   .success-text {
     font-size: 0.85rem;
   }
 }
 
-/* --- CORRECCIÓN PARA DISPOSITIVOS MUY ESTRECHOS O LANDSCAPE CORTO --- */
+@media (max-width: 600px) {
+  .card.wide {
+    padding: 15px;
+  }
+
+  .notice-item {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .notice-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .notice-date {
+    font-size: 0.7rem;
+  }
+}
+
 @media (max-height: 500px) and (orientation: landscape) {
   .dashboard-grid,
   .info-grid {
     gap: 10px;
   }
-
   .stat-card,
   .card {
     min-height: auto;

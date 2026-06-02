@@ -12,11 +12,13 @@ public class GroupEntity {
     @Id
     private String id;
 
-    private List<String> members_id;
+    private List<String> membersId;
     private List<String> member_names;
     private Integer number;
     private Integer group_limit;
-    private String subject_id;
+    private String subjectId;
     private String professor_id;
     private String classroom_id;
+    private String status;
+    private Integer order;
 }

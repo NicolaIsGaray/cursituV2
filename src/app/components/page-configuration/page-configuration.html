@@ -17,7 +17,7 @@
         <div class="setting-item">
           <span>Modo Oscuro</span>
           <label class="switch">
-            <input type="checkbox" [checked]="isDark" (change)="toggleTheme()" />
+            <input type="checkbox" [checked]="isDark" (change)="themeService.toggleTheme()" />
             <span class="slider round"></span>
           </label>
         </div>
@@ -53,15 +53,11 @@
         <div class="setting-item">
           <span>Alertas de sonido</span>
           <label class="switch">
-            <input type="checkbox" checked />
+            <input type="checkbox" [checked]="audioEnabled" />
             <span class="slider round"></span>
           </label>
         </div>
       </div>
     </section>
-  </div>
-
-  <div class="config-actions">
-    <button class="btn-save-config">Guardar Cambios</button>
   </div>
 </div>

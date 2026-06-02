@@ -5,8 +5,9 @@
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
-  background-color: var(--bg-gray);
+  background-color: var(--bg-main, var(--bg-gray));
   min-height: 100vh;
+  transition: background-color 0.25s ease;
 }
 
 /* --- NAVEGACIÓN Y CABECERA --- */
@@ -22,7 +23,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -32,7 +33,7 @@
 }
 
 .btn-back:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: var(--bg-hover);
   color: var(--primary-purple);
 }
 
@@ -46,12 +47,13 @@
 .planilla-header h2 {
   font-size: 1.8rem;
   font-weight: 800;
-  color: var(--text-dark);
+  color: var(--text-primary, var(--text-dark));
   margin: 0;
+  transition: color 0.2s ease;
 }
 
 .btn-nueva-nota {
-  background: var(--success-green);
+  background: var(--success-green, #10b981);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -61,18 +63,30 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition:
+    transform 0.2s,
+    filter 0.2s;
 }
 
-.btn-nueva-nota:active { transform: scale(0.95); }
+.btn-nueva-nota:hover {
+  filter: brightness(1.08);
+}
+
+.btn-nueva-nota:active {
+  transform: scale(0.95);
+}
 
 /* --- FILTRO DE ACTIVIDADES (SEGMENTED CONTROL) --- */
 .filter-wrapper {
   margin-bottom: 25px;
-  background: white;
+  background: var(--bg-card);
   padding: 12px;
   border-radius: 18px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 15px var(--sidebar-shadow);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .filter-scroll {
@@ -80,20 +94,22 @@
   gap: 10px;
   overflow-x: auto;
   padding-bottom: 5px;
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
 }
 
-.filter-scroll::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+.filter-scroll::-webkit-scrollbar {
+  display: none;
+}
 
 .filter-chip {
   white-space: nowrap;
-  background: #f0f2f5;
-  border: none;
+  background: var(--bg-input);
+  border: 1px solid transparent;
   padding: 10px 20px;
   border-radius: 25px;
   font-weight: 700;
   font-size: 0.85rem;
-  color: #666;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -104,17 +120,22 @@
   box-shadow: 0 4px 10px rgba(63, 54, 137, 0.2);
 }
 
-.filter-chip:hover {
-  background-color: rgb(from var(--subject-color) r g b / 0.5);
-  color: #eee;
+.filter-chip:hover:not(.active) {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-color);
 }
 
 /* --- PLANILLA / TABLA --- */
 .planilla-wrapper {
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0px 10px 30px rgba(0,0,0,0.05);
+  border: 1px solid var(--border-color);
+  box-shadow: 0px 10px 30px var(--sidebar-shadow);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .table-header-banner {
@@ -142,41 +163,47 @@
   padding: 1rem;
   font-size: 0.85rem;
   text-transform: uppercase;
-  border-bottom: 2px solid #f5f5f5;
+  border-bottom: 2px solid var(--border-color);
+  transition: border-color 0.25s ease;
 }
 
 .notas-table td {
   padding: 1.2rem 1rem;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
+  transition: border-color 0.25s ease;
 }
 
 .alumno-name {
   font-weight: 700;
-  color: var(--text-dark);
+  color: var(--text-primary, var(--text-dark));
+  transition: color 0.2s ease;
 }
 
 /* Inputs de Nota */
 .input-nota {
   width: 65px;
   padding: 10px;
-  border: 2px solid #eee;
+  border: 2px solid var(--border-input, var(--border-color));
   border-radius: 10px;
   text-align: center;
   font-weight: 800;
   font-size: 1rem;
-  transition: border-color 0.2s;
+  color: var(--text-primary);
+  background: var(--bg-input);
+  transition: all 0.2s ease;
 }
 
 .input-nota:focus {
   border-color: var(--primary-purple);
   outline: none;
+  background: var(--bg-card);
 }
 
 .input-nota.fail {
-  border-color: var(--danger-red);
-  color: var(--danger-red);
-  background: #fff5f5;
+  border-color: var(--danger-red, #ef4444);
+  color: var(--danger-red, #ef4444);
+  background: rgba(239, 68, 68, 0.12);
 }
 
 /* Botones de acción */
@@ -185,72 +212,106 @@
   gap: 12px;
 }
 
-.btn-save, .btn-delete {
-  background: white;
-  border: 1px solid #eee;
+.btn-save,
+.btn-delete {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 8px;
   cursor: pointer;
-  color: #666;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
-.btn-save:hover { color: var(--primary-purple); border-color: var(--primary-purple); background: #f4f3ff; }
-.btn-delete:hover { color: var(--danger-red); border-color: var(--danger-red); background: #fff5f5; }
+.btn-save:hover {
+  color: var(--primary-purple);
+  border-color: var(--primary-purple);
+  background: var(--bg-hover);
+}
+
+.btn-delete:hover {
+  color: var(--danger-red, #ef4444);
+  border-color: var(--danger-red, #ef4444);
+  background: rgba(239, 68, 68, 0.12);
+}
 
 /* =========================================
    ADAPTACIÓN PARA NETBOOKS (Baja altura)
    ========================================= */
 @media (max-height: 650px) {
-  .planilla-header h2 { font-size: 1.4rem; }
-  .table-header-banner { padding: 0.8rem; margin: 10px; font-size: 0.9rem; }
-  .notas-table td { padding: 0.8rem; }
-  .input-nota { padding: 6px; }
+  .planilla-header h2 {
+    font-size: 1.4rem;
+  }
+  .table-header-banner {
+    padding: 0.8rem;
+    margin: 10px;
+    font-size: 0.9rem;
+  }
+  .notas-table td {
+    padding: 0.8rem;
+  }
+  .input-nota {
+    padding: 6px;
+  }
 }
 
 /* =========================================
    ADAPTACIÓN MÓVIL (TABLA TIPO CARD)
    ========================================= */
 @media (max-width: 768px) {
-  .notas-container { padding: 10px; }
-  
-  .planilla-header { flex-direction: row; margin-bottom: 1rem; }
-  .btn-text { display: none; } /* Solo icono en móvil */
-
-  /* Transformación de Tabla a Cards */
-  .notas-table thead {
-    display: none; /* Escondemos cabeceras */
+  .notas-container {
+    padding: 10px;
   }
 
-  .notas-table, .notas-table tbody, .notas-table tr, .notas-table td {
+  .planilla-header {
+    flex-direction: row;
+    margin-bottom: 1rem;
+  }
+  .btn-text {
+    display: none;
+  }
+
+  .notas-table thead {
+    display: none;
+  }
+
+  .notas-table,
+  .notas-table tbody,
+  .notas-table tr,
+  .notas-table td {
     display: block;
     width: 100%;
     box-sizing: border-box;
   }
 
   .notas-table tr {
-    background: white;
+    background: var(--bg-card);
     margin-bottom: 15px;
     border-radius: 15px;
     padding: 10px;
-    border: 1px solid #eee;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 10px var(--sidebar-shadow);
+    transition:
+      background-color 0.25s ease,
+      border-color 0.25s ease;
   }
 
   .notas-table td {
     text-align: right;
     padding: 12px 15px;
-    border-bottom: 1px solid #f9f9f9;
+    border-bottom: 1px solid var(--bg-input);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: border-color 0.25s ease;
   }
 
-  .notas-table td:last-child { border-bottom: none; }
+  .notas-table td:last-child {
+    border-bottom: none;
+  }
 
-  /* Inyectar etiquetas desde data-label */
   .notas-table td::before {
     content: attr(data-label);
     font-weight: 800;
@@ -258,14 +319,21 @@
     font-size: 0.7rem;
     text-transform: uppercase;
     text-align: left;
+    transition: color 0.2s ease;
   }
 
   .alumno-name {
     color: var(--primary-purple) !important;
     font-size: 1.1rem;
-    background: #f8f9ff;
+    background: var(--bg-hover);
     border-radius: 10px;
     margin-bottom: 8px;
+    width: 100%;
+    justify-content: center !important;
+  }
+
+  .alumno-name::before {
+    display: none; /* Quitamos la inyección de etiqueta para el nombre completo */
   }
 
   .actions-cell {

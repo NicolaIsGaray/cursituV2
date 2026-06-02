@@ -4,14 +4,16 @@
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .avisos-main-container h2,
 .aviso-detalle-wrapper h2 {
   font-size: 1.8rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 25px;
+  transition: color 0.2s ease;
 }
 
 /* === TOP NAV & BUTTON BACK === */
@@ -26,7 +28,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -36,79 +38,187 @@
 }
 
 .btn-back:hover {
-  background-color: #f1f5f9;
-  color: var(--primary-purple, #3f3689);
+  background-color: var(--bg-hover);
+  color: var(--primary-purple);
+}
+
+/* ==========================================================================
+   REFACTORIZACIÓN GLOBAL DE BARRAS DE DESPLAZAMIENTO (SCROLLBARS)
+   ========================================================================== */
+.avisos-card-list::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.avisos-card-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.avisos-card-list::-webkit-scrollbar-thumb {
+  background: var(--border-input, var(--border-color, #cbd5e1));
+  border-radius: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.avisos-card-list::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary, #94a3b8);
 }
 
 /* === SECCIÓN 1: VISTA LISTADO DE AVISOS === */
 .avisos-card-list {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 20px var(--sidebar-shadow);
+  border: 1px solid var(--border-color);
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   gap: 12px;
+  max-height: 65vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
+/* ESTADO BASE DE LA FILA (UNIFICADO) */
 .aviso-row-item {
-  display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  display: flex;
   align-items: center;
   gap: 20px;
-  padding: 16px;
+  padding: 14px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
   cursor: pointer;
+  box-sizing: border-box;
   transition: all 0.2s ease-in-out;
 }
 
 .aviso-row-item:hover {
-  border-color: var(--primary-purple, #3f3689);
+  background: var(--bg-hover);
+  border-color: var(--primary-purple);
   transform: translateX(2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4px 12px var(--sidebar-shadow);
 }
 
+/* VARIACIONES PARA EL ESTADO NO LEÍDO (UNREAD) */
+.aviso-row-item.unread {
+  background: rgba(var(--primary-purple-rgb, 63, 54, 137), 0.04);
+  border-color: rgba(var(--primary-purple-rgb, 63, 54, 137), 0.25);
+}
+
+.aviso-row-item.unread:hover {
+  background: rgba(var(--primary-purple-rgb, 63, 54, 137), 0.08);
+}
+
+.aviso-row-item.unread .aviso-asunto-text {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.aviso-row-item.unread .leer-action-trigger {
+  color: var(--primary-purple);
+  font-weight: 700;
+}
+
+/* CONTENEDOR DEL ICONO Y PUNTO DE NOTIFICACIÓN */
 .aviso-status-icon {
-  width: 54px;
-  height: 54px;
-  background: rgba(255, 145, 44, 0.1);
-  color: #ff912c;
-  border-radius: 10px;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  border-radius: 10px;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
 }
 
 .aviso-status-icon .material-symbols-outlined {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
 }
 
+.aviso-row-item.unread .aviso-status-icon {
+  color: var(--primary-purple);
+  background: rgba(var(--primary-purple-rgb, 63, 54, 137), 0.1);
+}
+
+/* PUNTO DE NOTIFICACIÓN (BADGE DOT) */
+.unread-badge-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background-color: var(--error-red, #ef4444);
+  border: 2px solid var(--bg-card);
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+.aviso-row-item:hover .unread-badge-dot {
+  border-color: var(--bg-hover);
+}
+
+.aviso-row-item.unread:hover .unread-badge-dot {
+  border-color: rgba(var(--primary-purple-rgb, 63, 54, 137), 0.08);
+}
+
+/* ANIMACIÓN DE PULSO */
+@keyframes pulse-dot {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 5px rgba(239, 68, 68, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+/* CONTENEDORES DE INFORMACIÓN */
 .aviso-main-info {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex: 1;
+  min-width: 0;
 }
 
 .aviso-autor-label {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
 }
 
 .aviso-autor-label span {
   font-weight: 800;
-  color: #1e293b;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
 }
 
 .aviso-asunto-text {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--text-primary);
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
 }
 
 .aviso-meta-side {
@@ -117,20 +227,24 @@
   flex-direction: column;
   gap: 4px;
   padding-right: 10px;
+  flex-shrink: 0;
 }
 
 .aviso-date-stamp {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-muted);
   margin: 0;
+  transition: color 0.2s ease;
 }
 
 .leer-action-trigger {
   font-size: 0.88rem;
   font-weight: 700;
-  color: var(--primary-purple, #3f3689);
-  transition: color 0.2s;
+  color: var(--primary-purple);
+  transition:
+    color 0.2s,
+    filter 0.2s;
 }
 
 .aviso-row-item:hover .leer-action-trigger {
@@ -140,64 +254,83 @@
 .aviso-action-view-btn {
   width: 44px;
   height: 44px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  color: #64748b;
+  color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
 }
 
 .aviso-action-view-btn:hover {
-  background: #f1f5f9;
-  color: #1e293b;
-  border-color: #cbd5e1;
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-input, var(--border-color));
 }
 
 /* === SECCIÓN 2: VISTA DETALLE DE UN AVISO === */
 .detalle-view-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 40px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 20px var(--sidebar-shadow);
+  border: 1px solid var(--border-color);
+  box-sizing: border-box;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .detalle-view-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 24px;
   margin-bottom: 30px;
+  gap: 16px;
+  transition: border-color 0.25s ease;
 }
 
 .autor-perfil-block {
   display: flex;
   gap: 16px;
   align-items: center;
+  min-width: 0;
 }
 
 .profile-avatar-icon {
   width: 48px;
   height: 48px;
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color);
+  flex-shrink: 0;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.autor-meta-text {
+  min-width: 0;
 }
 
 .autor-meta-text .nombre-display {
   font-weight: 800;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 4px 0;
   font-size: 1.1rem;
+  word-break: break-word;
+  transition: color 0.2s ease;
 }
 
 .motivo-tag {
@@ -206,12 +339,15 @@
   font-weight: 700;
   padding: 3px 10px;
   border-radius: 20px;
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 .motivo-tag.info-tag {
-  background: rgba(255, 145, 44, 0.1);
+  background: rgba(255, 145, 44, 0.15);
   color: #ff912c;
 }
 
@@ -221,7 +357,9 @@
   gap: 6px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: color 0.2s ease;
 }
 
 .fecha-envio-stamp .material-symbols-outlined {
@@ -231,7 +369,9 @@
 .detalle-view-body {
   font-size: 1.1rem;
   line-height: 1.7;
-  color: #334155;
+  color: var(--text-primary);
+  word-break: break-word;
+  transition: color 0.2s ease;
 }
 
 /* === ESTADO VACÍO (FALLBACK) === */
@@ -242,14 +382,17 @@
   justify-content: center;
   text-align: center;
   padding: 40px 20px;
-  border: 2px dashed #e2e8f0;
+  border: 2px dashed var(--border-color);
+  background: var(--bg-empty-box, var(--bg-input));
   border-radius: 12px;
   min-height: 240px;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
 }
 
 .fallback-icon-container {
-  background: #f8fafc;
-  color: #94a3b8;
+  background: var(--bg-hover);
+  color: var(--text-muted);
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -257,26 +400,31 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 14px;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 .empty-avisos-fallback h4 {
   font-size: 1.1rem;
   font-weight: 800;
-  color: #334155;
+  color: var(--text-primary);
   margin: 0 0 6px 0;
+  transition: color 0.2s ease;
 }
 
 .empty-avisos-fallback p {
   font-size: 0.88rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-muted);
   max-width: 340px;
   margin: 0;
   line-height: 1.4;
+  transition: color 0.2s ease;
 }
 
 /* =========================================
-   ADAPTACIÓN PARA RESOLUCIONES (NETBOOKS)
+   ADAPTACIÓN RESPONSIVA OPTIMIZADA
    ========================================= */
 @media (max-width: 1024px) {
   .avisos-card-list {
@@ -287,11 +435,11 @@
     padding: 12px;
   }
   .aviso-status-icon {
-    width: 46px;
-    height: 46px;
+    width: 40px;
+    height: 40px;
   }
   .aviso-status-icon .material-symbols-outlined {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
   }
   .aviso-asunto-text {
     font-size: 0.95rem;
@@ -313,11 +461,98 @@
 }
 
 @media (max-width: 768px) {
-  .aviso-meta-side {
-    display: none;
+  .avisos-main-container,
+  .aviso-detalle-wrapper {
+    padding: 12px;
   }
+
+  .avisos-main-container h2,
+  .aviso-detalle-wrapper h2 {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+  }
+
+  .aviso-meta-side {
+    display: none; /* Oculta fecha y acción en tablets reducidas */
+  }
+
   .aviso-row-item {
-    grid-template-columns: auto 1fr auto;
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .detalle-view-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 14px;
+    margin-bottom: 20px;
+  }
+
+  .autor-perfil-block {
+    width: 100%;
+  }
+
+  .fecha-envio-stamp {
+    font-size: 0.82rem;
+    align-self: flex-start;
+    padding-left: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .avisos-card-list {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .aviso-row-item {
+    padding: 12px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .aviso-status-icon {
+    display: none; /* Eliminación limpia sin romper el flujo flex */
+  }
+
+  .aviso-asunto-text {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.92rem;
+    line-height: 1.3;
+  }
+
+  .aviso-autor-label {
+    font-size: 0.82rem;
+  }
+
+  .aviso-action-view-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .detalle-view-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .detalle-view-body {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .profile-avatar-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .autor-meta-text .nombre-display {
+    font-size: 1rem;
   }
 }
 

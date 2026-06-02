@@ -33,7 +33,7 @@
             theme="snow"
             [modules]="editorModules"
             placeholder="Escribe el contenido del aviso aquí..."
-            style="width: 100%; height: 30vh"
+            style="width: 100%; height: 30vh; color: var(--text-primary);"
           ></quill-editor>
         </div>
 
@@ -43,7 +43,7 @@
           [style.background-color]="'var(--primary-purple)'"
         >
           <span class="material-symbols-outlined" style="font-size: 1.2rem">send</span>
-          {{mode === 'crear' ? 'Publicar Aviso' : 'Actualizar Aviso'}}
+          {{ mode === 'crear' ? 'Publicar Aviso' : 'Actualizar Aviso' }}
         </button>
       </form>
 
@@ -54,23 +54,35 @@
           @for (notice of noticeList$ | async; track notice.id) {
             <article class="aviso-card">
               <header class="aviso-card-header">
-                <span class="title">"{{notice.title}}"</span>
+                <span class="title">"{{ notice.title }}"</span>
 
                 <div class="aviso-actions">
-                  <button class="action-icon-btn edit" title="Editar Aviso" (click)="redirectToNotice(notice.id!)">
+                  <button
+                    class="action-icon-btn edit"
+                    title="Editar Aviso"
+                    (click)="redirectToNotice(notice.id!)"
+                  >
                     <span class="material-symbols-outlined">visibility</span>
                   </button>
-                  <button class="action-icon-btn edit" title="Editar Aviso" (click)="noticeToEdit(notice)">
+                  <button
+                    class="action-icon-btn edit"
+                    title="Editar Aviso"
+                    (click)="noticeToEdit(notice)"
+                  >
                     <span class="material-symbols-outlined">edit</span>
                   </button>
-                  <button class="action-icon-btn delete" title="Eliminar Aviso" (click)="deleteNotice(notice.id!)">
+                  <button
+                    class="action-icon-btn delete"
+                    title="Eliminar Aviso"
+                    (click)="deleteNotice(notice.id!)"
+                  >
                     <span class="material-symbols-outlined">delete</span>
                   </button>
                 </div>
               </header>
 
               <div class="aviso-meta-content">
-                <p class="aviso-fecha">Publicado: {{formatDate(notice.created_at)}}</p>
+                <p class="aviso-fecha">Publicado: {{ formatDate(notice.created_at) }}</p>
               </div>
             </article>
           } @empty {

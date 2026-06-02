@@ -1,10 +1,12 @@
 export class Group {
     id?: string;
-    members_id!: string[];
+    membersId!: string[];
     member_names?: string[];
     number!: number;
     group_limit!: number;
-    subject_id!: string;
+    subjectId!: string;
     professor_id!: string;
     classroom_id!: string;
+    status!: string;
+    order?: number;
 }

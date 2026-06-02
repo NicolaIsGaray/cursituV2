@@ -4,8 +4,8 @@
   flex-direction: column;
   gap: 30px;
   padding: 24px;
-  max-width: 1200px; /* Evita que se deforme en pantallas ultra anchas */
-  margin: 0 auto;    /* Centra el contenedor en la pantalla */
+  max-width: 1200px;
+  margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
 }
@@ -18,18 +18,24 @@
 .parciales-panel h2 {
   font-size: 1.8rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--text-primary);
   margin-top: 0;
   margin-bottom: 1.5rem;
+  transition: color 0.2s ease;
 }
 
 .examen-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
   padding: 35px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 30px var(--sidebar-shadow);
   width: 100%;
   box-sizing: border-box;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 /* === BOTÓN REGRESAR === */
@@ -39,7 +45,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -49,8 +55,8 @@
 }
 
 .btn-back:hover {
-  background-color: #f1f5f9;
-  color: var(--subject-color, #3f66cc);
+  background-color: var(--bg-hover);
+  color: var(--subject-color, var(--primary-purple));
 }
 
 /* === CABECERA DEL EXAMEN === */
@@ -66,15 +72,17 @@
   font-size: 1.4rem;
   font-weight: 900;
   margin: 0;
-  color: #0f172a;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
 }
 
-.materia-sub { 
-  color: #64748b; 
+.materia-sub {
+  color: var(--text-muted);
   font-weight: 600;
   font-size: 0.95rem;
   display: inline-block;
   margin-top: 4px;
+  transition: color 0.2s ease;
 }
 
 .examen-top-actions {
@@ -83,9 +91,9 @@
 }
 
 .btn-tool {
-  background: #f1f5f9;
-  color: #475569;
-  border: none;
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 10px;
   cursor: pointer;
@@ -96,8 +104,9 @@
 }
 
 .btn-tool:hover {
-  background: #e2e8f0;
-  color: #1e293b;
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-input, var(--border-color));
 }
 
 /* === FILTROS (CHIPS SCROLLABLE) === */
@@ -118,32 +127,34 @@
 }
 
 .filter-scroll::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--border-color);
   border-radius: 10px;
 }
 
 .filter-chip {
   white-space: nowrap;
-  background: #f1f5f9;
-  border: none;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
   padding: 10px 22px;
   border-radius: 25px;
   font-weight: 700;
   font-size: 0.85rem;
-  color: #475569;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .filter-chip.active {
-  background: var(--subject-color, #3f66cc);
+  background: var(--subject-color, var(--primary-purple));
   color: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--subject-color, var(--primary-purple));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .filter-chip:hover:not(.active) {
-  background-color: #e2e8f0;
-  color: #0f172a;
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-input, var(--border-color));
 }
 
 /* === RECUADROS LOGÍSTICOS === */
@@ -159,24 +170,29 @@
   text-align: center;
   font-size: 0.75rem;
   font-weight: 800;
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  transition: color 0.2s ease;
 }
 
 .log-value-box {
-  background: #f8fafc;
-  border: 1px solid #f1f5f9;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
   padding: 14px;
   border-radius: 12px;
   text-align: center;
   font-weight: 700;
-  color: #334155;
+  color: var(--text-secondary);
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.2s ease;
 }
 
 /* === TABLA DE ASISTENCIA Y CALIFICACIONES === */
@@ -188,12 +204,15 @@
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   padding: 15px 10px;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--border-color);
   font-weight: 800;
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  transition:
+    border-bottom-color 0.25s ease,
+    color 0.2s ease;
 }
 
 .table-body {
@@ -205,20 +224,24 @@
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   padding: 18px 10px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-color);
   align-items: center;
-  transition: background-color 0.15s ease;
+  background: transparent;
+  transition:
+    background-color 0.15s ease,
+    border-bottom-color 0.25s ease;
 }
 
 .student-row:hover {
-  background-color: #f8fafc;
+  background-color: var(--bg-hover);
 }
 
 .empty-table-row {
   padding: 3rem;
   text-align: center;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.95rem;
+  transition: color 0.2s ease;
 }
 
 /* === BADGES DE ESTADO === */
@@ -231,39 +254,40 @@
   text-align: center;
 }
 
-.status-badge.presente { 
-  background: #f0fdf4; 
-  color: #16a34a; 
+.status-badge.presente {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success-green, #10b981);
 }
 
-.status-badge.ausente { 
-  background: #fef2f2; 
-  color: #dc2626; 
+.status-badge.ausente {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger-red, #f87171);
 }
 
 /* === INTERFAZ DE EDICIÓN DE NOTAS === */
 .input-mini-nota {
   width: 60px;
   padding: 6px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--border-input, var(--border-color));
   border-radius: 8px;
   text-align: center;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   outline: none;
-  background-color: white;
+  background-color: var(--bg-input);
   transition: all 0.15s ease;
 }
 
 .input-mini-nota:focus {
-  border-color: var(--subject-color, #3f66cc);
-  box-shadow: 0 0 0 3px rgba(63, 102, 204, 0.15);
+  border-color: var(--subject-color, var(--primary-purple));
+  background-color: var(--bg-card);
+  box-shadow: 0 0 0 3px hsl(from var(--subject-color, var(--primary-purple)) h s l / 0.2);
 }
 
 .input-mini-nota:disabled {
-  background-color: #f1f5f9;
-  color: #94a3b8;
-  border-color: #e2e8f0;
+  background-color: var(--bg-hover);
+  color: var(--text-muted);
+  border-color: var(--border-color);
   cursor: not-allowed;
 }
 
@@ -290,7 +314,8 @@
     overflow-x: auto;
   }
 
-  .table-head, .student-row {
+  .table-head,
+  .student-row {
     min-width: 500px;
   }
 }

@@ -1,12 +1,15 @@
 /* === LAYOUT PRINCIPAL === */
 .classroom-container {
   display: flex;
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.05);
+  box-shadow: 0px 10px 30px var(--sidebar-shadow);
   min-height: 70vh;
   position: relative;
+  transition:
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 /* Contenedor principal de recursos */
@@ -16,7 +19,8 @@
   gap: 20px;
   margin-top: 30px;
   padding-top: 25px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border-color);
+  transition: border-color 0.25s ease;
 }
 
 @media (max-width: 768px) {
@@ -27,19 +31,23 @@
 
 /* --- COLUMNA DE ARCHIVOS --- */
 .resources-files-box {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 16px;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .resources-files-box h4 {
   margin: 0 0 12px 0;
   font-size: 0.95rem;
-  color: #475569;
+  color: var(--text-secondary);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  transition: color 0.2s ease;
 }
 
 .resources-file-list {
@@ -56,18 +64,18 @@
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  background: #ffffff;
-  border: 1px solid #edf2f7;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
+  transition: all 0.2s ease;
   cursor: pointer;
 }
 
 .resources-file-list li:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  background: var(--bg-hover);
+  border-color: var(--border-input, var(--border-color));
+  box-shadow: 0 4px 6px -1px var(--sidebar-shadow);
 }
 
 .resources-file-list .material-symbols-outlined {
@@ -76,13 +84,17 @@
 
 /* Identificadores cromáticos por tipo de archivo */
 .icon-pdf {
-  color: #e53e3e;
+  color: #ef4444; /* Ajustado para mejor contraste en modo oscuro */
 }
 .icon-zip {
-  color: #dd6b20;
+  color: #f97316; /* Ajustado para mejor contraste en modo oscuro */
 }
 .icon-link {
-  color: #3182ce;
+  color: #3b82f6; /* Ajustado para mejor contraste en modo oscuro */
+}
+
+.icon-doc {
+  color: #3b82f6;
 }
 
 .file-info {
@@ -92,13 +104,15 @@
 
 .file-name {
   font-size: 0.9rem;
-  color: #2d3748;
+  color: var(--text-primary);
   font-weight: 500;
+  transition: color 0.2s ease;
 }
 
 .file-size {
   font-size: 0.75rem;
-  color: #718096;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
 }
 
 /* --- COLUMNA DE ACTIVIDAD --- */
@@ -106,8 +120,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: #f0fdf4; /* Tonalidad verde suave de contexto académico */
-  border: 1px solid #bbf7d0;
+  background: rgba(16, 185, 129, 0.12); /* Opacidad semántica sobre verde success */
+  border: 1px solid rgba(16, 185, 129, 0.25);
   border-radius: 8px;
   padding: 16px;
   gap: 16px;
@@ -121,8 +135,8 @@
 
 .activity-icon {
   font-size: 32px;
-  color: #16a34a;
-  background: #dcfce7;
+  color: var(--success-green, #10b981);
+  background: rgba(16, 185, 129, 0.15);
   padding: 8px;
   border-radius: 8px;
 }
@@ -130,14 +144,16 @@
 .activity-meta h5 {
   margin: 0;
   font-size: 1rem;
-  color: #14532d;
+  color: var(--text-primary);
   font-weight: 600;
+  transition: color 0.2s ease;
 }
 
 .activity-meta p {
   margin: 2px 0 0 0;
   font-size: 0.8rem;
-  color: #166534;
+  color: var(--success-green, #10b981);
+  filter: brightness(1.1);
 }
 
 /* Botón de acción con la variable de color dinámica del curso */
@@ -161,7 +177,7 @@
 }
 
 .btn-go-activity:hover {
-  filter: brightness(0.9);
+  filter: brightness(1.1);
 }
 
 .btn-go-activity:active {
@@ -175,13 +191,14 @@
   justify-content: center;
   height: 100%;
   min-height: 350px;
-  background: #ffffff;
+  background: var(--bg-empty-box, var(--bg-input));
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 12px var(--sidebar-shadow);
   padding: 40px;
   box-sizing: border-box;
   text-align: center;
-  border: 2px dashed #e2e8f0; /* Efecto de zona vacía/disponible */
+  border: 2px dashed var(--border-color);
+  transition: all 0.25s ease;
 }
 
 .message-wrapper {
@@ -195,47 +212,54 @@
 /* ICONO CENTRAL GRANDE */
 .central-icon {
   font-size: 64px;
-  color: #a0aec0;
+  color: var(--text-muted);
   margin-bottom: 8px;
+  transition: color 0.2s ease;
 }
 
 .empty-course-state h3 {
   margin: 0;
   font-size: 1.5rem;
-  color: #2d3748;
+  color: var(--text-primary);
   font-weight: 700;
+  transition: color 0.2s ease;
 }
 
 .empty-course-state p {
   margin: 0;
   font-size: 1rem;
-  color: #718096;
+  color: var(--text-muted);
   line-height: 1.5;
+  transition: color 0.2s ease;
 }
 
 /* CUADRO DE INDICACIÓN PARA EL DOCENTE */
 .teacher-hint {
   margin-top: 24px;
   padding: 16px;
-  background: #f7fafc;
+  background: var(--bg-hover);
   border-radius: 12px;
-  border: 1px solid #edf2f7;
+  border: 1px solid var(--border-color);
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .teacher-hint p {
   font-size: 0.9rem;
-  color: #4a5568;
+  color: var(--text-secondary);
   font-weight: 500;
+  transition: color 0.2s ease;
 }
 
 /* FLECHA SUTIL QUE SEÑALA HACIA EL FAB (+) */
 .hint-arrow {
   font-size: 28px;
-  color: #3f3689; /* Color de tu app o botón */
+  color: var(--primary-purple);
   margin-top: 12px;
   animation: bounceArrow 2s infinite;
 }
@@ -252,21 +276,21 @@
 }
 
 /* ESTADO DE CARGA COMPATIBLE */
-.loading-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: #718096;
-  font-size: 0.95rem;
-}
-
+.loading-state,
 .loading-state-global {
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--text-muted);
+}
+
+.loading-state {
+  height: 100%;
+  font-size: 0.95rem;
+}
+
+.loading-state-global {
   height: 50vh;
-  color: #718096;
   font-size: 1.1rem;
   font-weight: 500;
 }
@@ -279,22 +303,22 @@
   text-overflow: clip;
 }
 
-/* Asegura que la tarjeta no se estire horizontalmente */
 .content-card {
   width: 100%;
   box-sizing: border-box;
-  overflow: hidden; /* Recorta cualquier escape inesperado */
+  overflow: hidden;
 }
 
 /* Controla el flujo del texto inyectado */
 .text-content {
   width: 100%;
-  word-wrap: break-word; /* Fuerza el salto de línea en palabras largas */
-  overflow-wrap: break-word; /* Estándar moderno para romper líneas */
-  word-break: break-word; /* Compatibilidad con navegadores antiguos */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
 }
 
-/* Especificidad para el contenido renderizado por Quill */
 .text-content [innerHTML] {
   display: block;
   width: 100%;
@@ -303,11 +327,16 @@
 /* Corrección crítica para bloques de código o texto preformateado de Quill */
 .text-content pre,
 .text-content code {
-  white-space: pre-wrap; /* Respeta espacios pero aplica salto de línea */
-  word-wrap: break-word; /* Evita el scroll horizontal en código largo */
-  max-width: 100%; /* No permite que exceda el ancho del padre */
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-width: 100%;
   display: block;
-  overflow-x: auto; /* Si es código muy estricto, añade scroll interno en vez de romper la tarjeta */
+  overflow-x: auto;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 10px;
 }
 
 /* Corrección para imágenes que el docente pueda pegar en el editor */
@@ -324,7 +353,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -334,7 +363,7 @@
 }
 
 .btn-back:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: var(--bg-hover);
   color: var(--primary-purple);
 }
 
@@ -349,25 +378,27 @@
   align-items: center;
   gap: 8px;
   padding: 10px 18px;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 10px;
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .btn-manage.edit {
-  background: #f0f0f0;
-  color: #1a1a1a;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border-color: var(--border-color);
 }
 .btn-manage.delete {
-  background: #ffe5e5;
-  color: #e74c3c;
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--danger-red, #ef4444);
+  border-color: rgba(239, 68, 68, 0.2);
 }
 
 .btn-manage:hover {
-  filter: brightness(0.95);
+  filter: brightness(1.08);
   transform: translateY(-2px);
 }
 
@@ -375,7 +406,7 @@
 .sections-sidebar {
   width: 280px;
   padding: 30px 0;
-  color: white;
+  color: var(--text-primary);
 }
 
 .sidebar-header {
@@ -390,23 +421,27 @@
   padding: 12px 25px;
   cursor: pointer;
   transition: all 0.3s ease;
-  opacity: 0.7;
+  opacity: 0.6;
+  color: var(--text-secondary);
 }
 
 .section-item:hover {
   opacity: 1;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .section-item.active {
   opacity: 1;
   font-weight: bold;
+  color: var(--text-primary);
+  background: var(--bg-hover);
 }
 
 .section-item .indicator {
   width: 4px;
   height: 0;
-  background: white;
+  background: whitesmoke;
   transition: height 0.3s ease;
 }
 
@@ -421,14 +456,14 @@
   right: 30px;
   width: 65px;
   height: 65px;
-  background: #3f3689;
+  background: var(--primary-purple);
   color: white;
   border: none;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0px 8px 20px rgba(63, 54, 137, 0.4);
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   z-index: 100;
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -436,6 +471,7 @@
 
 .fab-add:hover {
   transform: scale(1.1) rotate(90deg);
+  filter: brightness(1.1);
 }
 
 .fab-add .material-symbols-outlined {
@@ -449,7 +485,8 @@
   gap: 10px;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-color);
+  transition: border-color 0.25s ease;
 }
 
 .btn-topic-action {
@@ -457,26 +494,28 @@
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .btn-topic-action.edit {
-  background: #f0f0f0;
-  color: #1a1a1a;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border-color: var(--border-color);
 }
 
 .btn-topic-action.delete {
-  background: #ffe5e5;
-  color: #e74c3c;
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--danger-red, #ef4444);
+  border-color: rgba(239, 68, 68, 0.2);
 }
 
 .btn-topic-action:hover {
-  filter: brightness(0.93);
+  filter: brightness(1.08);
   transform: translateY(-1px);
 }
 
@@ -512,6 +551,8 @@
     top: 0;
     z-index: 10;
     height: 60px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
   }
 
   .sidebar-header {
@@ -524,7 +565,7 @@
     height: 100%;
     align-items: center;
     padding: 0 10px;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;
   }
 
   .sections-list::-webkit-scrollbar {
@@ -538,9 +579,13 @@
     border-bottom: 3px solid transparent;
   }
 
+  .section-item:hover {
+    background: transparent;
+  }
+
   .section-item.active {
     background: transparent;
-    border-bottom: 3px solid white;
+    border-bottom: 3px solid var(--primary-purple);
   }
 
   .section-item.active .indicator {

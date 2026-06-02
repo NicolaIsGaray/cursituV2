@@ -5,5 +5,6 @@ export class Notice {
     message!: string;
     senderId!: string;
     created_at!: string;
-    read_by?: string[];
+    readBy?: string[];
+    hasRead?: boolean;
 }

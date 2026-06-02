@@ -14,6 +14,9 @@ import { Router } from '@angular/router';
 import { Assignment } from '../../../models/assignment.model';
 import { AssignmentService } from '../../../services/assignment.service';
 import { TopicDTO } from '../../../models/dto/topicDTO';
+import { DateService } from '../../../services/date.service';
+import { AppwriteService } from '../../../services/appwrite.service';
+import { FileDTO } from '../../../models/dto/fileDTO';
 
 @Component({
   selector: 'app-add-class',
@@ -28,9 +31,11 @@ export class ClassManagement implements OnInit {
   assignmentType: 'tarea' | 'parcial' = 'tarea';
   assignmentEnabled: 'habilitado' | 'deshabilitado' = 'habilitado';
   enableToDeliver: boolean = true;
+  deliverType: 'individual' | 'grupo' = 'individual';
 
   subject$!: Observable<Subject>;
   subjectId: string | null = null;
+  subjectName: string | null = null;
 
   currentClassroom: Classroom | null = null;
   classroom_id!: string;
@@ -42,6 +47,9 @@ export class ClassManagement implements OnInit {
 
   assignmentForm!: FormGroup;
   newAssignment!: Assignment;
+
+  uploadedFiles: File[] = [];
+  existingFiles: FileDTO[] = [];
 
   editorModules = {
     toolbar: [
@@ -58,6 +66,7 @@ export class ClassManagement implements OnInit {
     private topicService: TopicService,
     private assignmentService: AssignmentService,
     private classroomService: ClassroomService,
+    private appwriteService: AppwriteService,
     private fb: FormBuilder,
     private router: Router,
     private location: Location,
@@ -88,8 +97,7 @@ export class ClassManagement implements OnInit {
     this.class_mode = localStorage.getItem('class_mode');
 
     if (this.class_mode === 'editar') {
-      this.topicToEditId = localStorage.getItem('cursitu_selected_topic');
-      this.topicToEditId = this.topicToEditId!.replace(/"/g, '');
+      this.topicToEditId = this.topicService.getTopicFromStorage();
 
       if (this.topicToEditId) {
         this.topicService.getTopicById(this.topicToEditId).subscribe({
@@ -124,6 +132,7 @@ export class ClassManagement implements OnInit {
         document.documentElement.style.setProperty('--subject-color', subjectData.color);
 
         this.classroom_id = subjectData.classroom_id!;
+        this.subjectName = subjectData.subject_name;
 
         this.loadCurrentClassroom(this.classroom_id);
       },
@@ -140,14 +149,36 @@ export class ClassManagement implements OnInit {
     });
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.topicForm.invalid || !this.currentClassroom) return;
 
     const { title, content } = this.topicForm.value;
 
+    let newFilesUrls: string[] = [];
+
+    if (this.uploadedFiles.length > 0) {
+      try {
+        newFilesUrls = await this.appwriteService.uploadMultiFiles(
+          this.uploadedFiles,
+          `topic/subject-${this.subjectId}`,
+        );
+      } catch (error) {
+        console.error('Error al procesar los archivos nuevos: ', error);
+        return;
+      }
+    }
+
+    const newFilesDTO: FileDTO[] = this.uploadedFiles.map((file, index) => ({
+      fileName: file.name,
+      url: newFilesUrls[index],
+    }));
+
+    const finalFilesList = [...this.existingFiles, ...newFilesDTO];
+
     this.newTopic = {
       title: title.trim(),
       content: content,
+      files: finalFilesList,
       classroom_id: this.classroom_id!,
     };
 
@@ -159,9 +190,11 @@ export class ClassManagement implements OnInit {
       this.newAssignment = {
         title: assignmentTitle.trim(),
         content: assignmentContent,
+        subject_name: this.subjectName!,
         date_limit: assignmentLimit,
         allowed_format: this.assignmentFormat,
         type: this.assignmentType,
+        deliverMode: this.deliverType,
         enabled_to_deliver: this.enableToDeliver,
         subject_id: this.subjectId!,
       };
@@ -173,15 +206,17 @@ export class ClassManagement implements OnInit {
   }
 
   submitTopic() {
-    if (this.class_mode === 'editar' && this.mode !== 'teorico') {  
+    if (this.class_mode === 'editar' && this.mode !== 'teorico') {
       const { assignmentTitle, assignmentContent, assignmentLimit } = this.assignmentForm.value;
 
       this.newAssignment = {
         title: assignmentTitle.trim(),
         content: assignmentContent,
+        subject_name: this.subjectName!,
         date_limit: assignmentLimit,
         allowed_format: this.assignmentFormat,
         type: this.assignmentType,
+        deliverMode: this.deliverType,
         enabled_to_deliver: this.enableToDeliver,
         subject_id: this.subjectId!,
       };
@@ -216,10 +251,22 @@ export class ClassManagement implements OnInit {
   }
 
   topicToEdit(topic: Topic, assignment: Assignment | null) {
+    if (assignment) {
+      if (assignment!.type === 'parcial') {
+        this.assignmentType = 'parcial';
+      }
+
+      if (assignment!.deliverMode === 'grupo') {
+        this.deliverType = 'grupo';
+      }
+    }
+
     this.topicForm.patchValue({
       title: topic.title,
       content: topic.content,
     });
+
+    this.existingFiles = topic.files ? [...topic.files] : [];
 
     if (assignment) {
       this.initAssignmentForm();
@@ -255,12 +302,69 @@ export class ClassManagement implements OnInit {
     }
   }
 
+  onFilesSelected(e: any): void {
+    const files: FileList = e.target.files;
+    if (!files) return;
+
+    const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      if (file.size > MAX_FILE_SIZE_BYTES) {
+        alert(`El archivo "${file.name}" supera el límite máximo permitido de 50 MB.`);
+        continue;
+      }
+
+      this.uploadedFiles.push(file);
+    }
+  }
+
+  removeFile(index: number): void {
+    this.uploadedFiles.splice(index, 1);
+  }
+
+  removeExistingFile(index: number): void {
+    this.existingFiles.splice(index, 1);
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  getFileIcon(fileName: string): string {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'pdf':
+        return 'description';
+      case 'zip':
+      case 'rar':
+      case '7z':
+        return 'folder_zip';
+      case 'png':
+      case 'jpg':
+      case 'jpeg':
+      case 'webp':
+        return 'image';
+      default:
+        return 'draft';
+    }
+  }
+
   setFormat(newFormat: 'archivo' | 'carpeta' | 'texto') {
     this.assignmentFormat = newFormat;
   }
 
   setType(newType: 'tarea' | 'parcial') {
     this.assignmentType = newType;
+  }
+
+  setDeliverMode(newMode: 'individual' | 'grupo') {
+    this.deliverType = newMode;
   }
 
   setAvaiability(isAvaiable: 'habilitado' | 'deshabilitado') {

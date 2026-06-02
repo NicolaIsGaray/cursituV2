@@ -8,6 +8,7 @@ import pepedevelopers.cursitu.model.NoticeEntity;
 import pepedevelopers.cursitu.repository.INotice;
 import pepedevelopers.cursitu.service.NoticeService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +26,9 @@ public class NoticeController {
     this.noticeRepo = noticeRepo;
   }
 
-  @PostMapping
-  public ResponseEntity<NoticeEntity> createNotice(@RequestBody NoticeEntity newNotice) {
-    return new ResponseEntity<>(noticeRepo.save(newNotice), HttpStatus.CREATED);
+  @PostMapping("/sent-by/{senderId}")
+  public ResponseEntity<NoticeEntity> createNotice(@RequestBody NoticeEntity newNotice, @PathVariable String senderId) {
+    return new ResponseEntity<>(noticeService.createNotice(newNotice, senderId), HttpStatus.CREATED);
   }
 
   @GetMapping("/{id}")
@@ -68,5 +69,16 @@ public class NoticeController {
   @GetMapping("/sender/{senderId}")
   public ResponseEntity<List<NoticeEntity>> getSenderNotices(@PathVariable String senderId) {
     return ResponseEntity.ok(noticeService.obtainSenderNotices(senderId));
+  }
+
+  @GetMapping("/not-read/{studentId}")
+  public ResponseEntity<List<NoticeEntity>> getNotReadNotices(@PathVariable String studentId) {
+    return ResponseEntity.ok(noticeService.showNotRead(studentId));
+  }
+
+  @GetMapping("/status/{noticeId}/user/{studentId}")
+  public ResponseEntity<?> statusForReader(@PathVariable String noticeId, @PathVariable String studentId) {
+    noticeService.checkAndUpdateReadStatus(noticeId, studentId);
+    return ResponseEntity.ok(Map.of("message", "Aviso marcado como leído."));
   }
 }

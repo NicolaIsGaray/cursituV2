@@ -2,6 +2,7 @@ export interface TeacherSubmissionDTO {
   studentId: string;
   studentName: string;
   submissionId?: string;
+  fileName?: string;
   fileUrl?: string;
   submissionDate?: string;
   isLate: boolean;

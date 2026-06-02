@@ -1,13 +1,14 @@
-/* --- CSS ADAPTADO PARA NETBOOKS/RESPONSIVE --- */
+/* --- CSS ADAPTADO PARA NETBOOKS/RESPONSIVE Y MODO OSCURO --- */
 
 .login-page {
   min-height: 100vh; /* Permite scroll si el teclado virtual o la pantalla es muy pequeña */
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f4f7fe;
+  background: var(--bg-main, var(--bg-gray));
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   padding: 10px; /* Margen de seguridad para pantallas pequeñas */
+  transition: background-color 0.25s ease;
 }
 
 .login-container {
@@ -15,10 +16,15 @@
   width: 100%;
   max-width: 1000px; /* Límite para monitores grandes */
   min-height: 500px; /* Reducido de 650px */
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px; /* Redondeado ligeramente menor para ganar espacio */
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 20px 60px var(--sidebar-shadow);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 /* Lado del Formulario */
@@ -34,26 +40,60 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #3f66cc;
+  color: var(--primary-purple);
   margin-bottom: 30px; /* Reducido de 50px */
 }
 
-.brand-header h1 { font-weight: 900; font-size: 1.3rem; margin: 0; }
+.brand-header h1 {
+  font-weight: 900;
+  font-size: 1.3rem;
+  margin: 0;
+}
 
-.login-content h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
-.login-content p { color: #777; font-weight: 600; margin-bottom: 25px; font-size: 0.9rem; }
+.login-content h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
+}
 
-.input-group { margin-bottom: 15px; } /* Espaciado más compacto */
-.input-group label { display: block; font-weight: 700; margin-bottom: 5px; color: #444; font-size: 0.85rem; }
+.login-content p {
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 25px;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.input-group {
+  margin-bottom: 15px;
+} /* Espaciado más compacto */
+
+.input-group label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 5px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  transition: color 0.2s ease;
+}
 
 .input-wrapper {
   display: flex;
   align-items: center;
-  background: #f0f2f7;
+  background: var(--bg-input);
   border-radius: 10px;
   padding: 0 12px;
-  border: 2px solid transparent;
-  transition: 0.3s;
+  border: 2px solid var(--border-color);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.2s ease;
+}
+
+.input-wrapper:focus-within {
+  border-color: var(--primary-purple);
+  background: var(--bg-card);
 }
 
 .input-wrapper input {
@@ -64,6 +104,7 @@
   outline: none;
   font-weight: 600;
   font-size: 0.95rem;
+  color: var(--text-primary);
 }
 
 .login-options {
@@ -72,11 +113,21 @@
   font-size: 0.8rem;
   font-weight: 700;
   margin-bottom: 25px;
+  color: var(--text-secondary);
+}
+
+/* Enlaces o checkboxes dentro de opciones */
+.login-options a {
+  color: var(--primary-purple);
+  text-decoration: none;
+}
+.login-options a:hover {
+  filter: brightness(1.2);
 }
 
 .btn-login {
   width: 100%;
-  background: #3f66cc;
+  background: var(--primary-purple);
   color: white;
   border: none;
   padding: 14px;
@@ -84,14 +135,26 @@
   font-weight: 800;
   font-size: 1rem;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.2s ease;
   text-decoration: none;
+  text-align: center;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-login:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 /* Lado Visual - Ocultar en resoluciones de netbook típicas si es necesario */
 .login-visual-side {
   flex: 1;
-  background: linear-gradient(135deg, #8742e0 0%, #6a2bc2 100%);
+  background: linear-gradient(
+    135deg,
+    #7c3aed 0%,
+    #5b21b6 100%
+  ); /* Suavizado sutil para modo oscuro */
   position: relative;
   display: flex;
   align-items: flex-end;
@@ -99,15 +162,26 @@
   color: white;
 }
 
-.visual-content h3 { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; line-height: 1.2; }
-.visual-content p { font-size: 0.9rem; font-weight: 600; opacity: 0.9; }
+.visual-content h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
 
-.login-footer { 
-  margin-top: 30px; 
-  font-size: 0.7rem; 
-  color: #aaa; 
-  font-weight: 600; 
+.visual-content p {
+  font-size: 0.9rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.login-footer {
+  margin-top: 30px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 600;
   text-align: center;
+  transition: color 0.2s ease;
 }
 
 /* --- MEDIA QUERIES ESPECÍFICAS --- */
@@ -117,7 +191,7 @@
   .login-visual-side {
     display: none; /* Eliminamos el panel visual para centrar el foco en el login */
   }
-  
+
   .login-container {
     max-width: 450px; /* El formulario no debe estirarse demasiado */
   }

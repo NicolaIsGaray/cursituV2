@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Group } from '../models/group.model';
 import { environment } from '../../environments/environment.development';
+import { GroupDTO } from '../models/dto/groupDTO';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,10 @@ export class GroupService {
     return this.http.get<Group[]>(`${this.apiUrl}/subject/${subjectId}`);
   }
 
+  getCurrentStudentGroups(studentId: string, subjectId: string): Observable<GroupDTO[]> {
+    return this.http.get<GroupDTO[]>(`${this.apiUrl}/user/${studentId}/groups/${subjectId}`);
+  }
+
   createGroup(group: Group): Observable<Object> {
     return this.http.post(this.apiUrl, group);
   }
@@ -33,5 +38,12 @@ export class GroupService {
 
   deleteGroup(groupId: string) {
     return this.http.delete(`${this.apiUrl}/${groupId}`);
+  }
+
+  /**
+   * @param groupOrders
+   */
+  updateGroupsOrder(groupOrders: { id: string; order: number }[]): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/update-order`, groupOrders);
   }
 }

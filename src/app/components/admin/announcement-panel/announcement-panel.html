@@ -2,7 +2,7 @@
   <div class="admin-container" *ngIf="rol === 'ADMIN'">
     <!-- Lado Izquierdo: Acciones de Anuncios -->
     <div class="selection-panel">
-      <h3>Panel de Anuncios</h3>
+      <h3 style="color: var(--text-primary);">Panel de Anuncios</h3>
       <p class="section-description">Difunde información importante a toda la plataforma.</p>
 
       <div class="admin-actions-list">
@@ -86,6 +86,7 @@
               theme="snow"
               [modules]="editorModules"
               placeholder="Escribe el contenido del aviso aquí..."
+              style="color: var(--text-primary);"
             ></quill-editor>
           </div>
 
