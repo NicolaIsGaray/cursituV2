@@ -1,7 +1,10 @@
 package pepedevelopers.cursitu.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import pepedevelopers.cursitu.model.subject_submodel.TopicsEntity;
+import pepedevelopers.cursitu.model.subject_submodel.TopicEntity;
 
-public interface ITopics extends MongoRepository<TopicsEntity, String> {
+import java.util.Optional;
+
+public interface ITopics extends MongoRepository<TopicEntity, String> {
+  Optional<TopicEntity> findByAssignmentId(String activityId);
 }

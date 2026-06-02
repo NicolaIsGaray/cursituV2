@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { SubjectService } from '../../../services/subject.service';
 import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 import { Subject } from '../../../models/subject.model';
 import { QuillEditorComponent } from 'ngx-quill';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -14,15 +13,17 @@ import { ClassroomService } from '../../../services/classroom.service';
 import { Router } from '@angular/router';
 import { Assignment } from '../../../models/assignment.model';
 import { AssignmentService } from '../../../services/assignment.service';
+import { TopicDTO } from '../../../models/dto/topicDTO';
 
 @Component({
   selector: 'app-add-class',
   imports: [CommonModule, QuillEditorComponent, ReactiveFormsModule],
-  templateUrl: './add-class.html',
-  styleUrl: './add-class.css',
+  templateUrl: './class-management.html',
+  styleUrl: './class-management.css',
 })
-export class AddClass implements OnInit {
+export class ClassManagement implements OnInit {
   mode: 'teorico' | 'entregable' = 'teorico';
+  class_mode: string | null = null;
   assignmentFormat: 'archivo' | 'carpeta' | 'texto' = 'archivo';
   assignmentType: 'tarea' | 'parcial' = 'tarea';
   assignmentEnabled: 'habilitado' | 'deshabilitado' = 'habilitado';
@@ -32,17 +33,19 @@ export class AddClass implements OnInit {
   subjectId: string | null = null;
 
   currentClassroom: Classroom | null = null;
-  classroomId: string | null = null;
+  classroom_id!: string;
 
   topicForm!: FormGroup;
   newTopic!: Topic;
+  newTopicDTO!: TopicDTO;
+  topicToEditId: string | null = null;
 
   assignmentForm!: FormGroup;
   newAssignment!: Assignment;
 
   editorModules = {
     toolbar: [
-      [{ size: [ 'small', false, 'large', 'huge' ]}],
+      [{ size: ['small', false, 'large', 'huge'] }],
       ['bold', 'italic', 'underline', 'clean'],
       [{ list: 'ordered' }, { list: 'bullet' }],
       ['link'],
@@ -57,9 +60,11 @@ export class AddClass implements OnInit {
     private classroomService: ClassroomService,
     private fb: FormBuilder,
     private router: Router,
+    private location: Location,
   ) {}
 
   ngOnInit(): void {
+    this.checkClassMode();
     this.initForm();
     this.getSelectedSubjectAndClassroom();
   }
@@ -75,8 +80,34 @@ export class AddClass implements OnInit {
     this.assignmentForm = this.fb.group({
       assignmentTitle: ['', Validators.required],
       assignmentContent: [''],
-      assignmentLimit: ['', Validators.required]
+      assignmentLimit: ['', Validators.required],
     });
+  }
+
+  checkClassMode() {
+    this.class_mode = localStorage.getItem('class_mode');
+
+    if (this.class_mode === 'editar') {
+      this.topicToEditId = localStorage.getItem('cursitu_selected_topic');
+      this.topicToEditId = this.topicToEditId!.replace(/"/g, '');
+
+      if (this.topicToEditId) {
+        this.topicService.getTopicById(this.topicToEditId).subscribe({
+          next: (topic) => {
+            if (!topic.assignmentId) {
+              this.topicToEdit(topic, null);
+            } else {
+              this.assignmentService.getAssignmentInTopic(topic).subscribe({
+                next: (assignment) => {
+                  this.topicToEdit(topic, assignment);
+                },
+              });
+            }
+          },
+          error: (err) => console.error('No se pudo obtener el tema a editar: ', err),
+        });
+      }
+    }
   }
 
   getSelectedSubjectAndClassroom() {
@@ -92,16 +123,16 @@ export class AddClass implements OnInit {
       next: (subjectData) => {
         document.documentElement.style.setProperty('--subject-color', subjectData.color);
 
-        this.classroomId = subjectData.classroom_id!;
+        this.classroom_id = subjectData.classroom_id!;
 
-        this.loadCurrentClassroom(this.classroomId);
+        this.loadCurrentClassroom(this.classroom_id);
       },
       error: (err) => console.error('Error al obtener la materia: ', err),
     });
   }
 
-  loadCurrentClassroom(classroomId: string) {
-    this.classroomService.getClassroomById(classroomId).subscribe({
+  loadCurrentClassroom(classroom_id: string) {
+    this.classroomService.getClassroomById(classroom_id).subscribe({
       next: (classroomData) => {
         this.currentClassroom = classroomData;
       },
@@ -114,16 +145,14 @@ export class AddClass implements OnInit {
 
     const { title, content } = this.topicForm.value;
 
-    // Estructura base del Topic
     this.newTopic = {
       title: title.trim(),
       content: content,
-      classroom_id: this.classroomId!,
-      assignment_id: null!, // Se inicializa nulo o vacío
+      classroom_id: this.classroom_id!,
     };
 
     if (this.mode === 'entregable') {
-      if (this.assignmentForm.invalid) return; // Validación preventiva del segundo formulario
+      if (this.assignmentForm.invalid) return;
 
       const { assignmentTitle, assignmentContent, assignmentLimit } = this.assignmentForm.value;
 
@@ -144,39 +173,65 @@ export class AddClass implements OnInit {
   }
 
   submitTopic() {
-    const assignmentObservable$ =
-      this.mode === 'entregable' && this.newAssignment
-        ? this.assignmentService.createAssignment(this.newAssignment)
-        : of<any>(null);
+    if (this.class_mode === 'editar' && this.mode !== 'teorico') {  
+      const { assignmentTitle, assignmentContent, assignmentLimit } = this.assignmentForm.value;
 
-    assignmentObservable$
-      .pipe(
-        switchMap((createdAssignment: any) => {
-          if (createdAssignment && createdAssignment.id) {
-            this.newTopic.assignment_id = createdAssignment.id;
-          }
+      this.newAssignment = {
+        title: assignmentTitle.trim(),
+        content: assignmentContent,
+        date_limit: assignmentLimit,
+        allowed_format: this.assignmentFormat,
+        type: this.assignmentType,
+        enabled_to_deliver: this.enableToDeliver,
+        subject_id: this.subjectId!,
+      };
+    }
 
-          return this.topicService.createTopic(this.newTopic);
-        }),
-      )
-      .subscribe({
-        next: (createdTopic: any) => {
-          const topicId = (createdTopic as Topic).id!;
-          const currentTopics = this.currentClassroom?.topics_id || [];
+    const payload = {
+      mode: this.mode,
+      topic: this.newTopic,
+      assignment: this.mode === 'entregable' ? this.newAssignment : null,
+      classroom_id: this.classroom_id,
+    };
 
-          if (!currentTopics.includes(topicId)) {
-            const updatedClassroom: Classroom = {
-              ...this.currentClassroom!,
-              topics_id: [...currentTopics, topicId],
-            };
-
-            this.updateClassroomTopics(updatedClassroom);
-          } else {
-            this.navigateToClassroom();
-          }
+    if (this.class_mode === 'crear') {
+      this.topicService.submitTopic(payload).subscribe({
+        next: () => {
+          alert('Sección Creada Exitosamente.');
+          this.navigateToClassroom();
         },
         error: (err) => console.error('Hubo un error en el flujo de creación: ', err),
       });
+    } else if (this.class_mode === 'editar') {
+      this.topicService.modifyTopic(this.topicToEditId!, payload).subscribe({
+        next: () => {
+          alert('Sección Modificada Exitosamente.');
+          this.navigateToClassroom();
+        },
+        error: (err) => console.error('Hubo un error al intentar modificar la sección: ', err),
+      });
+    } else {
+      console.error('Opción no válida.');
+    }
+  }
+
+  topicToEdit(topic: Topic, assignment: Assignment | null) {
+    this.topicForm.patchValue({
+      title: topic.title,
+      content: topic.content,
+    });
+
+    if (assignment) {
+      this.initAssignmentForm();
+      this.mode = 'entregable';
+      this.assignmentForm.patchValue({
+        assignmentTitle: assignment.title,
+        assignmentContent: assignment.content,
+        assignmentLimit: assignment.date_limit,
+      });
+    } else {
+      this.mode = 'teorico';
+    }
   }
 
   updateClassroomTopics(updatedClassroom: Classroom) {
@@ -188,10 +243,6 @@ export class AddClass implements OnInit {
       },
       error: (err) => console.error('Hubo un error al asociar el tema al curso: ', err),
     });
-  }
-
-  navigateToClassroom() {
-    this.router.navigate([`/current-classroom`, this.classroomId]);
   }
 
   switchMode(newMode: 'teorico' | 'entregable') {
@@ -217,9 +268,16 @@ export class AddClass implements OnInit {
 
     if (this.assignmentEnabled === 'habilitado') {
       this.enableToDeliver = true;
-    }
-    else if (this.assignmentEnabled === 'deshabilitado') {
+    } else if (this.assignmentEnabled === 'deshabilitado') {
       this.enableToDeliver = false;
     }
+  }
+
+  navigateToClassroom() {
+    this.router.navigate([`/current-classroom`, this.classroom_id]);
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

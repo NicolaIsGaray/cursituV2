@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { User } from '../models/user.model';
 import { Role } from '../models/roles';
 import { Router } from '@angular/router';
@@ -22,13 +22,10 @@ export class AuthService {
   private readonly ROL_KEY = 'cursitu_mock_role';
   private readonly USER_KEY = 'cursitu_mock_user';
 
-  // 1. Inicializamos el BehaviorSubject del usuario leyendo el localStorage de forma segura
   private userSubject = new BehaviorSubject<User | null>(this.getUserFromLocalStorage());
   
-  // 2. Exponemos el Observable público para los componentes (Navbar, Home, etc.)
   currentUser$ = this.userSubject.asObservable();
 
-  // Observable existente para el rol
   private roleSubject = new BehaviorSubject<Role>(
     (localStorage.getItem(this.ROL_KEY) as Role) || 'ALUMNO'
   );
@@ -37,20 +34,16 @@ export class AuthService {
   constructor() {}
 
   login(user: LoginData): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/login`, user).pipe(
-      map((loggedUser) => {
-        if (loggedUser && loggedUser.role) {
-          // Guardamos el rol de forma reactiva
-          this.setSimulatedRole(loggedUser.role as Role);
-          
-          // Guardamos el usuario en localStorage y notificamos al Subject reactivo
-          localStorage.setItem(this.USER_KEY, JSON.stringify(loggedUser));
-          this.userSubject.next(loggedUser);
-        }
-        return loggedUser;
-      })
-    );
-  }
+  return this.http.post<User>(`${this.apiUrl}/login`, user).pipe(
+    tap((loggedUser) => {
+      if (loggedUser && loggedUser.role) {
+        this.setSimulatedRole(loggedUser.role as Role);
+        localStorage.setItem(this.USER_KEY, JSON.stringify(loggedUser));
+        this.userSubject.next(loggedUser);
+      }
+    })
+  );
+}
 
   setSimulatedRole(nuevoRol: Role) {
     localStorage.setItem(this.ROL_KEY, nuevoRol);
@@ -61,7 +54,6 @@ export class AuthService {
     return this.roleSubject.value;
   }
 
-  // Getter síncrono por si necesitas el valor instantáneo en código TS sin suscribirte
   get currentUserValue(): User | null {
     return this.userSubject.value;
   }
@@ -69,8 +61,7 @@ export class AuthService {
   logout() {
     localStorage.removeItem(this.USER_KEY);
     localStorage.removeItem(this.ROL_KEY);
-    
-    // Notificamos a los flujos reactivos que ya no hay usuario ni rol administrador
+
     this.userSubject.next(null);
     this.roleSubject.next('ALUMNO' as Role); 
 

@@ -7,11 +7,13 @@ h2 {
   color: #1a1a1a;
 }
 
-.subjects-container, .materias-container {
+.subjects-container,
+.materias-container {
   padding: 5px;
 }
 
-.subjects-card, .materias-wrapper {
+.subjects-card,
+.materias-wrapper {
   background: white;
   border-radius: 16px;
   padding: 20px;
@@ -41,12 +43,25 @@ h2 {
   color: var(--primary-purple);
 }
 
-/* Estructura de Fila */
-.subject-row, .materia-row {
+/* ==========================================================================
+   ESTRUCTURA DE CONTENEDORES Y FILAS
+   ========================================================================== */
+.subject-row-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.subject-row,
+.materia-row {
   display: flex;
   align-items: center;
   gap: 10px;
   height: 85px; /* Ligeramente más alto para mejor touch target */
+  position: relative;
+  z-index: 2; /* Mantiene la fila por encima del panel al colapsar */
 }
 
 /* Contenedor Principal Clickable */
@@ -60,7 +75,9 @@ h2 {
   color: white;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.12);
   cursor: pointer;
-  transition: transform 0.15s ease, filter 0.2s;
+  transition:
+    transform 0.15s ease,
+    filter 0.2s;
   overflow: hidden;
 }
 
@@ -69,10 +86,15 @@ h2 {
   filter: brightness(0.9);
 }
 
-.materia-card.orange { background: linear-gradient(90deg, #ff912c, #ff9e42); }
-.materia-card.purple { background: linear-gradient(90deg, #3f3689, #4c42a1); }
+.materia-card.orange {
+  background: linear-gradient(90deg, #ff912c, #ff9e42);
+}
+.materia-card.purple {
+  background: linear-gradient(90deg, #3f3689, #4c42a1);
+}
 
-.subject-info h3, .materia-info h3 {
+.subject-info h3,
+.materia-info h3 {
   margin: 0;
   font-size: 0.95rem;
   font-weight: 700;
@@ -83,52 +105,154 @@ h2 {
   overflow: hidden;
 }
 
-.subject-info p, .materia-info p {
+.subject-info p,
+.materia-info p {
   margin: 4px 0 0 0;
   font-size: 0.75rem;
   opacity: 0.85;
 }
 
-/* Botón de Horarios (Rediseño Estético) */
-.schedule-btn, .btn-horarios {
-  width: 55px; /* En desktop/tablet es compacto */
+/* ==========================================================================
+   BOTÓN DE HORARIOS ADAPTATIVO (DESKTOP PRIMERO)
+   ========================================================================== */
+.schedule-action-btn {
   height: 100%;
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
+  padding: 0 20px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 14px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  color: #6c757d;
+  gap: 8px;
+  color: #64748b;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease-in-out;
   flex-shrink: 0;
 }
 
-.schedule-btn span:not(.material-symbols-outlined),
-.btn-horarios span:not(.material-symbols-outlined) {
-  font-size: 0.65rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.schedule-btn .material-symbols-outlined,
-.btn-horarios .material-symbols-outlined {
+.schedule-action-btn .material-symbols-outlined {
   font-size: 20px;
+  transition: transform 0.2s ease;
 }
 
-.schedule-btn:hover, .btn-horarios:hover {
-  background: #fff;
+.schedule-action-btn .btn-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+/* Estados Hover, Focus y Activo (Abierto) */
+.schedule-action-btn:hover:not(.active) {
+  background-color: #ffffff;
   border-color: #3f3689;
   color: #3f3689;
+  box-shadow: 0 4px 12px rgba(63, 54, 137, 0.08);
 }
 
-/* === MEDIA QUERIES (ADAPTACIÓN MÓVIL) === */
+.schedule-action-btn:hover:not(.active) .material-symbols-outlined {
+  transform: rotate(-15deg);
+}
 
+.schedule-action-btn.active {
+  background-color: #3f3689;
+  border-color: #3f3689;
+  color: #ffffff;
+}
+
+.schedule-action-btn:active {
+  transform: scale(0.96);
+}
+
+/* ==========================================================================
+   DISEÑO ANIMADO DEL ACORDEÓN (ALTURA DINÁMICA)
+   ========================================================================== */
+.schedule-accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.25s ease-out,
+    visibility 0.25s ease-out;
+  overflow: hidden;
+  background-color: #f8fafc;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  border-left: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  margin-top: -6px;
+  padding-top: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.schedule-accordion-panel.open {
+  grid-template-rows: 1fr;
+  visibility: visible;
+}
+
+.accordion-content {
+  min-height: 0;
+  padding: 0 20px 16px 20px;
+}
+
+.accordion-content h4 {
+  margin: 12px 0 10px 0;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+}
+
+.schedule-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.schedule-item-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: #334155;
+  font-size: 0.85rem;
+}
+
+.schedule-item-badge .material-symbols-outlined {
+  font-size: 16px;
+  color: #94a3b8;
+}
+
+.schedule-item-badge .day-name {
+  font-weight: 700;
+  color: #1e293b;
+  min-width: 70px;
+}
+
+.schedule-item-badge .time-range {
+  font-weight: 500;
+  color: #475569;
+}
+
+.no-schedules-text {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-style: italic;
+  margin: 4px 0;
+}
+
+/* ==========================================================================
+   MEDIA QUERIES (ADAPTACIÓN DISPOSITIVOS MÓVILES)
+   ========================================================================== */
 @media (max-width: 768px) {
-  .subject-row, .materia-row {
+  .subject-row,
+  .materia-row {
     height: 75px;
     gap: 8px;
   }
@@ -137,36 +261,46 @@ h2 {
     padding: 0 15px;
   }
 
-  .subject-info h3, .materia-info h3 {
+  .subject-info h3,
+  .materia-info h3 {
     font-size: 0.85rem;
   }
 
-  .subject-info p, .materia-info p {
+  .subject-info p,
+  .materia-info p {
     font-size: 0.7rem;
   }
 
-  /* El botón de horarios se mantiene icon-centric en móviles muy pequeños */
-  .schedule-btn, .btn-horarios {
+  /* Transformación del botón a modo compacto / circular */
+  .schedule-action-btn {
     width: 50px;
+    height: 50px;
+    padding: 0;
+    border-radius: 50%;
+    align-self: center;
   }
-  
-  .schedule-btn span:not(.material-symbols-outlined),
-  .btn-horarios span:not(.material-symbols-outlined) {
-    display: none; /* Solo icono en móviles pequeños para no saturar */
+
+  .schedule-action-btn .btn-text {
+    display: none;
+  }
+
+  .accordion-content {
+    padding: 0 14px 14px 14px;
   }
 }
 
 @media (max-width: 400px) {
-  .subjects-card, .materias-wrapper {
+  .subjects-card,
+  .materias-wrapper {
     padding: 12px;
   }
-  
+
   .main-clickable {
     border-radius: 10px;
   }
 
-  .schedule-btn, .btn-horarios {
-    border-radius: 10px;
-    width: 45px;
+  .schedule-action-btn {
+    width: 44px;
+    height: 44px;
   }
 }

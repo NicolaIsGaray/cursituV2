@@ -1,3 +1,10 @@
+<nav class="top-nav">
+  <button class="btn-back" (click)="goBack()">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Regresar
+  </button>
+</nav>
+
 <div class="course-header" *ngIf="subject$ | async as subject">
   <h2>{{ subject.subject_name }}</h2>
 </div>
@@ -5,7 +12,7 @@
 <main *ngIf="authService.userRole$ | async as rol" style="overflow: hidden">
   <div class="form-scroll-container" *ngIf="rol === 'DOCENTE'">
     <div class="form-card" *ngIf="subject$ | async as subject">
-      <h2>Agregar Nueva Sección</h2>
+      <h2>{{class_mode === 'editar' ? 'Editar Sección' : 'Agregar Nueva Sección'}}</h2>
       <form [formGroup]="topicForm" (ngSubmit)="onSubmit()">
         <section class="form-group">
           <label for="section-name">Nombre de la sección:</label>

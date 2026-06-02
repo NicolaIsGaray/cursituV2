@@ -1,7 +1,5 @@
-import { CommonModule, Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { User } from '../../../models/user.model';
-import { Subject } from '../../../models/subject.model';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
 import { SubjectService } from '../../../services/subject.service';
@@ -13,8 +11,18 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, filter, isEmpty, Observable, switchMap } from 'rxjs';
-import { Route, Router } from '@angular/router';
+import {
+  BehaviorSubject,
+  debounceTime,
+  distinctUntilChanged,
+  merge,
+  Observable,
+  of,
+  switchMap,
+  take,
+} from 'rxjs';
+
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-management',
@@ -23,36 +31,33 @@ import { Route, Router } from '@angular/router';
   styleUrl: './user-management.css',
 })
 export class UserManagement implements OnInit {
-  modo: 'crear' | 'editar' | 'eliminar' | null = null;
-
+  mode: 'crear' | 'editar' | 'eliminar' | null = null;
   userForm!: FormGroup;
-  newUser: User = new User();
   userToUpdateId: string | null = null;
   userToDeleteSel: any = null;
 
-  roleList = [{ name: 'ALUMNO' }, { name: 'DOCENTE' }];
   comissionList = ['A', 'B'];
-  subjectToAssignList: string[] = [];
+  roleList = [{ name: 'ALUMNO' }, { name: 'DOCENTE' }, { name: 'ADMIN' }];
+  subjectList: any[] = [];
 
-  subjectList: Subject[] = [];
+  dniEditControl = new FormControl('');
+  dniDeleteControl = new FormControl('');
+  usersFound$!: Observable<any[]>;
 
-  dniControl = new FormControl('');
-  usersFound$!: Observable<User[]>;
-
-  roleSwitch = true;
+  private refreshSearch$ = new BehaviorSubject<void>(undefined);
 
   constructor(
     public authService: AuthService,
     private fb: FormBuilder,
     private userService: UserService,
     private subjectService: SubjectService,
-    private route: Router
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.getSubjectList();
-    this.searchDNI();
     this.initForm();
+    this.setupDniSearchPipeline();
+    this.loadSubjects();
   }
 
   private initForm(): void {
@@ -66,7 +71,7 @@ export class UserManagement implements OnInit {
       assigned_subjects: this.fb.array([]),
     });
 
-    this.addComissionCheckboxes();
+    this.buildComissionCheckboxes();
   }
 
   get comissionFromArray(): FormArray {
@@ -77,42 +82,74 @@ export class UserManagement implements OnInit {
     return this.userForm.get('assigned_subjects') as FormArray;
   }
 
-  private addComissionCheckboxes(userCommissions: string[] = []): void {
+  private buildComissionCheckboxes(userCommissions: string[] = []): void {
     this.comissionFromArray.clear();
-
     this.comissionList.forEach((com) => {
       const isMarked = userCommissions.includes(com);
       this.comissionFromArray.push(new FormControl(isMarked));
     });
   }
 
-  private addSubjectCheckboxes(userSubjects: any[] = []): void {
+  private buildSubjectCheckboxes(userSubjectIds: string[] = []): void {
     this.subjectFormArray.clear();
-
-    const userSubjectIds = new Set(userSubjects.map((s) => String(s)));
-
+    const checkedSet = new Set(userSubjectIds.map((id) => String(id)));
     this.subjectList.forEach((subject) => {
-      const isMarked = userSubjectIds.has(String(subject.id));
-
-      this.subjectFormArray.push(new FormControl(isMarked));
+      this.subjectFormArray.push(new FormControl(checkedSet.has(String(subject.id))));
     });
   }
 
-  private getSelectedValuesToString(formArray: FormArray, referenceList: string[]): string[] {
-    return formArray.value
-      .map((checked: boolean, i: number) => (checked ? referenceList[i] : null))
-      .filter((value: string | null) => value !== null);
+  private loadSubjects(): void {
+    this.subjectService
+      .getAllSubjects()
+      .pipe(take(1))
+      .subscribe({
+        next: (subjects: any) => {
+          this.subjectList = subjects;
+          this.buildSubjectCheckboxes();
+        },
+        error: (err) => console.error('Error al cargar materias:', err),
+      });
   }
 
-  private getSubjectList(): void {
-    this.subjectService.getAllSubjects().subscribe({
-      next: (subjects) => {
-        this.subjectList = subjects;
-        this.subjectToAssignList = this.subjectList.map((s) => s.id!);
-        this.addSubjectCheckboxes();
-      },
-      error: (err) => console.error('Hubo un error al traer las materias: ', err),
-    });
+  private setupDniSearchPipeline(): void {
+    const dniSource$ = merge(
+      this.dniEditControl.valueChanges.pipe(startWith(this.dniEditControl.value || '')),
+      this.dniDeleteControl.valueChanges.pipe(startWith(this.dniDeleteControl.value || '')),
+    ).pipe(map((dni) => (dni ? dni.trim() : '')));
+
+    this.usersFound$ = this.refreshSearch$.pipe(
+      switchMap(() => dniSource$),
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((dni) => {
+        if (!dni || dni.length < 1) {
+          return of([]);
+        }
+        return this.userService.searchUserByDni(dni);
+      }),
+    );
+  }
+
+  private mapFormToModel(): any {
+    const { fullname, dni, email, role, classroom_number } = this.userForm.value;
+
+    const selectedComissions = (this.comissionFromArray.value as boolean[])
+      .map((checked: boolean, i: number) => (checked ? this.comissionList[i] : null))
+      .filter((v: string | null): v is string => v !== null);
+
+    const selectedSubjects = (this.subjectFormArray.value as boolean[])
+      .map((checked: boolean, i: number) => (checked ? this.subjectList[i].id : null))
+      .filter((v: string | null): v is string => v !== null);
+
+    return {
+      name: fullname ? fullname.trim() : '',
+      email: email ? email.trim() : '',
+      dni: dni || '',
+      role: role || '',
+      classroom_number: classroom_number || '',
+      comission: selectedComissions,
+      subjects_id: selectedSubjects,
+    };
   }
 
   onSubmit(): void {
@@ -125,132 +162,96 @@ export class UserManagement implements OnInit {
       this.deleteUser();
     }
 
-    const { fullname, dni, email, role, classroom_number } = this.userForm.value;
-    const comission = this.getSelectedValuesToString(this.comissionFromArray, this.comissionList);
-    const assigned_subjects = this.getSelectedValuesToString(
-      this.subjectFormArray,
-      this.subjectToAssignList,
-    );
+    const payload = this.mapFormToModel();
 
-    this.newUser = {
-      ...(this.modo === 'editar' && { id: this.userToUpdateId! }),
-      name: fullname.trim(),
-      email: email.trim(),
-      dni: dni,
-      password: this.modo === 'editar' ? this.newUser.password : dni,
-      role: role,
-      comission: comission,
-      classroom_number: classroom_number,
-      subjects_id: assigned_subjects,
-    };
-
-    console.log('Datos listos para enviar al backend:', this.newUser);
-
-    this.submitUser(this.userToUpdateId || '');
-  }
-
-  submitUser(id: string): void {
-    if (this.modo === 'crear') {
-      this.userService.createUser(this.newUser).subscribe({
-        next: () => {
-          alert('Usuario Registrado Exitosamente.');
-          this.userForm.reset();
-        },
-        error: (err) => console.error('Hubo un error al registrar al usuario: ', err),
-      });
-    }
-
-    if (this.modo === 'editar') {
-      console.log('Actualizando ID:', id, 'con datos:', this.newUser);
-
-      this.userService.modifyUser(id, this.newUser).subscribe({
-        next: () => {
-          alert('Usuario Modificado Exitosamente.');
-          this.userToUpdateId = null;
-          this.userForm.reset();
-        },
-        error: (err) => console.error('Hubo un error al modificar al usuario:', err),
-      });
+    if (this.mode === 'crear') {
+      this.userService
+        .createUser(payload)
+        .pipe(take(1))
+        .subscribe({
+          next: () => {
+            alert('Usuario Registrado Exitosamente.');
+            this.resetManagementState();
+          },
+          error: (err) => alert(err.error?.message || 'Error al crear'),
+        });
+    } else if (this.mode === 'editar' && this.userToUpdateId) {
+      this.userService
+        .modifyUser(this.userToUpdateId, payload)
+        .pipe(take(1))
+        .subscribe({
+          next: () => {
+            alert('Usuario Modificado Exitosamente.');
+            this.resetManagementState();
+          },
+          error: (err) => alert(err.error?.message || 'Error al modificar'),
+        });
     }
   }
 
-  userToEdit(user: User): void {
-    this.modo = 'editar';
-    this.userToUpdateId = user.id!;
-    this.newUser = user;
-
-    if (this.newUser.role === 'ALUMNO') {
-      this.roleSwitch = true;
-    } else {
-      this.roleSwitch = false;
-    }
-
-    this.addComissionCheckboxes(this.newUser.comission);
-    if (this.newUser.role !== 'DOCENTE') {
-      this.addSubjectCheckboxes(this.newUser.subjects_id);
-    }
-
-    this.userForm.patchValue({
-      fullname: this.newUser.name,
-      email: this.newUser.email,
-      dni: this.newUser.dni,
-      role: this.newUser.role,
-      classroom_number: this.newUser.classroom_number
-    });
-  }
-
-  seleccionarUsuarioParaEliminar(user: any): void {
-    if (user === null) return;
-    this.userToDeleteSel = user;
-
-    this.dniControl.setValue(user.dni, { emitEvent: false });
-  }
-
-  // Método de eliminación final
   deleteUser(): void {
     if (!this.userToDeleteSel) return;
 
-    const confirmar = confirm(
-      `¿Estás seguro de que deseas eliminar permanentemente a ${this.userToDeleteSel.name}?`,
-    );
-
-    if (confirmar) {
-      this.userService.deleteUser(this.userToDeleteSel.id).subscribe({
-        next: () => {
-          alert('Usuario eliminado con éxito.');
-          this.dniControl.reset();
-          this.userToDeleteSel = null;
-        },
-        error: (err) => console.error('Error al eliminar:', err),
-      });
+    if (confirm(`¿Estás seguro de eliminar a ${this.userToDeleteSel.name}?`)) {
+      this.userService
+        .deleteUser(this.userToDeleteSel.id)
+        .pipe(take(1))
+        .subscribe({
+          next: () => {
+            alert('Usuario eliminado con éxito.');
+            this.resetManagementState();
+          },
+          error: (err) => alert(err.error?.message || 'Error al eliminar'),
+        });
     }
   }
 
-  searchDNI() {
-    this.usersFound$ = this.dniControl.valueChanges.pipe(
-      filter((dni) => dni !== null && dni.length >= 1),
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap((dni) => this.userService.searchUserByDni(dni!)),
-    );
+  userToEdit(user: any): void {
+    this.mode = 'editar';
+    this.userToUpdateId = user.id;
+
+    this.userForm.patchValue({
+      fullname: user.name,
+      email: user.email,
+      dni: user.dni,
+      role: user.role,
+      classroom_number: user.classroom_number,
+    });
+
+    this.buildComissionCheckboxes(user.comission || []);
+    this.buildSubjectCheckboxes(user.subjects_id || []);
+    this.cdr.detectChanges();
   }
 
-  switchSubjectCheckboxes(e: Event) {
-    const element = e.target as HTMLSelectElement;
-    const value = element.value;
+  resetManagementState(): void {
+    this.userForm.reset();
+    this.dniEditControl.setValue('', { emitEvent: true });
+    this.dniDeleteControl.setValue('', { emitEvent: true });
 
-    if (value === 'ALUMNO') {
-      this.roleSwitch = true;
-    } else {
-      this.roleSwitch = false;
+    this.userToUpdateId = null;
+    this.userToDeleteSel = null;
+
+    this.buildComissionCheckboxes();
+    this.buildSubjectCheckboxes();
+
+    this.refreshSearch$.next();
+    this.cdr.detectChanges();
+
+    this.mode = null;
+    this.cdr.detectChanges();
+  }
+
+  changeMode(newMode: 'crear' | 'editar' | 'eliminar'): void {
+    this.mode = newMode;
+    // Si entramos a crear, nos aseguramos de que los arrays limpien cualquier rastro de ediciones previas
+    if (newMode === 'crear') {
+      this.userForm.reset();
+      this.buildComissionCheckboxes();
+      this.buildSubjectCheckboxes();
     }
   }
 
-  cambiarModo(nuevoModo: 'crear' | 'editar' | 'eliminar'): void {
-    this.modo = nuevoModo;
-  }
-
-  refreshPage(path: string) {
-    this.route.navigate([path]);
+  selectUserToDelete(user: any): void {
+    this.userToDeleteSel = user;
   }
 }

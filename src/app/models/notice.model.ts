@@ -1,9 +1,9 @@
 export class Notice {
     id?: string;
     title!: string;
-    type!: string;
+    type?: string;
     message!: string;
-    emisor_id!: string;
+    senderId!: string;
     created_at!: string;
     read_by?: string[];
 }

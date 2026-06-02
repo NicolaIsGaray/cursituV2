@@ -12,7 +12,8 @@ public class GroupEntity {
     @Id
     private String id;
 
-    private String[] members_id;
+    private List<String> members_id;
+    private List<String> member_names;
     private Integer number;
     private Integer group_limit;
     private String subject_id;

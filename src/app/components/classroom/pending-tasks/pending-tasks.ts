@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
@@ -25,9 +25,15 @@ export class PendingTasks {
     { id: 103, titulo: 'Trabajo Práctico N° 3', descripcion: 'Manejo de Excepciones y Polimorfismo', fechaVencimiento: '12/05/2026' },
     { id: 104, titulo: 'Trabajo Práctico N° 3', descripcion: 'Manejo de Excepciones y Polimorfismo', fechaVencimiento: '12/05/2026' }
   ];
+  
+  constructor (private location: Location) {}
 
   seleccionarMateria(materia: any) {
     this.materiaSeleccionada = materia;
     // Aquí deberías refrescar 'tareasFiltradas' con los datos de la nueva materia
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

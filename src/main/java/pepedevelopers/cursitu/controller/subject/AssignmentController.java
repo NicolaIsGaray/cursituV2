@@ -1,10 +1,17 @@
 package pepedevelopers.cursitu.controller.subject;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pepedevelopers.cursitu.model.dto.AssignmentDTO;
+import pepedevelopers.cursitu.model.dto.TaskStatsDTO;
+import pepedevelopers.cursitu.model.dto.TeacherSubmissionDTO;
 import pepedevelopers.cursitu.model.subject_submodel.AssignmentEntity;
+import pepedevelopers.cursitu.model.subject_submodel.GradesEntity;
+import pepedevelopers.cursitu.model.subject_submodel.SubmissionEntity;
 import pepedevelopers.cursitu.repository.IAssignment;
+import pepedevelopers.cursitu.service.AssignmentService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +21,9 @@ import java.util.Map;
 @RequestMapping("/api/assignment")
 @CrossOrigin(origins = "*")
 public class AssignmentController {
+  @Autowired
+  private AssignmentService assignmentService;
+
   private final IAssignment assignRepo;
 
   public AssignmentController(IAssignment assignRepo) {
@@ -21,7 +31,7 @@ public class AssignmentController {
   }
 
   @PostMapping
-  public ResponseEntity<AssignmentEntity> createAssignment(@RequestBody AssignmentEntity newAssignment) {
+  public ResponseEntity<AssignmentEntity> addAssignment(@RequestBody AssignmentEntity newAssignment) {
     return new ResponseEntity<>(assignRepo.save(newAssignment), HttpStatus.CREATED);
   }
 
@@ -34,23 +44,17 @@ public class AssignmentController {
 
   @GetMapping
   public ResponseEntity<List<AssignmentEntity>> getAllAssignments() {
-    return ResponseEntity.ok(assignRepo.findAll());
+    List<AssignmentEntity> list = assignRepo.findAll();
+    return ResponseEntity.ok(list);
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<?> modifyAssignment(@PathVariable String id, @RequestBody AssignmentEntity modified) {
-    AssignmentEntity existing = assignRepo.findById(id).orElse(null);
+    AssignmentEntity assignment = assignmentService.updateAssignment(id, modified);
 
-    if (existing == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tarea o Parcial no encontrado.");
+    if (assignment == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se ha podido modificar la tarea o parcial.");
     }
-
-    existing.setTitle(modified.getTitle() == null ? existing.getTitle() : modified.getTitle());
-    existing.setContent(modified.getContent() == null ? existing.getContent() : modified.getContent());
-    existing.setDate_limit(modified.getDate_limit() == null ? existing.getDate_limit() : modified.getDate_limit());
-    existing.setEnabled_to_deliver(modified.getEnabled_to_deliver() == null ? existing.getEnabled_to_deliver() : modified.getEnabled_to_deliver());
-    existing.setType(modified.getType() == null ? existing.getType() : modified.getType());
-    existing.setDelivered(modified.getDelivered() == null ? existing.getDelivered() : modified.getDelivered());
 
     Map<String, String> response = new HashMap<>();
     response.put("message", "Tarea o Parcial modificado con éxito.");
@@ -60,17 +64,106 @@ public class AssignmentController {
 
   @DeleteMapping("/{id}")
   public ResponseEntity<?> deleteAssignment(@PathVariable String id) {
-    AssignmentEntity deleting = assignRepo.findById(id).orElse(null);
+    assignmentService.deleteAssignment(id);
+    return ResponseEntity.ok(Map.of("message", "Actividad eliminada con éxito."));
+  }
 
-    if (deleting == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tarea o Parcial no encontrado.");
+  @DeleteMapping("/single/{id}")
+  public ResponseEntity<?> singleAssignmentDelete(@PathVariable String id) {
+    assignRepo.deleteById(id);
+    return ResponseEntity.ok(Map.of("message", "Actividad individual eliminada con éxito."));
+  }
+
+  @GetMapping("/in-topic/{id}")
+  public ResponseEntity<AssignmentEntity> getAssignmentInTopic(@PathVariable String id) {
+    return ResponseEntity.ok(assignmentService.getAssignmentInTopic(id));
+  }
+
+  @GetMapping("/in-subject/{id}")
+  public ResponseEntity<List<AssignmentEntity>> getAssignmentsInSubject(@PathVariable String id) {
+    return ResponseEntity.ok(assignmentService.getAllAssignmentsInSubject(id));
+  }
+
+  @GetMapping("/check-status")
+  public ResponseEntity<Map<String, String>> checkAssignmentSubmissionStatus(@RequestParam String studentId, @RequestParam String activityId) {
+    String status = assignmentService.checkSubmissionStatus(studentId, activityId);
+
+    return ResponseEntity.ok(Map.of("status", status));
+  }
+
+  @GetMapping("/student/{id}/pending")
+  public ResponseEntity<List<AssignmentDTO>> getStudentPendings(@PathVariable String id) {
+    List<AssignmentDTO> list = assignmentService.getPendingAssignmentsForStudent(id);
+
+    if (list == null || list.isEmpty()) {
+      return ResponseEntity.notFound().build();
     }
 
-    assignRepo.delete(deleting);
+    return ResponseEntity.ok(list);
+  }
 
-    Map<String, String> response = new HashMap<>();
-    response.put("message", "Tarea o Parcial eliminado con éxito.");
+  @GetMapping("/{classroomId}/tasks/{taskId}/stats")
+  public ResponseEntity<TaskStatsDTO> getTaskDeliveryStats(
+    @PathVariable String classroomId,
+    @PathVariable String taskId) {
 
-    return ResponseEntity.ok(response);
+    TaskStatsDTO stats = assignmentService.getTaskStatistics(classroomId, taskId);
+    return ResponseEntity.ok(stats);
+  }
+
+  @GetMapping("/professor-table/classroom/{classroomId}/assignment/{activityId}")
+  public ResponseEntity<List<TeacherSubmissionDTO>> getStudentSubmissions(
+    @PathVariable String classroomId,
+    @PathVariable String activityId
+    ) {
+    return ResponseEntity.ok(assignmentService.getAssignmentsTableForTeacher(classroomId, activityId));
+  }
+
+  @PostMapping("/professor-correction/student/{studentId}/assignment/{activityId}")
+  public ResponseEntity<?> saveOrUpdateGrade(
+    @PathVariable String studentId,
+    @PathVariable String activityId,
+    @RequestBody Float note
+  ) {
+    assignmentService.saveOrUpdateGrade(studentId, activityId, note);
+
+    return ResponseEntity.ok(Map.of("message", "Nota actualizada exitosamente."));
+  }
+
+  @GetMapping("/grades")
+  public ResponseEntity<List<GradesEntity>> getAllGrades() {
+    return ResponseEntity.ok(assignmentService.getGrades());
+  }
+
+  @DeleteMapping("/grades/{id}")
+  public ResponseEntity<?> deleteGrade(@PathVariable String id) {
+    assignmentService.deleteGrade(id);
+    return ResponseEntity.ok(Map.of("message", "Nota eliminada con éxito."));
+  }
+
+  @PostMapping("/submit-activity")
+  public ResponseEntity<SubmissionEntity> submitAssignment(
+    @RequestParam String activityId,
+    @RequestParam String studentId,
+    @RequestBody SubmissionEntity submission) {
+
+    SubmissionEntity submited = assignmentService.submitActivity(activityId, studentId, submission);
+
+    if (submited == null) {
+      return ResponseEntity.notFound().build();
+    }
+
+    return ResponseEntity.ok(submited);
+  }
+
+  @GetMapping("/submited")
+  public ResponseEntity<List<SubmissionEntity>> getAllSubmitedAssignments() {
+    return ResponseEntity.ok(assignmentService.getAllSubmited());
+  }
+
+  @DeleteMapping("/submited/{id}")
+  public ResponseEntity<?> deleteSubmited(@PathVariable String id) {
+    assignmentService.deleteSubmited(id);
+    return ResponseEntity.ok(Map.of("message", "Entrega eliminada con éxito."));
   }
 }

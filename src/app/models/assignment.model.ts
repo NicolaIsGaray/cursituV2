@@ -7,5 +7,5 @@ export class Assignment {
     type!: string;
     enabled_to_deliver!: boolean;
     subject_id!: string;
-    delivered?: boolean;
+    sentBy?: string[];
 }

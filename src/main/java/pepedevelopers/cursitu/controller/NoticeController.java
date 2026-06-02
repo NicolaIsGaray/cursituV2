@@ -1,10 +1,12 @@
 package pepedevelopers.cursitu.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pepedevelopers.cursitu.model.NoticeEntity;
 import pepedevelopers.cursitu.repository.INotice;
+import pepedevelopers.cursitu.service.NoticeService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +17,9 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class NoticeController {
   private final INotice noticeRepo;
+
+  @Autowired
+  private NoticeService noticeService;
 
   public NoticeController(INotice noticeRepo) {
     this.noticeRepo = noticeRepo;
@@ -37,6 +42,13 @@ public class NoticeController {
     return ResponseEntity.ok(noticeRepo.findAll());
   }
 
+  @PutMapping("/{id}")
+  public ResponseEntity<?> modifyNotice(@PathVariable String id, @RequestBody NoticeEntity updates) {
+    noticeService.updateNotice(id, updates);
+
+    return ResponseEntity.ok(Map.of("message", "Anuncio actualizado con éxito."));
+  }
+
   @DeleteMapping("/{id}")
   public ResponseEntity<?> deleteNotice(@PathVariable String id) {
     NoticeEntity noticeToDelete = noticeRepo.findById(id).orElse(null);
@@ -51,5 +63,10 @@ public class NoticeController {
     response.put("message", "Anuncio eliminado con éxito.");
 
     return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/sender/{senderId}")
+  public ResponseEntity<List<NoticeEntity>> getSenderNotices(@PathVariable String senderId) {
+    return ResponseEntity.ok(noticeService.obtainSenderNotices(senderId));
   }
 }

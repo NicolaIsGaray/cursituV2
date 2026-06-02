@@ -3,22 +3,25 @@
     <!-- Botón Volver -->
     <a class="btn-back" (click)="goBack()">
       <span class="material-symbols-outlined">arrow_back</span>
-      Regresar atrás
+      Regresar
     </a>
 
-    <header class="entregas-header">
-      <div class="tp-info">
-        <h1>TP N° 1: Clases y Objetos</h1>
-        <span class="materia-sub">Materia: Programación Orientada a Objetos</span>
-      </div>
-      <button class="btn-descargar-todo">
-        <span class="material-symbols-outlined">download_for_offline</span>
-        Descargar Todo (.zip)
-      </button>
-    </header>
+    @if (currentSubject$ | async; as subject) {
+      <header class="entregas-header">
+        @if (currentAssignment$ | async; as activity) {
+          <div class="tp-info">
+            <h1>{{ activity.title }}</h1>
+            <span class="materia-sub">Materia: {{ subject.subject_name }}</span>
+          </div>
+        }
+        <button class="btn-descargar-todo">
+          <span class="material-symbols-outlined">download_for_offline</span>
+          Descargar Todo (.zip)
+        </button>
+      </header>
+    }
 
-    <!-- Tabla de Entregas -->
-    <div class="tabla-card">
+    <div class="tabla-card" *ngIf="submissionList$ | async as submissions">
       <div class="tabla-header">
         <span class="col-alumno">ALUMNO / FECHA</span>
         <span class="col-archivo">ARCHIVO ENTREGADO</span>
@@ -27,89 +30,85 @@
       </div>
 
       <div class="tabla-body">
-        <!-- Fila: Corregido -->
-        <div class="entrega-row">
-          <div class="col-alumno student-cell">
-            <div class="avatar-placeholder"></div>
-            <div class="student-info">
-              <strong>Garay, Facundo</strong>
-              <span class="fecha-entrega">Entregado: 12/05 - 14:20hs</span>
-            </div>
-          </div>
-          <div class="col-archivo">
-            <a class="file-link">
-              <span class="material-symbols-outlined">description</span>
-              TP1_Garay_Final.pdf
-            </a>
-          </div>
-          <div class="col-calificacion">
-            <div class="input-grade-group">
-              <input type="number" class="grade-input" value="9" />
-              <button class="btn-save-grade checked">
-                <span class="material-symbols-outlined">check</span>
-              </button>
-            </div>
-          </div>
-          <div class="col-estado">
-            <span class="badge corregido">CORREGIDO</span>
-          </div>
-        </div>
+        @for (item of submissions; track item.studentId) {
+          <div class="entrega-row">
+            <div class="col-alumno student-cell">
+              <div class="avatar-placeholder"></div>
+              <div class="student-info">
+                <strong>{{ item.studentName }}</strong>
 
-        <!-- Fila: Pendiente (Diaz) -->
-        <div class="entrega-row">
-          <div class="col-alumno student-cell">
-            <div class="avatar-placeholder"></div>
-            <div class="student-info">
-              <strong>Diaz, Martin</strong>
-              <span class="fecha-entrega">Entregado: 14/05 - 09:15hs</span>
+                @if (item.submissionDate) {
+                  <span class="fecha-entrega" [class.warning]="item.isLate">
+                    Entregado: {{ formatDate(item.submissionDate) }}
+                    {{ item.isLate ? '(Fuera de término)' : '' }}
+                  </span>
+                } @else {
+                  <span class="fecha-entrega sin-entregar">Sin entregar</span>
+                }
+              </div>
             </div>
-          </div>
-          <div class="col-archivo">
-            <a class="file-link">
-              <span class="material-symbols-outlined">description</span>
-              Solucion_TP1_Diaz.zip
-            </a>
-          </div>
-          <div class="col-calificacion">
-            <div class="input-grade-group">
-              <input type="number" class="grade-input" placeholder="-" />
-              <button class="btn-save-grade pending">
-                <span class="material-symbols-outlined">save</span>
-              </button>
-            </div>
-          </div>
-          <div class="col-estado">
-            <span class="badge pendiente">PENDIENTE</span>
-          </div>
-        </div>
 
-        <!-- Fila: Pendiente (Perez - A término) -->
-        <div class="entrega-row">
-          <div class="col-alumno student-cell">
-            <div class="avatar-placeholder"></div>
-            <div class="student-info">
-              <strong>Perez, Juan</strong>
-              <span class="fecha-entrega warning">Entregado: 15/05 - 23:50hs (A término)</span>
+            <div class="col-archivo">
+              @if (item.fileUrl) {
+                <a class="file-link" (click)="downloadFile(item.fileUrl)">
+                  <span class="material-symbols-outlined">description</span>
+                  {{ getFileName(item.fileUrl) }}
+                </a>
+              } @else {
+                <span class="no-file">—</span>
+              }
+            </div>
+
+            <div class="col-calificacion">
+              <div class="input-grade-group">
+                <input
+                  type="number"
+                  class="grade-input"
+                  placeholder="-"
+                  min="0"
+                  max="10"
+                  [(ngModel)]="item.grade"
+                  (keydown)="validateKeyboard($event)"
+                  (input)="item.grade = item.grade! > 10 ? 10 : item.grade"
+                  [disabled]="item.status === 'SIN_ENTREGAR'"
+                />
+
+                @if (item.status === 'CORREGIDO') {
+                  <button
+                    class="btn-save-grade checked"
+                    (click)="saveGrade(item)"
+                    title="Actualizar nota"
+                  >
+                    <span class="material-symbols-outlined">check</span>
+                  </button>
+                } @else {
+                  <button
+                    class="btn-save-grade pending"
+                    (click)="saveGrade(item)"
+                    [disabled]="item.status === 'SIN_ENTREGAR' || item.grade === null"
+                    title="Guardar nota"
+                  >
+                    <span class="material-symbols-outlined">save</span>
+                  </button>
+                }
+              </div>
+            </div>
+
+            <div class="col-estado">
+              @if (item.status === 'CORREGIDO') {
+                <span class="badge corregido">CORREGIDO</span>
+              } @else if (item.status === 'PENDIENTE') {
+                <span class="badge pendiente">PENDIENTE</span>
+              } @else {
+                <span class="badge vacio">SIN ENTREGAR</span>
+              }
             </div>
           </div>
-          <div class="col-archivo">
-            <a class="file-link">
-              <span class="material-symbols-outlined">description</span>
-              TP1_Juan_Final.pdf
-            </a>
+        } @empty {
+          <div class="no-students-state">
+            <p>No hay alumnos asignados a esta materia actualmente.</p>
           </div>
-          <div class="col-calificacion">
-            <div class="input-grade-group">
-              <input type="number" class="grade-input" placeholder="-" />
-              <button class="btn-save-grade pending">
-                <span class="material-symbols-outlined">save</span>
-              </button>
-            </div>
-          </div>
-          <div class="col-estado">
-            <span class="badge pendiente">PENDIENTE</span>
-          </div>
-        </div>
+        }
       </div>
     </div>
   </div>

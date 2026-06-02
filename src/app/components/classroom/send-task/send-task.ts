@@ -3,21 +3,23 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Subject } from '../../../models/subject.model';
 import { SubjectService } from '../../../services/subject.service';
-import { filter, Observable, shareReplay, switchMap, tap } from 'rxjs';
+import { filter, map, Observable, shareReplay, switchMap, tap } from 'rxjs';
 import { Assignment } from '../../../models/assignment.model';
 import { AssignmentService } from '../../../services/assignment.service';
 import { QuillEditorComponent } from 'ngx-quill';
+import { Submission } from '../../../models/submission.model';
+import { AuthService } from '../../../services/auth.service';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-send-task',
-  imports: [CommonModule, RouterModule, QuillEditorComponent],
+  imports: [CommonModule, RouterModule, QuillEditorComponent, ReactiveFormsModule],
   templateUrl: './send-task.html',
   styleUrl: './send-task.css',
 })
 export class SendTask implements OnInit {
-  hasSubmitted: boolean = false;
   submissionDate!: Date;
-  submissionStatus: 'A término' | 'Fuera de término' = 'A término';
+  submissionTimeStatus: 'A término' | 'Fuera de término' = 'A término';
   submissionText: string = '';
   submissionComment: string = '';
   selectedFile: File | null = null;
@@ -28,9 +30,13 @@ export class SendTask implements OnInit {
   activityId: string | null = null;
   currentActivity$!: Observable<Assignment>;
 
+  newSubmit!: Submission;
+
+  submitForm!: FormGroup;
+  submissionStatus$!: Observable<string>;
+
   editorModules = {
     toolbar: [
-      [{ size: ['small', false, 'large', 'huge'] }],
       ['bold', 'italic', 'underline', 'clean'],
       [{ list: 'ordered' }, { list: 'bullet' }],
       ['link'],
@@ -41,11 +47,15 @@ export class SendTask implements OnInit {
     private subjectService: SubjectService,
     private assignmentService: AssignmentService,
     private activeRoute: ActivatedRoute,
-    private location: Location
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private location: Location,
   ) {}
 
   ngOnInit(): void {
+    this.initForm();
     this.activityId = this.activeRoute.snapshot.paramMap.get('id');
+    this.loadSubmissionStatus();
 
     if (this.activityId) {
       this.currentActivity$ = this.assignmentService.getAssignmentById(this.activityId).pipe(
@@ -72,7 +82,21 @@ export class SendTask implements OnInit {
     }
   }
 
-  formatDate(original: Date | string): string {
+  initForm() {
+    this.submitForm = this.fb.group({
+      comment: [''],
+    });
+  }
+
+  private loadSubmissionStatus(): void {
+    this.submissionStatus$ = this.assignmentService
+      .checkSubmissionStatus(this.authService.currentUserValue?.id!, this.activityId!)
+      .pipe(
+        map((res) => res.status),
+      );
+  }
+
+  formatDateDisplay(original: Date | string): string {
     const date = new Date(original);
 
     const formatter = new Intl.DateTimeFormat('es-AR', {
@@ -98,13 +122,38 @@ export class SendTask implements OnInit {
     return new Date() <= limit;
   }
 
-  enviarEntrega(activity: any) {
+  sendActivity(activity: Assignment) {
     this.submissionDate = new Date();
     const limit = new Date(activity.date_limit);
 
-    this.submissionStatus = this.submissionDate <= limit ? 'A término' : 'Fuera de término';
+    this.submissionTimeStatus = this.submissionDate <= limit ? 'A término' : 'Fuera de término';
 
-    this.hasSubmitted = true;
+    const timezoneOffsetOffset = this.submissionDate.getTimezoneOffset() * 60000;
+
+    const localISODate = new Date(
+      this.submissionDate.getTime() - timezoneOffsetOffset,
+    ).toISOString();
+
+    const formattedDate = localISODate.split('.')[0];
+
+    const { comment } = this.submitForm.value;
+
+    this.newSubmit = {
+      comment: comment,
+      file_url: 'google.com',
+      submission_date: formattedDate,
+    };
+
+    this.assignmentService
+      .submitActivity(this.activityId!, this.authService.currentUserValue?.id!, this.newSubmit)
+      .subscribe({
+        next: () => {
+          alert('Actividad Entregada Exitosamente.');
+          this.submitForm.reset();
+          this.loadSubmissionStatus();
+        },
+        error: (err) => console.error('Hubo un error al entregar la actividad: ', err),
+      });
   }
 
   triggerFileInput() {

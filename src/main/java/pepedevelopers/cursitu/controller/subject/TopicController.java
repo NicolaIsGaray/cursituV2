@@ -1,10 +1,13 @@
 package pepedevelopers.cursitu.controller.subject;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pepedevelopers.cursitu.model.subject_submodel.TopicsEntity;
+import pepedevelopers.cursitu.model.dto.TopicDTO;
+import pepedevelopers.cursitu.model.subject_submodel.TopicEntity;
 import pepedevelopers.cursitu.repository.ITopics;
+import pepedevelopers.cursitu.service.TopicService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,55 +19,49 @@ import java.util.Map;
 public class TopicController {
   private final ITopics topicsRepo;
 
+  @Autowired
+  private TopicService topicService;
+
   public TopicController(ITopics topicsRepo) {
     this.topicsRepo = topicsRepo;
   }
 
   @PostMapping
-  public ResponseEntity<TopicsEntity> createTopic(@RequestBody TopicsEntity newTopic) {
-    return new ResponseEntity<>(topicsRepo.save(newTopic), HttpStatus.CREATED);
+  public ResponseEntity<TopicEntity> createTopic(@RequestBody TopicDTO request) {
+    TopicEntity newTopic = topicService.submitTopic(
+      request.mode(),
+      request.topic(),
+      request.assignment(),
+      request.classroom_id()
+    );
+    return ResponseEntity.ok(newTopic);
   }
 
   @GetMapping
-  public ResponseEntity<List<TopicsEntity>> getAllTopics() {
+  public ResponseEntity<List<TopicEntity>> getAllTopics() {
     return ResponseEntity.ok(topicsRepo.findAll());
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<TopicsEntity> getTopicById(@PathVariable String id) {
-    TopicsEntity topic = topicsRepo.findById(id).orElse(null);
+  public ResponseEntity<TopicEntity> getTopicById(@PathVariable String id) {
+    TopicEntity topic = topicsRepo.findById(id).orElse(null);
 
     return topic != null ? ResponseEntity.ok(topic) : ResponseEntity.notFound().build();
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<?> modifyTopic(@PathVariable String id, @RequestBody TopicsEntity updatedTopic) {
-    TopicsEntity existingTopic = topicsRepo.findById(id).orElse(null);
-
-    if (existingTopic == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se ha encontrado");
-
-    existingTopic.setTitle(updatedTopic.getTitle() == null ? existingTopic.getTitle() : updatedTopic.getTitle());
-    existingTopic.setContent(updatedTopic.getContent() == null ? existingTopic.getContent() : updatedTopic.getContent());
-    existingTopic.setAssignment_id(updatedTopic.getAssignment_id() == null ? existingTopic.getAssignment_id() : updatedTopic.getAssignment_id());
-
-    topicsRepo.save(existingTopic);
-
-    Map<String, String> response = new HashMap<>();
-    response.put("message", "Tema modificado con éxito.");
-
-    return ResponseEntity.ok(response);
+  public ResponseEntity<?> modifyTopic(@PathVariable String id, @RequestBody TopicDTO updatedTopic) {
+    topicService.modifyTopic(id,
+      updatedTopic.mode(),
+      updatedTopic.topic(),
+      updatedTopic.assignment()
+      );
+    return ResponseEntity.ok(Map.of("message", "Clase modificada con éxito."));
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<?> deleteTopic(@PathVariable String id) {
-    TopicsEntity existingTopic = topicsRepo.findById(id).orElse(null);
-
-    if (existingTopic == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tema no encontrado");
-
-    topicsRepo.delete(existingTopic);
-    Map<String, String> response = new HashMap<>();
-    response.put("message", "Tema eliminado con éxito.");
-
-    return ResponseEntity.ok(response);
+    topicService.deleteTopicAndAssignments(id);
+    return ResponseEntity.ok(Map.of("message", "Tema eliminado con éxito."));
   }
 }

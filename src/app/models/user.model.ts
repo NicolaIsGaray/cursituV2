@@ -8,4 +8,5 @@ export class User {
     comission!: string[];
     classroom_number!: number;
     subjects_id?: string[];
+    hasGroup!: boolean;
 }

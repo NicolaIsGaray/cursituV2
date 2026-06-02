@@ -65,7 +65,7 @@ export class AnnouncementPanel implements OnInit{
       title: title.trim(),
       type: type,
       message: body,
-      emisor_id: this.emisorId!,
+      senderId: this.emisorId!,
       created_at: todayDate
     }
 
@@ -87,8 +87,6 @@ export class AnnouncementPanel implements OnInit{
   selectNoticeToDelete(e: Event) {
     const element = e.target as HTMLSelectElement;
     const value = element.value;
-
-    alert("CALLING");
 
     this.noticeService.getNoticeById(value).subscribe({
       next: (data) => {

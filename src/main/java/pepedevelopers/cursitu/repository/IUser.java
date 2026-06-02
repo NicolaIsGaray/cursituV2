@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface IUser extends MongoRepository<UserEntity, String> {
   Optional<UserEntity> findByDni(String dni);
   Optional<List<UserEntity>> findByDniContaining(String dni);
+  List<UserEntity> findByRole(String role);
+  List<UserEntity> findByIdIn(List<String> ids);
 }

@@ -1,4 +1,5 @@
 import { DateEvent } from "./date-event.model"
+import { SubjectSchedule } from "./subject-schedule.model";
 
 export class Subject {
     id?: string;
@@ -9,4 +10,6 @@ export class Subject {
     year_level!: number;
     academic_period!: number[];
     important_dates?: DateEvent[];
+    isSuspended?: boolean;
+    schedule!: SubjectSchedule[];
 }

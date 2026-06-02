@@ -52,6 +52,52 @@
   cursor: pointer;
 }
 
+.empty-tp-placeholder {
+  grid-column: 1 / -1; /* Ocupa todo el ancho si usás un CSS Grid en .tp-list */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+  background-color: #f8fafc; /* Fondo gris slate muy suave */
+  border: 2px dashed #cbd5e1; /* Borde punteado de diseño */
+  border-radius: 12px;
+  max-width: 600px;
+  margin: 32px auto;
+}
+
+.empty-tp-placeholder .icon-circle {
+  width: 64px;
+  height: 64px;
+  background-color: #f1f5f9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.empty-tp-placeholder .icon-circle span {
+  font-size: 32px;
+  color: #94a3b8; /* Ícono sutil */
+}
+
+.empty-tp-placeholder h3 {
+  font-size: 1.25rem;
+  color: #334155;
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.empty-tp-placeholder p {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin: 0;
+  max-width: 440px;
+  line-height: 1.5;
+}
+
 /* === TARJETAS DE TP === */
 .tp-list {
   display: flex;
@@ -183,6 +229,13 @@
 .filename {
   color: #555;
   text-decoration: underline;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.filename:hover {
+  color: var(--primary-purple);
 }
 
 .btn-ver-entregas {

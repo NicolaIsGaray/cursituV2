@@ -1,6 +1,5 @@
 <main *ngIf="authService.userRole$ | async as rol">
   <div class="admin-container" *ngIf="rol === 'ADMIN'">
-    <!-- Lado Izquierdo: Menú de Acciones -->
     <div class="selection-panel">
       <h3>Gestión de Usuarios</h3>
       <p class="section-description">Selecciona una operación para administrar la base de datos.</p>
@@ -8,62 +7,56 @@
       <div class="admin-actions-list">
         <button
           class="admin-btn create"
-          [class.active]="modo === 'crear'"
-          (click)="cambiarModo('crear')"
+          [class.active]="mode === 'crear'"
+          (click)="changeMode('crear')"
         >
-          <span class="material-symbols-outlined">person_add</span>
-          Crear Usuario
+          <span class="material-symbols-outlined">person_add</span> Crear Usuario
         </button>
 
         <button
           class="admin-btn edit"
-          [class.active]="modo === 'editar'"
-          (click)="cambiarModo('editar')"
+          [class.active]="mode === 'editar'"
+          (click)="changeMode('editar')"
         >
-          <span class="material-symbols-outlined">edit_square</span>
-          Editar Usuario
+          <span class="material-symbols-outlined">edit_square</span> Editar Usuario
         </button>
 
         <button
           class="admin-btn delete"
-          [class.active]="modo === 'eliminar'"
-          (click)="cambiarModo('eliminar')"
+          [class.active]="mode === 'eliminar'"
+          (click)="changeMode('eliminar')"
         >
-          <span class="material-symbols-outlined">person_remove</span>
-          Eliminar Usuario
+          <span class="material-symbols-outlined">person_remove</span> Eliminar Usuario
         </button>
       </div>
     </div>
 
-    <!-- Lado Derecho: Formulario Dinámico -->
     <div class="action-panel">
-      <!-- FORMULARIO CREAR / EDITAR -->
-      <div class="form-card" *ngIf="modo === 'crear' || modo === 'editar'">
+      <div class="form-card" *ngIf="mode === 'crear' || mode === 'editar'">
         <header
           class="form-header"
-          [style.background-color]="modo === 'crear' ? '#3f3689' : '#2ecc71'"
+          [style.background-color]="mode === 'crear' ? '#3f3689' : '#2ecc71'"
         >
-          <h4>{{ modo === 'crear' ? 'Nuevo Usuario' : 'Modificar Usuario' }}</h4>
+          <h4>{{ mode === 'crear' ? 'Nuevo Usuario' : 'Modificar Usuario' }}</h4>
         </header>
 
-        <div class="admin-form" *ngIf="modo === 'editar'">
+        <div class="admin-form" *ngIf="mode === 'editar'">
           <label for="dni-input">Buscar por DNI:</label>
-          <input class="admin-input" type="text" placeholder="Sin puntos" id="dni-input" [formControl]="dniControl" />
+          <input
+            class="admin-input"
+            type="text"
+            placeholder="Sin puntos"
+            id="dni-input"
+            [formControl]="dniEditControl"
+          />
 
           <ul class="user-list">
             <li *ngFor="let user of usersFound$ | async" [id]="user.id" class="user-item">
               <button type="button" class="user-card" (click)="userToEdit(user)">
-                <!-- Avatar con iniciales o placeholder -->
-                <div class="user-avatar">
-                  {{ user.name.charAt(0).toUpperCase() }}
-                </div>
-
-                <!-- Información del usuario -->
+                <div class="user-avatar">{{ user.name.charAt(0).toUpperCase() }}</div>
                 <div class="user-info">
                   <span class="user-name">{{ user.name }}</span>
-                  <span class="user-role" [ngClass]="user.role.toLowerCase()">
-                    {{ user.role }}
-                  </span>
+                  <span class="user-role" [ngClass]="user.role.toLowerCase()">{{ user.role }}</span>
                 </div>
               </button>
             </li>
@@ -89,7 +82,7 @@
                 "
                 style="color: var(--error-red)"
               >
-                Porfavor, ingresa un nombre.
+                Por favor, ingresa un nombre.
               </span>
             </div>
             <div class="form-group">
@@ -108,13 +101,17 @@
                 "
                 style="color: var(--error-red)"
               >
-                Porfavor, ingrese un correo.
+                Por favor, ingrese un correo válido.
               </span>
               <span
-                *ngIf="userForm.get('email')?.touched && userForm.get('email')?.errors?.['email']"
+                *ngIf="
+                  userForm.get('email')?.touched &&
+                  (userForm.get('email')?.errors?.['email'] ||
+                    userForm.get('email')?.errors?.['pattern'])
+                "
                 style="color: var(--error-red)"
               >
-                Correo inválido.
+                El correo ingresado es inválido.
               </span>
             </div>
           </div>
@@ -135,10 +132,10 @@
                 *ngIf="userForm.get('dni')?.touched && userForm.get('dni')?.errors?.['required']"
                 style="color: var(--error-red)"
               >
-                Porfavor, ingrese un DNI.
+                Por favor, ingrese un DNI.
               </span>
               <span
-                *ngIf="userForm.get('dni')?.touched && userForm.get('dni')?.errors?.['minLength']"
+                *ngIf="userForm.get('dni')?.touched && userForm.get('dni')?.errors?.['minlength']"
                 style="color: var(--error-red)"
               >
                 El DNI debe contener al menos 8 caracteres.
@@ -147,16 +144,14 @@
                 *ngIf="userForm.get('dni')?.touched && userForm.get('dni')?.errors?.['pattern']"
                 style="color: var(--error-red)"
               >
-                Formato de DNI inválido.
+                Formato de DNI inválido. Solo números.
               </span>
             </div>
             <div class="form-group">
               <label>Rol del Usuario *</label>
-              <select class="admin-input" id="role" formControlName="role" (change)="switchSubjectCheckboxes($event)">
+              <select class="admin-input" id="role" formControlName="role">
                 <option value="" selected disabled>-- Selecciona un rol --</option>
-                <option *ngFor="let role of roleList" [value]="role.name">
-                  {{ role.name }}
-                </option>
+                <option *ngFor="let role of roleList" [value]="role.name">{{ role.name }}</option>
               </select>
               <span
                 *ngIf="userForm.get('role')?.touched && userForm.get('role')?.errors?.['required']"
@@ -168,20 +163,19 @@
           </div>
 
           <div class="form-row">
-            <!-- Checkboxes de Comisiones -->
             <div class="form-group">
               <label>Comisiones Asignadas *</label>
               <div class="checkbox-group-container" formArrayName="comissions">
-                <div
-                  class="checkbox-item"
-                  *ngFor="let control of comissionFromArray.controls; let i = index"
-                >
-                  <input type="checkbox" [formControlName]="i" [id]="'comission-' + i" />
-                  <label [for]="'comission-' + i">Comisión {{ comissionList[i] }}</label>
-                </div>
+                @for (comission of comissionList; track comission; let i = $index) {
+                  <div class="checkbox-item">
+                    <input type="checkbox" [formControlName]="i" [id]="'comission-' + i" />
+                    <label [for]="'comission-' + i">Comisión {{ comission }}</label>
+                  </div>
+                }
               </div>
             </div>
-            <div class="form-group" *ngIf="roleSwitch">
+
+            <div class="form-group" *ngIf="userForm.get('role')?.value === 'ALUMNO'">
               <label>N° de Curso</label>
               <input
                 type="number"
@@ -193,8 +187,10 @@
             </div>
           </div>
 
-          <!-- Checkboxes de Materias Asignadas -->
-          <div class="form-group full-width" [style.display]="roleSwitch ? 'block' : 'none'">
+          <div
+            class="form-group full-width"
+            *ngIf="userForm.get('role')?.value === 'ALUMNO' && subjectList.length > 0"
+          >
             <label>Materias Asignadas</label>
             <div class="checkbox-group-container horizontal" formArrayName="assigned_subjects">
               <div
@@ -202,45 +198,37 @@
                 *ngFor="let control of subjectFormArray.controls; let i = index"
               >
                 <input type="checkbox" [formControlName]="i" [id]="'subject-' + i" />
-                <label [for]="'subject-' + i">{{ subjectList[i].subject_name }}</label>
+                <label [for]="'subject-' + i">{{ subjectList[i]?.subject_name }}</label>
               </div>
             </div>
           </div>
 
           <button
             class="btn-submit"
-            [style.background-color]="modo === 'crear' ? '#3f3689' : '#2ecc71'"
+            [style.background-color]="mode === 'crear' ? '#3f3689' : '#2ecc71'"
             [disabled]="userForm.invalid"
           >
-            {{ modo === 'crear' ? 'Registrar Usuario' : 'Guardar Cambios' }}
+            {{ mode === 'crear' ? 'Registrar Usuario' : 'Guardar Cambios' }}
           </button>
         </form>
       </div>
 
-      <!-- FORMULARIO ELIMINAR -->
-      <div class="form-card delete-card" *ngIf="modo === 'eliminar'">
+      <div class="form-card delete-card" *ngIf="mode === 'eliminar'">
         <header class="form-header delete-header">
           <h4>Eliminar Usuario</h4>
         </header>
-
         <div class="delete-content">
           <p>Ingresa el DNI del usuario que deseas dar de baja permanentemente.</p>
-
-          <!-- Contenedor del buscador (Mantiene la referencia relativa para el desplegable) -->
-          <form class="form-group search-container" style="position: relative">
-            <label for="dni">DNI del Usuario</label>
-
-            <!-- Input vinculado al FormControl Reactivo -->
+          <div class="form-group search-container" style="position: relative">
+            <label for="dni-delete">DNI del Usuario</label>
             <input
-              id="dni"
+              id="dni-delete"
               type="text"
-              [formControl]="dniControl"
+              [formControl]="dniDeleteControl"
               placeholder="Ej: 42333444"
               class="admin-input error-focus"
               autocomplete="off"
             />
-
-            <!-- Desplegable flotante de resultados estilo Card -->
             <ul
               class="autocomplete-results"
               *ngIf="usersFound$"
@@ -255,14 +243,8 @@
               "
             >
               <li *ngFor="let user of usersFound$ | async" class="user-item" style="width: 100%">
-                <button
-                  type="button"
-                  class="user-card"
-                  (click)="seleccionarUsuarioParaEliminar(user)"
-                >
-                  <div class="user-avatar">
-                    {{ user.name.charAt(0).toUpperCase() }}
-                  </div>
+                <button type="button" class="user-card" (click)="selectUserToDelete(user)">
+                  <div class="user-avatar">{{ user.name.charAt(0).toUpperCase() }}</div>
                   <div class="user-info">
                     <span class="user-name">{{ user.name }}</span>
                     <span class="user-dni">DNI: {{ user.dni }}</span>
@@ -270,17 +252,13 @@
                 </button>
               </li>
             </ul>
-          </form>
-
-          <!-- Sección intermedia que confirma al usuario seleccionado -->
+          </div>
           <div class="selected-user-preview" *ngIf="userToDeleteSel">
             <p>
               Vas a eliminar a: <strong>{{ userToDeleteSel.name }}</strong> (DNI:
               {{ userToDeleteSel.dni }})
             </p>
           </div>
-
-          <!-- El botón se habilita únicamente si hay un usuario seleccionado previamente -->
           <button
             class="btn-submit btn-delete"
             (click)="deleteUser()"
@@ -291,8 +269,7 @@
         </div>
       </div>
 
-      <!-- VISTA VACÍA -->
-      <div class="empty-state" *ngIf="!modo">
+      <div class="empty-state" *ngIf="!mode">
         <span class="material-symbols-outlined">manage_accounts</span>
         <p>Selecciona una acción para comenzar</p>
       </div>

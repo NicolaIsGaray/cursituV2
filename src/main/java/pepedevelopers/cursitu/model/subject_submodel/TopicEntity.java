@@ -6,11 +6,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document(collection = "topics")
-public class TopicsEntity {
+public class TopicEntity {
   @Id
   private String id;
 
   private String title;
   private String content;
-  private String assignment_id;
+  private String assignmentId;
+  private String classroom_id;
 }

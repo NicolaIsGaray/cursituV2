@@ -1,4 +1,4 @@
 export const environment = {
-  production: false,
+  production: true,
   api: 'http://web.grupo1.edu.ar/api',
 };
